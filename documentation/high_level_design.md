@@ -2,71 +2,88 @@
 
 ## Problem
 
-The database solutions are dominated by the [relational databases](https://en.wikipedia.org/wiki/Relational_database) that use [Structured Query Language (SQL)](https://en.wikipedia.org/wiki/SQL) for querying them. Relational databases organize the data in data tables with rows and columns. This concept has two major flaws:
+The database solutions are dominated by the [relational databases](https://en.wikipedia.org/wiki/Relational_database) that organize the data in tables with rows and columns. The data is queried with text based [Structured Query Language (SQL)](https://en.wikipedia.org/wiki/SQL). These databases have several shortcomings:
 
-1. Despite the name there is no direct way of representing relations between different tables. This is typically solved by introducing meta data columns (so called foreign keys) that contain indexes in another table. This adds complexity and makes the database queries more complex and the database/data harder to maintain.
+1. There is no direct way of representing relationships between tables, rows and columns (despite the name - relational databases). The typical solution is the use of meta data columns that contain indexes in another table (foreign keys). This adds complexity and makes it hard to reason about the data and their relations.
 
-2. Tables are rigid data structures and manipulating the table structure (adding/removing/modifying columns) is often impossible requiring creation of a new table with the desired structure and copying the original data over. For the same reason representing sparse data in tables is problematic. Missing values in a row still needs some value (e.g. `null`, `0`, empty string etc.) while representing extra value represented only in some cases is outright impossible (requires new column).
+2. Tables have rigid data structure (schema) that is impossible to change after creation. This makes representing sparse data (not all columns filled) or new unexpected data (new columns) a very hard problem especially for database design. The typical solution is creating a new database schema and importing the original data which is error prone and cumbersome.
 
-With the constantly evolving needs of systems that use a database the rigidity of the relational databases poses a major problem. Because changing the structure (scheme) of such a database is extremely difficult and expensive while in production, significant amount of time and resources are spent in designing the database structure fit for a particular business need ahead of time. However it is impossible to design the relational database for future needs. Database scheme not fit for the business need can also easily suffer from degraded performance and inability to scale.
+3. Text based queries are their own separate programming language. They require to be learnt separately, have their own syntax, parsing etc. This constitutes a barrier between the database (and the data) and the client (user). Due to the problem no. 1 (no relations in relational databases) they also tend to be rather complex and hard to author. 
 
-The solution to this problem exists in form of so called [NoSQL databases](https://en.wikipedia.org/wiki/NoSQL). There are many variants of such databases and there are not many common traits among them.
+4. Scalability of relational databases vis-à-vis dataset size is generally poor. The typical solution is the use of indexes - essentially an in-built meta data system that makes lookup in selected columns faster. This solution however cannot cope with the ever growing amount of data and requirements on the database performance.
 
-### Graph Databases
+Other properties of relational databases or their implementations however are good and needs to be retained by any new system to replace them. For example:
 
-One type of NoSQL databases are graph databases. They solve the aforementioned problems by plotting the data on a [graph](https://en.wikipedia.org/wiki/Graph_database) instead in tables. The advantage of this approach is that the graph itself accurately represents the relations between the data (unlike the so called relational databases). The disadvantage is that SQL is not particularly well suited for querying such database. For that reasons the graph databases introduce their own query language in one way or another although support for SQL in them might still exist.
+- Platform independent.
+- Database transactions.
+- Use as an embedded database (e.g. [SQLite](https://www.sqlite.org/index.html)).
+- [ACID - data atomicity, consistency, isolation, durability](https://en.wikipedia.org/wiki/ACID).
 
-The shortcomings of the currently available databases are:
+## Requirements
 
-- They are written in Java
-- They do not offer C++ bindings
-- They use their own text based query language (including modified SQL)
+The solution to the problem is a database system that:
 
-### Text Based Database Queries
+- Allow direct representation of data relationships.
+- Allow changing the database schema (or even schema-less).
+- Allow querying the database natively from a programming language.
+- Allow embedded use.
+- Allow server use.
+- Allow database transactions.
+- SQL compatible.
+- Retain (constant) performance regardless of dataset size.
+- Unlimited horizontal nad vertical scalability.
+- ACID compliance.
+- Platform independent.
+- Platfomr inoperable (write on one platform, read on another).
 
-While SQL is de facto industry standard for querying databases. Since it is its own independent programming language to use it one needs to learn it in addition to the programming language of their choice. Since it is text based parsing is expensive. For the same reason syntactic errors are commonplace. Furthermore SQL is not particularly well suited for querying graph databases. 
+## Existing Solutions
 
-## Design Overview
+Some of the requiremnts can be met with [NoSQL databases](https://en.wikipedia.org/wiki/NoSQL). There are many variants of such databases but one particular type is well suited for addressing most of the above mentioned problems - [graph database](https://en.wikipedia.org/wiki/Graph_database). The existing graph databases (e.g. [Neo4J](https://neo4j.com/) or [OrientDB](https://www.orientdb.org/) however do not fulfill all of the requirements. They do not offer bindings for many programming languages (e.g. C++). They use their own text based query language. They do not offer an embedded solution. They are not ACID compliant etc.
 
-The **Agnesoft Database** or **ADb** is the graph database system written in C++. The database is primarily designed for:
+## Agnesoft Database (ADb)
 
-- Schema flexibility
-- Read performance
-- Real time data access
-- Unlimited scalability
-- Native querying in all programming languages
-- Use embedded (in-process) or as server
-
-The ADb database consists of two main components:
+The **Agnesoft Database** or **ADb** is a graph database system. It comprises of two main components:
 
 - Agnesoft Database (ADb)
-- ADb Query
+- Agnesoft Database Query (ADb Query)
 
-## Agnesoft Database
+### Agnesoft Database
 
-The main structural component of the database is the [graph](https://en.wikipedia.org/wiki/Graph_database). The elements on the graph are nodes (points, vertices) and directed edges (arcs, connections) that connect the nodes. Both kinds of graph elements may have data associated with them in the form of `key-value` pairs. Every element on the graph has a unique 64-bit ID that is used to access and modify the element and its data. 
+The specification of the Agnesoft Database component:
 
-The ADb database graph is directed and there are no limitations to the numbers of edges between nodes; there can be multiple edges in the same direction between two nodes. There can also be edges connecting a node to itself. The graph can be both cyclic or acyclic. The database graph can also contain multiple disjointed/independent subgraphs.
+#### Graph
+The main structural component of the database is the [graph](https://en.wikipedia.org/wiki/Graph_database). The elements on the graph are nodes (points, vertices) and directed edges (arcs, connections) that connect the nodes. Every element on the graph has a unique indentifier that is used to access and modify the element and its relations. Elements can be added, modified or removed.
 
-All of the graph data are persisted in a single database file. The data are stored in machine independent binary format that can be read & modified on any machine regardless of its origin. The database can be replicated by other instances (sharding) or be extended by other instances (possibly over a network). Running queries on one instance is therefore capable of searching multiple instances that appears as one database to the client.
+The database graph is:
 
-The database is [ACID](https://en.wikipedia.org/wiki/ACID) compliant, provides write transactions and concurrent reads. By default the database is schema-less and does not have any user based access. Both can however be achieved in number of ways. The ADb configuration and all meta information are stored in the database itself.
+- Directed graph.
+- Allow multiple edges between two nodes.
+- Allow multiple edges in the same direction.
+- Allow edges connecting a node to itself.
+- Allow cyclic graphs.
+- Allow multiple disjointed subgraphs.
 
-The database performance is mostly independent from the amount of data stored. Accessing elements and data has constant time complexity. Searching the database has linear time complexity. There are no indexes. The graph structure is capable of perfectly capturing the relations between data. Therefore searches are typically simpler and shorter in comparison to other databases and there is no real need for an index (the graph itself is the index).
+#### Data
 
-### Variants
+Both kinds of the database graph elements (nodes and edges) have data associated with them in the form of `key-value` pairs. The data can be added, modified or removed. The data can be bound to a schema or be completely freeform. There cannot be duplicate keys associated with the same graph element.
 
-The database operates in two forms - embedded or server.
+#### Data Store
+
+All of the database data including meta data such as configuration is persisted in a single file. The data is stored in machine independent binary format that can be read & modified on any platform. The file is protected via [write-ahead-logging](https://en.wikipedia.org/wiki/Write-ahead_logging). Operations over the file are atomic (transactional) and [ACID](https://en.wikipedia.org/wiki/ACID) compliant. The database performance is mostly independent from the amount of data stored. Accessing elements and data has constant time complexity. Searching the database has linear time complexity based on the searched subgraph. The data store allow concurrent reads but not concurrent writes.
+
+#### Variants
+
+The database can operate in both embedded or server mode:
 
 **Embedded**
 
-The embedded means in-process as a static or dynamic library directly linked to the client program. It is accessed directly using C++ application programming interface (API). This API can be exposed to other languages in standard form dependent on the language. The database does not run any event loop or continuous processing of its own.
+In the embedded mode the database is directly linked to the client program (either during the compile time or at runtime). It is accessed directly using application programming interface (API) from any supported language.
 
 **Server**
 
-The database server is a stand alone process accessed via a network (or a local socket) connection. It actively listens for new connections and processes network requests returning responses to the client.
+The database server is a stand alone process accessed via a network (or a local socket) connection. It actively listens for new connections and processes network requests returning responses to the client. It allows concurrent connections and processing. In server mode the individual instances of the database can form a cluster and either replicate the data (sharding) or extend the available store capacity. The server mode provides credentials based access to the database.
 
-## ADb Query
+### ADb Query
 
 Commands to the database, regardless of the database variant, are issued in the form of queries. Queries in ADb are C++ objects with certain data fields that are used by the database to execute the command and possibly return a result. Query objects are constructed using a [builder pattern](https://en.wikipedia.org/wiki/Builder_pattern) in every supported language. The pattern intentionally resembles English and SQL. The query interface for every supported language including ADb's native C++ is generated from a query IDL.
 

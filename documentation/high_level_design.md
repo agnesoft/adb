@@ -4,27 +4,28 @@
 
 The database solutions are dominated by the [relational databases](https://en.wikipedia.org/wiki/Relational_database) that organize the data in tables with rows and columns. The data is queried with text based [Structured Query Language (SQL)](https://en.wikipedia.org/wiki/SQL). These databases have several shortcomings:
 
-1. There is no direct way of representing relationships between tables, rows and columns (despite the name - relational databases). The typical solution is the use of meta data columns that contain indexes in another table (foreign keys). This adds complexity and makes it hard to reason about the data and their relations.
+1. There is no direct way of representing relationships between tables, rows and columns (despite the name - relational databases). The typical solution is to use the meta data columns that contain indexes in another table (foreign keys). This adds complexity and makes it hard to reason about the data and their relations.
 
-2. Tables have rigid data structure (schema) that is impossible to change after creation. This makes representing sparse data (not all columns filled) or new unexpected data (new columns) a very hard problem especially for database design. The typical solution is creating a new database schema and importing the original data which is error prone and cumbersome.
+2. Tables have rigid data structure (schema) that is impossible to change after creation. This makes representing sparse data (not all columns filled) or new unexpected data (new columns) a very hard problem especially for database design. The typical solution is creating a new database schema and importing the original data which is disruptive, error prone and cumbersome.
 
 3. Text based queries are their own separate programming language. They require to be learnt separately, have their own syntax, parsing etc. This constitutes a barrier between the database (and the data) and the client (user). Due to the problem no. 1 (no relations in relational databases) they also tend to be rather complex and hard to author. 
 
-4. Scalability of relational databases vis-à-vis dataset size is generally poor. The typical solution is the use of indexes - essentially an in-built meta data system that makes lookup in selected columns faster. This solution however cannot cope with the ever growing amount of data and requirements on the database performance.
+4. Scalability of relational databases vis-à-vis dataset size is generally poor. The typical solution is the use of indexes - essentially an in-built meta data system that makes lookup in selected columns faster. This solution however cannot cope with the ever growing amount of data.
 
 Other properties of relational databases or their implementations however are good and needs to be retained by any new system to replace them. For example:
 
-- Platform independent.
+- Platform independence.
 - Database transactions.
 - Use as an embedded database (e.g. [SQLite](https://www.sqlite.org/index.html)).
 - [ACID - data atomicity, consistency, isolation, durability](https://en.wikipedia.org/wiki/ACID).
+- etc.
 
 ## Requirements
 
 The solution to the problem is a database system that:
 
 - Allow direct representation of data relationships.
-- Allow changing the database schema (or even schema-less).
+- Allow changing the database schema (or allow no schema).
 - Allow querying the database natively from a programming language.
 - Allow embedded use.
 - Allow server use.
@@ -34,11 +35,11 @@ The solution to the problem is a database system that:
 - Unlimited horizontal nad vertical scalability.
 - ACID compliance.
 - Platform independent.
-- Platfomr inoperable (write on one platform, read on another).
+- Platform inoperable (write on one platform, read on another).
 
 ## Existing Solutions
 
-Some of the requiremnts can be met with [NoSQL databases](https://en.wikipedia.org/wiki/NoSQL). There are many variants of such databases but one particular type is well suited for addressing most of the above mentioned problems - [graph database](https://en.wikipedia.org/wiki/Graph_database). The existing graph databases (e.g. [Neo4J](https://neo4j.com/) or [OrientDB](https://www.orientdb.org/) however do not fulfill all of the requirements. They do not offer bindings for many programming languages (e.g. C++). They use their own text based query language. They do not offer an embedded solution. They are not ACID compliant etc.
+Some of the requiremnts can be met with [NoSQL databases](https://en.wikipedia.org/wiki/NoSQL). There are many variants of such databases but one particular type is well suited for addressing most of the above mentioned problems - [graph database](https://en.wikipedia.org/wiki/Graph_database). The existing graph databases (e.g. [Neo4J](https://neo4j.com/) or [OrientDB](https://www.orientdb.org/) however do not fulfill all of the requirements. They do not offer bindings for many programming languages (e.g. C++). They use their own text based query language (e.g. Cypher). They do not offer an embedded solution. They are not ACID compliant etc.
 
 ## Agnesoft Database (ADb)
 
@@ -89,7 +90,7 @@ The interface to the Agnesoft Database:
 
 #### Queries
 
-Commands to the database are issued in the form of database queries. Queries are binary objects passed to the database's public API. The query objects are constructed using a [builder pattern](https://en.wikipedia.org/wiki/Builder_pattern) in every supported language. The builder pattern resembles plain English and SQL. The queries support named placeholders and query nesting. The object definitions and the builder functions are generated for every supported language from the ADb IDL (Interface Description Language).
+Commands to the database are issued in the form of database queries. Commands are used for altering the graph (structure), scheme, data, permissions/credentials in server mode also all database settings. Queries are binary objects passed to the database's public API. The query objects are constructed using a [builder pattern](https://en.wikipedia.org/wiki/Builder_pattern) in every supported language. The builder pattern resembles plain English and SQL. The queries support named placeholders and query nesting. The object definitions and the builder functions are generated for every supported language from the ADb IDL (Interface Description Language).
 
 Example of the ADB Query builder pattern:
 ```

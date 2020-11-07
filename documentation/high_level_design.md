@@ -90,13 +90,13 @@ The interface to the Agnesoft Database:
 
 #### Queries
 
-Commands to the database are issued in the form of database queries. Commands are used for reading and altering the database:
+Commands to the database are issued in the form of database queries. Queries are used for reading and altering everything regarding the database:
 
 - Graph (add & remove elements)
-- Schema
+- Schema (if used)
 - Data
 - Permissions/credentials (in server mode)
-- Settings
+- Configuration
 
 Queries are binary objects passed to the database's public API. The query objects are constructed using a [builder pattern](https://en.wikipedia.org/wiki/Builder_pattern) in every supported language. The builder pattern resembles plain English and SQL. The queries support named placeholders and query nesting. The object definitions and the builder functions are generated for every supported language from the ADb IDL (Interface Description Language).
 

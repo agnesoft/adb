@@ -49,7 +49,7 @@ The **Agnesoft Database** or **ADb** is a graph database system. It comprises of
 
 ### Agnesoft Database
 
-The specification of the Agnesoft Database component:
+The database engine and data store:
 
 #### Graph
 The main structural component of the database is the [graph](https://en.wikipedia.org/wiki/Graph_database). The elements on the graph are nodes (points, vertices) and directed edges (arcs, connections) that connect the nodes. Every element on the graph has a unique indentifier that is used to access and modify the element and its relations. Elements can be added, modified or removed.
@@ -75,32 +75,23 @@ All of the database data including meta data such as configuration is persisted 
 
 The database can operate in both embedded or server mode:
 
-**Embedded**
+*Embedded*
 
 In the embedded mode the database is directly linked to the client program (either during the compile time or at runtime). It is accessed directly using application programming interface (API) from any supported language.
 
-**Server**
+*Server*
 
 The database server is a stand alone process accessed via a network (or a local socket) connection. It actively listens for new connections and processes network requests returning responses to the client. It allows concurrent connections and processing. In server mode the individual instances of the database can form a cluster and either replicate the data (sharding) or extend the available store capacity. The server mode provides credentials based access to the database.
 
-### ADb Query
+### Agnesoft Database Query
 
-Commands to the database, regardless of the database variant, are issued in the form of queries. Queries in ADb are C++ objects with certain data fields that are used by the database to execute the command and possibly return a result. Query objects are constructed using a [builder pattern](https://en.wikipedia.org/wiki/Builder_pattern) in every supported language. The pattern intentionally resembles English and SQL. The query interface for every supported language including ADb's native C++ is generated from a query IDL.
+The interface to the Agnesoft Database:
 
-The benefits of constructing queries directly in a programming language (as opposed to text based queries) is their inherent syntactic correctness, IDE driven autocomplete and performance (no need for parsing).
+#### Queries
 
-The queries support named placeholders and unlimited nesting.
+Commands to the database are issued in the form of database queries. Queries are binary objects passed to the database's public API. The query objects are constructed using a [builder pattern](https://en.wikipedia.org/wiki/Builder_pattern) in every supported language. The builder pattern resembles plain English and SQL. The queries support named placeholders and query nesting. The object definitions and the builder functions are generated for every supported language from the ADb IDL (Interface Description Language).
 
-### Interface Description Language (IDL)
-
-The ADb Query IDL is using JSON as its main format. The IDL describes the query objects, result objects and also the builder pattern to create the queries. The IDL Parser is used to create the abstract syntax tree (AST) from the query IDL. The AST can be used by a language generator to generate code in any language (including C++). 
-
-The reason for using IDL and code generation is to provide scalable & maintainable way to provide multiple language bindings. Every change to the IDL or AST generator would propagate to all supported languages. Furthermore having common definition of the object layouts on binary level for serialization of the queries allow them to be created in any language and interpreted/executed in ADb's native C++ without expensive transport formats (e.g. xml, json, yaml etc.) and/or need for deserialization.
-
-### Examples
-
-A query that selects all database elements reachable from element with index `10` that have an associated key "price" with value that is smaller than `10.0`.
-
+Example of the ADB Query builder pattern:
 ```
 //C++
 const auto query = adb::select().elements().from(5).where().key("price").lessThan(10.0);
@@ -108,11 +99,10 @@ const auto query = adb::select().elements().from(5).where().key("price").lessTha
 //Javascript
 const query = adb.select().elements().from(5).where().key("price").lessThan(10.0);
 
-//C
-const auto query = select().elements().from(5).where().key("price").lessThan(10.0);
-
 //Python
 query = select().elements().from(5).where().key("price").lessThan(10.0);
 ```
 
-The query builders are almost identical in most programming languages.
+#### ADb IDL
+
+The Agnesoft Database's interface description language describes the query objects, result objects and also the builder functions that create the queries. The IDL Parser is used to create the abstract syntax tree (AST) from the query IDL. The AST is used by a language generators to generate code in the supported languages. The objects in IDL are constructed as immutable with the plain byte array backing so that they can be transported between programming languages without the need for further serialization or encoding/decoding. The string values are used as is (there is no enforced string encoding - it is the responsibility of the client to know/enforce the right encoding). Numbers (integers and floating types) are always stored as little endian regardless of the platform and retrieved converting them to the endianness of the current platform (from little endian).

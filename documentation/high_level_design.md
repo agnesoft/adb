@@ -90,7 +90,15 @@ The interface to the Agnesoft Database:
 
 #### Queries
 
-Commands to the database are issued in the form of database queries. Commands are used for altering the graph (structure), scheme, data, permissions/credentials in server mode also all database settings. Queries are binary objects passed to the database's public API. The query objects are constructed using a [builder pattern](https://en.wikipedia.org/wiki/Builder_pattern) in every supported language. The builder pattern resembles plain English and SQL. The queries support named placeholders and query nesting. The object definitions and the builder functions are generated for every supported language from the ADb IDL (Interface Description Language).
+Commands to the database are issued in the form of database queries. Commands are used for reading and altering the database:
+
+- Graph (add & remove elements)
+- Schema
+- Data
+- Permissions/credentials (in server mode)
+- Settings
+
+Queries are binary objects passed to the database's public API. The query objects are constructed using a [builder pattern](https://en.wikipedia.org/wiki/Builder_pattern) in every supported language. The builder pattern resembles plain English and SQL. The queries support named placeholders and query nesting. The object definitions and the builder functions are generated for every supported language from the ADb IDL (Interface Description Language).
 
 Example of the ADB Query builder pattern:
 ```
@@ -106,4 +114,4 @@ query = select().elements().from(5).where().key("price").lessThan(10.0);
 
 #### ADb IDL
 
-The Agnesoft Database's interface description language describes the query objects, result objects and also the builder functions that create the queries. The IDL Parser is used to create the abstract syntax tree (AST) from the query IDL. The AST is used by a language generators to generate code in the supported languages. The objects in IDL are constructed with the plain byte array backing. The fields are then stored in the offsets of this array direclty so that there is no need for further serialization or encoding/decoding. The string values are stored/retrieved as is (there is no enforced string encoding - it is the responsibility of the client to know/enforce the right encoding). Numbers (integers and floating point types) are always stored in little endian byte order regardless of the platform and retrieved converting them to the endianness of the current platform (from little endian byte order).
+The Agnesoft Database's interface description language describes the query objects, result objects and also the builder functions that create the queries. The IDL parser is used to create the abstract syntax tree (AST) from the query IDL. The AST is used by a language generators to generate code in the supported languages. The generated code should create the query objects accurately and serialize them into the very same binary structure in every supported language so that two identical queries created in two different languages produce the same query object.

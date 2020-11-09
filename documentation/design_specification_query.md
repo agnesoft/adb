@@ -234,19 +234,31 @@ The AST is then passed over to the Analyzer that validates whether all reference
 
 The AST is then passed over to the Serializer that augments the existing types with the (de)serialization functions. They provide common AST representation of the code that producs the same binary data from any supported language.
 
-*Integers*
+#### Integers
 
-The `int64` and `double` are always stored in the little endian byte order regardless of the platform and retrieved converting them to the endianness of the current platform (from the little endian byte order).
+The `int64` and `double` are always serialized in the little endian byte order regardless of the platform (on big endian platforms the value is converted to little endian first). The value is deserialized as little endian and in case of big endian platform converted to that byte order.
 
-*Strings*
+#### Strings
 
 The ADb Query assumes the `byte array` (`[int64]`) to represent all data including strings. Every programming language uses their own native string representation. In some languages this is UTF-16 (two bytes per character), in others this is UTF-8 (variable number of bytes per character). The binary representation differs (e.g. UTF-16 takes twice as many bytes as it has characters). Storing a string in one language and reading it in another without agreeing on the encoding can have surprising results. It is not feasible to enforce an encoding (e.g. UTF-8) for all the data because not all data are strings. It is therefore up to the user to make sure the right encoding is used when using strings.
+
+#### array
+
+Size of the array in bytes as `int64` followed by the serialized values.
+
+#### object
+
+Individual fields serialized after each other in the order of declaration without padding.
+
+#### variant
+
+Index of currently active variant as `byte` (interpreted as signed 8-bit integer value) followed by the serialized active variant.
 
 ### Code Generators
 
 Every supported language has its own generator that generates code from the final AST. The code is fully native to the target programming language. The routines for (de)serialization must be carefully generated so that they produce the same binary data that is deserializable in other supported langauges, particularly in ADb's native C++.
 
-*C++*
+#### C++
 
 The special case is C++ as the generated code is considered the primary interface and basis for the ADb itself. In case of incompatibilities/inconsistencies between supported languages the version generated for C++ is considered correct.
 

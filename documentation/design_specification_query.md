@@ -1,6 +1,6 @@
 # Specification: Agnesoft Database Query
 
-Code generated interface to the Agnesoft Database. It consists of the Interface Description Language (IDL) schema, its parser and language generators for supported languages. The IDL is first translated into Abstract Syntax Tree (AST) by the parser and the AST is then used by the language generators to generate the code in supported languages.
+Code generated interface to the Agnesoft Database. It consists of the Interface Description Language (IDL) schema and ADb Query Compiler that parses the IDL and generates it as code in supported languages.
 
 ## Interface Description Language (IDL)
 
@@ -119,11 +119,15 @@ Syntax
 "MyVariant": ["Var1", "Var2"]
 ```
 
-## Abstract Syntax Tree (AST)
+## ADb Query Compiler
+
+Javascript program that translates the ADb Query IDL first into the Abstract Syntrax Tree (AST) and from it generates code in supported langauges.
+
+### Abstract Syntax Tree (AST)
 
 The IDL parser validates the schema and translates it into AST. The AST is a much richer version of the original JSON with additional deduced information suitable for code generation. Each type generates a different IDL object and all are stored under their original type names in a single AST object for cross referencing:
 
-### alias
+#### alias
 
 ```
 {
@@ -133,7 +137,7 @@ The IDL parser validates the schema and translates it into AST. The AST is a muc
 }
 ```
 
-### array
+#### array
 
 ```
 {
@@ -143,7 +147,7 @@ The IDL parser validates the schema and translates it into AST. The AST is a muc
 }
 ```
 
-### function & expressions
+#### function & expressions
 
 ```
 {
@@ -187,7 +191,7 @@ The IDL parser validates the schema and translates it into AST. The AST is a muc
 }
 ```
 
-### object
+#### object
 
 ```
 {
@@ -207,7 +211,7 @@ The IDL parser validates the schema and translates it into AST. The AST is a muc
 }
 ```
 
-### variant
+#### variant
 
 ```
 {
@@ -218,9 +222,17 @@ The IDL parser validates the schema and translates it into AST. The AST is a muc
 }
 ```
 
-## Code Generators
+### Parser
 
-## Serialization
+Parser translates the IDL into flat AST with no additional information. It performs syntax checking such as whether the type of the element following another is valid, whether given construct evaluates into something known etc. It also breaks down function expressions detecting their types and other basic information.
+
+### Analyzer
+
+The AST is then passed over to the Analyzer that validates whether all referenced types are declared and everything makes sense by following aliases, analysing both sides of expressions and in context of previous expressions etc. It also further augments the expressions with additional context information such as whether the given expression part references a field, an argument or is a new local variable.
+
+### Serializer
+
+The AST is then passed over to the Serializer that augments the existing types with the (de)serialization functions. They provide common AST representation of the code that producs the same binary data from any supported language.
 
 *Integers*
 
@@ -228,4 +240,13 @@ The `int64` and `double` are always stored in the little endian byte order regar
 
 *Strings*
 
-The ADb Query assumes the `byte array` to represent all data including strings. Every programming language uses their own native string representation. In some languages this is UTF-16 (two bytes per character), in others this is UTF-8 (variable number of bytes per character). The binary representation differs (e.g. UTF-16 takes twice as many bytes as it has characters). Storing a string in one language and reading it in another without agreeing on the encoding can have surprising results. It is not feasible to enforce an encoding for all the data (some data may be binary blobs) and all use cases. It is therefore up to the user to make sure the right encoding is used.
+The ADb Query assumes the `byte array` (`[int64]`) to represent all data including strings. Every programming language uses their own native string representation. In some languages this is UTF-16 (two bytes per character), in others this is UTF-8 (variable number of bytes per character). The binary representation differs (e.g. UTF-16 takes twice as many bytes as it has characters). Storing a string in one language and reading it in another without agreeing on the encoding can have surprising results. It is not feasible to enforce an encoding (e.g. UTF-8) for all the data because not all data are strings. It is therefore up to the user to make sure the right encoding is used when using strings.
+
+### Code Generators
+
+Every supported language has its own generator that generates code from the final AST. The code is fully native to the target programming language. The routines for (de)serialization must be carefully generated so that they produce the same binary data that is deserializable in other supported langauges, particularly in ADb's native C++.
+
+*C++*
+
+The special case is C++ as the generated code is considered the primary interface and basis for the ADb itself. In case of incompatibilities/inconsistencies between supported languages the version generated for C++ is considered correct.
+

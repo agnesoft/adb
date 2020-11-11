@@ -84,7 +84,7 @@ In the embedded mode the database is directly linked to the client program (eith
 
 The database server is a stand alone process accessed via a network (or a local socket) connection. It actively listens for new connections and processes network requests returning responses to the client. It allows concurrent connections and processing. In server mode the individual instances of the database can form a cluster and either replicate the data (sharding) or extend the available store capacity. The server mode provides credentials based access to the database.
 
-### Agnesoft Database Query
+### [Agnesoft Database Query](design_specification_query.md)
 
 The interface to the Agnesoft Database:
 
@@ -112,6 +112,6 @@ const query = adb.select().elements().from(5).where().key("price").lessThan(10.0
 query = select().elements().from(5).where().key("price").lessThan(10.0);
 ```
 
-#### [ADb IDL](design_specification_query.md)
+#### ADb IDL
 
 The Agnesoft Database's interface description language describes the query objects, result objects and also the builder functions that create the queries. The IDL compiler is used to create an abstract syntax tree (AST) representation from the query IDL. The AST is used by a language generators to generate code in the supported languages. The generated code should create the query objects accurately and serialize them into the very same binary structure in every supported language so that two identical queries created in two different languages produce the same query object.

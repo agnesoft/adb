@@ -112,6 +112,6 @@ const query = adb.select().elements().from(5).where().key("price").lessThan(10.0
 query = select().elements().from(5).where().key("price").lessThan(10.0);
 ```
 
-#### [ADb IDL](documentation/design_specification_query.md)
+#### [ADb IDL](design_specification_query.md)
 
 The Agnesoft Database's interface description language describes the query objects, result objects and also the builder functions that create the queries. The IDL compiler is used to create an abstract syntax tree (AST) representation from the query IDL. The AST is used by a language generators to generate code in the supported languages. The generated code should create the query objects accurately and serialize them into the very same binary structure in every supported language so that two identical queries created in two different languages produce the same query object.

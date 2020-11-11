@@ -2,15 +2,28 @@
 
 Code generated interface to the Agnesoft Database. It consists of the Interface Description Language (IDL) schema and ADb Query Compiler that parses the IDL and generates it as code in supported languages.
 
+**Table of Contents**
+
+- [Interface Description Language IDL](#interface-description-language-idl)
+    - [Native Types](#native-types)
+    - [Custom Types](#custom-types)
+        - [alias](#alias) | [array](#array) | [function](#function) ([expressions](#function-expressions)) | [object](#object) | [variant](#variant)
+- [ADb Query Compiler](#adb-query-compiler)
+    - [Abstract Syntax Tree (AST)](#abstract-syntax-tree-ast)
+        - [alias](#alias-1) | [array](#array-1) | [function](#function--expressions) | [object](#object-1) | [variant](#variant-1) | [Parser](#parser)
+    - [Analyzer](#analyzer)
+    - [Serializer](#serializer)
+        - [byte](#byte) | [integers](#integers-int64-double) | [array](#array) | [object](#object) | [variant](#variant)
+    - [Code Generators](#code-generators)
+        - [C++](#c)
+
 ## Interface Description Language (IDL)
 
 A JSON document that describes the types and functions (i.e. schema) of the query interface. The IDL is self contained and rely on very few "native" features in each supported langauge (described below). The root of the document is the object and each key represents a distinct type.
 
-## Types
-
 There are native types that are in-built and needs to be provided by the supported language, and custom types described in the schema.
 
-### Native
+### Native Types
 
 These types must be available and provided by every supported language:
 
@@ -18,7 +31,7 @@ These types must be available and provided by every supported language:
 - `int64` (64-bit signed two's complement integer)
 - `double` (64-bit floating point integer)
 
-### Custom types
+### Custom Types
 
 Each custom type can be one of the following:
 

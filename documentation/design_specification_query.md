@@ -2,8 +2,6 @@
 
 Code generated interface to the Agnesoft Database. It consists of the Interface Description Language (IDL) schema and ADb Query Compiler that parses the IDL and generates it as code in supported languages.
 
-**Table of Contents**
-
 - [Interface Description Language IDL](#interface-description-language-idl)
     - [Native Types](#native-types)
     - [Custom Types](#custom-types)

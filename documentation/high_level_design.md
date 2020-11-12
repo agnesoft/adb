@@ -1,5 +1,18 @@
 # High Level Design
 
+- [Problem](#problem)
+- [Requirements](#requirements)
+- [Existing Solutions](#existing-solutions)
+- [Agnesoft Database](#agnesoft-database)
+  - [Database](#database)
+    - [Graph](#graph)
+    - [Data](#data)
+    - [Data Store](#data-store)
+    - [Variants](#variants)
+  - [Query](#query)
+    - [Queries](#queries)
+    - [ADb IDL](#adb-idl)
+
 ## Problem
 
 The database solutions are dominated by the [relational databases](https://en.wikipedia.org/wiki/Relational_database) that organize the data in tables with rows and columns. The data is queried with text based [Structured Query Language (SQL)](https://en.wikipedia.org/wiki/SQL). These databases have several shortcomings:
@@ -41,14 +54,14 @@ The solution to the problem is a database system that:
 
 Some of the requiremnts can be met with [NoSQL databases](https://en.wikipedia.org/wiki/NoSQL). There are many variants of such databases but one particular type is well suited for addressing most of the above mentioned problems - [graph database](https://en.wikipedia.org/wiki/Graph_database). The existing graph databases (e.g. [Neo4J](https://neo4j.com/) or [OrientDB](https://www.orientdb.org/) however do not fulfill all of the requirements. They do not offer bindings for many programming languages (e.g. C++). They use their own text based query language (e.g. Cypher). They do not offer an embedded solution. They are not ACID compliant etc.
 
-## Agnesoft Database (ADb)
+## Agnesoft Database
 
 The **Agnesoft Database** or **ADb** is a graph database system. It comprises of two main components:
 
 - Agnesoft Database (ADb)
 - Agnesoft Database Query (ADb Query)
 
-### Agnesoft Database
+### Database
 
 The database engine and data store:
 
@@ -84,7 +97,7 @@ In the embedded mode the database is directly linked to the client program (eith
 
 The database server is a stand alone process accessed via a network (or a local socket) connection. It actively listens for new connections and processes network requests returning responses to the client. It allows concurrent connections and processing. In server mode the individual instances of the database can form a cluster and either replicate the data (sharding) or extend the available store capacity. The server mode provides credentials based access to the database.
 
-### [Agnesoft Database Query](design_specification_query.md)
+### [Query](design_specification_query.md)
 
 The interface to the Agnesoft Database:
 

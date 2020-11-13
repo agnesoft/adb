@@ -52,6 +52,12 @@ Syntax:
 "Id": "int64"
 ```
 
+Implicit aliases:
+
+- `"byte": <implementation defined>`
+- `"int64": <implementation defined>`
+- `"double": <implementation defined>`
+
 #### array
 
 Represents an array of another defined type (native or custom). There can be only one type in the array.
@@ -60,6 +66,10 @@ Syntax:
 ```
 "Ids": ["int64"]
 ```
+
+Implicit array declarations:
+
+- `"ByteArray": ["byte"]`
 
 #### function
 
@@ -80,6 +90,11 @@ Syntax:
 }
 ```
 
+Implicit function declarations:
+
+- `"toLittleEndian": { "arguments": ["int64"], "body": <implementation defined>, "return": "int64" }`
+- `"fromLittleEndian": { "arguments": ["int64"], "body": <implementation defined>, "return": "int64" }`
+
 #### Function Expressions
 
 There are three types of expressions:
@@ -94,7 +109,7 @@ Each expression is composed of types. Object fields, array types, variant types 
 ---
 **NOTE**
 
-The referenced type names serve also as the name of the instances. It simplifies the syntax and identification that is inferred from the context. But it also has limitations in that it is not possible to have two variables of the same type used in the same context. It is suggested to use an `alias` to create seemingly a new type for a different purpose (e.g. `Id`, `Count` or `Distance` all being aliases of `int64`). The variable, field or argument names needs to be invented by the code generator.
+The referenced type names serve also as the name of the instances. It simplifies the syntax and identification that is inferred from the context. But it also has limitations in that it is not possible to have two variables of the same type used in the same context. Use an `alias` to create a new type for a different purpose (e.g. `Id`, `Count` or `Distance` all being aliases of `int64` or each other). The local variable, field or argument names need to be invented by the code generator.
 
 ---
 
@@ -136,6 +151,8 @@ Syntax:
 
 ```
 
+There are no implicit objects.
+
 #### variant
 
 Represents a union type (a type that can be one of the other predefined types). There must be at least two variant types and max 256.
@@ -145,6 +162,8 @@ Syntax
 ```
 "MyVariant": ["Var1", "Var2"]
 ```
+
+There are no implicit variants.
 
 ## ADb Query Compiler
 

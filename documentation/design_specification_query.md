@@ -106,12 +106,7 @@ There are three types of expressions:
 
 Each expression is composed of types. Object fields, array types, variant types etc. are referenced using a dot syntax. Only valid combinations of known types (native or custom) or integer literals are allowed and only "compatible" types are allowed in an expression. If the given type is not accessible in the function context (is not an argument or object field) it will be declared as a local variable and can be referenced by its type name for example in the return statement.
 
----
-**NOTE**
-
 The referenced type names serve also as the name of the instances. It simplifies the syntax and identification that is inferred from the context. But it also has limitations in that it is not possible to have two variables of the same type used in the same context. Use an `alias` to create a new type for a different purpose (e.g. `Id`, `Count` or `Distance` all being aliases of `int64` or each other). The local variable, field or argument names need to be invented by the code generator.
-
----
 
 Examples:
 ```

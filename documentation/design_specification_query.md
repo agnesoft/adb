@@ -23,11 +23,13 @@ There are native types that are in-built and needs to be provided by the support
 
 ### Native Types
 
-These types must be available and provided by every supported language:
+These types and functions must be available and provided by every supported language:
 
 - `byte` (8-bit value)
 - `int64` (64-bit signed two's complement integer)
 - `double` (64-bit floating point integer)
+- `toLittleEndian(int64)` (a function that takes `int64` value and returns it in little endian byte order)
+- `fromLittleEndian(int64)` (a function that takes `int64` value in little endian byte order and returns it in native byte order)
 
 ### Custom Types
 

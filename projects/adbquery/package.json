@@ -6,7 +6,8 @@
     "main": "main.js",
     "scripts": {
         "start": "node main.js",
-        "test": "jest --coverage"
+        "test": "jest",
+        "coverage": "jest --coverage"
     },
     "repository": {
         "type": "git",

@@ -3,17 +3,21 @@ import { jsType } from "./parser_common.js";
 
 function validateField(token, field) {
     if (jsType(field) != "string") {
-        throw `Parser: invalid field type ('${jsType(
+        throw `Parser: field of '${token}' invalid ('${jsType(
             field
-        )}', must be 'string') in object '${token}'.`;
+        )}', must be 'string').`;
+    }
+
+    if (!field) {
+        throw `Parser: field of '${token}' cannot be empty.`;
     }
 }
 
 function validateFields(token, fields) {
     if (jsType(fields) != "array") {
-        throw `Parser: invalid 'fields' type ('${jsType(
+        throw `Parser: type of 'fields' of '${token}' invalid ('${jsType(
             fields
-        )}', must be 'array') in object '${token}'.`;
+        )}', must be 'array').`;
     }
 
     for (const field of fields) {
@@ -32,17 +36,17 @@ function objectFields(token, schema) {
 
 function validateFunction(token, func, definition) {
     if (jsType(definition) != "object") {
-        throw `Parser: invalid function type ('${jsType(
+        throw `Parser: type of function '${token}::${func}' invalid ('${jsType(
             definition
-        )}', must be 'object') in function '${token}::${func}'.`;
+        )}', must be 'object').`;
     }
 }
 
 function validateFunctions(token, functions) {
     if (jsType(functions) != "object") {
-        throw `Parser: invalid 'functions' type ('${jsType(
+        throw `Parser: type of 'functions' of '${token}' invalid ('${jsType(
             functions
-        )}', must be 'object') in object '${token}'.`;
+        )}', must be 'object').`;
     }
 
     for (const func in functions) {
@@ -51,34 +55,26 @@ function validateFunctions(token, functions) {
 }
 
 function objectFunctions(token, schema) {
-    let functions = [];
+    let functions = {};
 
     if ("functions" in schema[token]) {
         validateFunctions(token, schema[token]["functions"]);
 
         for (const func in schema[token]["functions"]) {
-            functions.push(functionAST(func, schema[token]["functions"][func]));
+            functions[func] = functionAST(
+                func,
+                schema[token]["functions"][func]
+            );
         }
     }
 
     return functions;
 }
 
-function objectBase(token, schema) {
-    if ("base" in schema[token] && typeof schema[token]["base"] != "string") {
-        throw `Parser: invalid 'base' type ('${typeof schema[token][
-            "base"
-        ]}', must be 'string') in object '${token}'.`;
-    }
-
-    return schema[token]["base"];
-}
-
 export function objectAST(token, schema) {
     return {
         type: "object",
         name: token,
-        base: objectBase(token, schema),
         fields: objectFields(token, schema),
         functions: objectFunctions(token, schema),
     };

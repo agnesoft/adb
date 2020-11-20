@@ -71,7 +71,7 @@ test("invalid fields", () => {
     );
 });
 
-test("empty string field", () => {
+test("empty field", () => {
     const data = {
         MyObj: {
             fields: [""],
@@ -82,7 +82,9 @@ test("empty string field", () => {
         parser.parse(data);
     };
 
-    expect(parse).toThrow("Parser: field of 'MyObj' cannot be empty.");
+    expect(parse).toThrow(
+        "Parser: field in 'fields' of 'MyObj' cannot be empty."
+    );
 });
 
 test("invalid field", () => {

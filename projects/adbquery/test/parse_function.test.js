@@ -17,130 +17,164 @@ test("empty", () => {
     expect(parser.parse(data)).toEqual(ast);
 });
 
-describe("invalid body", () => {
-    test("wrong body type", () => {
-        const data = {
-            foo: { body: {} },
-        };
+test("invalid body", () => {
+    const data = {
+        foo: { body: {} },
+    };
 
-        const parse = () => {
-            parser.parse(data);
-        };
+    const parse = () => {
+        parser.parse(data);
+    };
 
-        expect(parse).toThrow(
-            "Parser: invalid 'body' type ('object', must be 'array') in function 'foo'."
-        );
-    });
-
-    test("invalid expression type", () => {
-        const data = {
-            foo: { body: [{}] },
-        };
-
-        const parse = () => {
-            parser.parse(data);
-        };
-
-        expect(parse).toThrow(
-            "Parser: invalid expression ('object', must be 'string') in function 'foo'."
-        );
-    });
+    expect(parse).toThrow(
+        "Parser: type of 'body' of 'foo' invalid ('object', must be 'array')."
+    );
 });
 
-describe("arguments", () => {
-    test("single", () => {
-        const data = {
-            foo: { arguments: ["arg1"] },
-        };
+test("empty expression", () => {
+    const data = {
+        foo: { body: [""] },
+    };
 
-        const ast = {
-            foo: {
-                type: "function",
-                name: "foo",
-                arguments: ["arg1"],
-                body: [],
-            },
-        };
+    const parse = () => {
+        parser.parse(data);
+    };
 
-        expect(parser.parse(data)).toEqual(ast);
-    });
-
-    test("multiple arguments", () => {
-        const data = {
-            foo: { arguments: ["arg1", "arg2"] },
-        };
-
-        const ast = {
-            foo: {
-                type: "function",
-                name: "foo",
-                arguments: ["arg1", "arg2"],
-                body: [],
-            },
-        };
-
-        expect(parser.parse(data)).toEqual(ast);
-    });
-
-    test("invalid arguments", () => {
-        const data = {
-            foo: { arguments: {} },
-        };
-
-        const parse = () => {
-            parser.parse(data);
-        };
-
-        expect(parse).toThrow(
-            "Parser: invalid 'arguments' type ('object', must be 'array') in function 'foo'."
-        );
-    });
-
-    test("invalid argument", () => {
-        const data = {
-            foo: { arguments: [{}] },
-        };
-
-        const parse = () => {
-            parser.parse(data);
-        };
-
-        expect(parse).toThrow(
-            "Parser: invalid argument type ('object', must be 'string') in function 'foo'."
-        );
-    });
+    expect(parse).toThrow(
+        "Parser: expression in 'body' of 'foo' cannot be empty."
+    );
 });
 
-describe("return value", () => {
-    test("valid", () => {
-        const data = {
-            foo: { return: "Id" },
-        };
+test("invalid expression", () => {
+    const data = {
+        foo: { body: [{}] },
+    };
 
-        const ast = {
-            foo: {
-                type: "function",
-                name: "foo",
-                arguments: [],
-                body: [],
-                returnValue: "Id",
-            },
-        };
+    const parse = () => {
+        parser.parse(data);
+    };
 
-        expect(parser.parse(data)).toEqual(ast);
-    });
+    expect(parse).toThrow(
+        "Parser: expression in 'body' of 'foo' invalid ('object', must be 'string')."
+    );
+});
 
-    test("invalid", () => {
-        const data = {
-            foo: { return: {} },
-        };
+test("argument", () => {
+    const data = {
+        foo: { arguments: ["arg1"] },
+    };
 
-        const parse = () => {
-            parser.parse(data);
-        };
+    const ast = {
+        foo: {
+            type: "function",
+            name: "foo",
+            arguments: ["arg1"],
+            body: [],
+        },
+    };
 
-        expect(parse).toThrow(
-            "Parser: invalid 'return' type ('object', must be 'string') in function 'foo'."
-        );
-    });
+    expect(parser.parse(data)).toEqual(ast);
+});
+
+test("arguments", () => {
+    const data = {
+        foo: { arguments: ["arg1", "arg2"] },
+    };
+
+    const ast = {
+        foo: {
+            type: "function",
+            name: "foo",
+            arguments: ["arg1", "arg2"],
+            body: [],
+        },
+    };
+
+    expect(parser.parse(data)).toEqual(ast);
+});
+
+test("empty argument", () => {
+    const data = {
+        foo: { arguments: [""] },
+    };
+
+    const parse = () => {
+        parser.parse(data);
+    };
+
+    expect(parse).toThrow(
+        "Parser: argument in 'arguments' of 'foo' cannot be empty."
+    );
+});
+
+test("invalid argument", () => {
+    const data = {
+        foo: { arguments: [{}] },
+    };
+
+    const parse = () => {
+        parser.parse(data);
+    };
+
+    expect(parse).toThrow(
+        "Parser: argument in 'arguments' of 'foo' invalid ('object', must be 'string')."
+    );
+});
+
+test("invalid arguments", () => {
+    const data = {
+        foo: { arguments: {} },
+    };
+
+    const parse = () => {
+        parser.parse(data);
+    };
+
+    expect(parse).toThrow(
+        "Parser: type of 'arguments' of 'foo' invalid ('object', must be 'array')."
+    );
+});
+
+test("return", () => {
+    const data = {
+        foo: { return: "Id" },
+    };
+
+    const ast = {
+        foo: {
+            type: "function",
+            name: "foo",
+            arguments: [],
+            body: [],
+            returnValue: "Id",
+        },
+    };
+
+    expect(parser.parse(data)).toEqual(ast);
+});
+
+test("empty return", () => {
+    const data = {
+        foo: { return: "" },
+    };
+
+    const parse = () => {
+        parser.parse(data);
+    };
+
+    expect(parse).toThrow("Parser: 'return' of 'foo' cannot be empty.");
+});
+
+test("invalid return", () => {
+    const data = {
+        foo: { return: {} },
+    };
+
+    const parse = () => {
+        parser.parse(data);
+    };
+
+    expect(parse).toThrow(
+        "Parser: type of 'return' of 'foo' invalid ('object', must be 'string')."
+    );
 });

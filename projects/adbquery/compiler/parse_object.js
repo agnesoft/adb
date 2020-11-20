@@ -9,7 +9,7 @@ function validateField(token, field) {
     }
 
     if (!field) {
-        throw `Parser: field of '${token}' cannot be empty.`;
+        throw `Parser: field in 'fields' of '${token}' cannot be empty.`;
     }
 }
 

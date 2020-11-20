@@ -3,17 +3,21 @@ import { jsType } from "./parser_common.js";
 
 function validateArgument(name, arg) {
     if (jsType(arg) != "string") {
-        throw `Parser: invalid argument type ('${jsType(
+        throw `Parser: argument in 'arguments' of '${name}' invalid ('${jsType(
             arg
-        )}', must be 'string') in function '${name}'.`;
+        )}', must be 'string').`;
+    }
+
+    if (!arg) {
+        throw `Parser: argument in 'arguments' of '${name}' cannot be empty.`;
     }
 }
 
 function validateArguments(name, args) {
     if (jsType(args) != "array") {
-        throw `Parser: invalid 'arguments' type ('${jsType(
+        throw `Parser: type of 'arguments' of '${name}' invalid ('${jsType(
             args
-        )}', must be 'array') in function '${name}'.`;
+        )}', must be 'array').`;
     }
 
     for (const argument of args) {
@@ -32,21 +36,21 @@ function functionArguments(name, func) {
 
 function validateExpression(name, expression) {
     if (jsType(expression) != "string") {
-        throw `Parser: invalid expression ('${jsType(
+        throw `Parser: expression in 'body' of '${name}' invalid ('${jsType(
             expression
-        )}', must be 'string') in function '${name}'.`;
+        )}', must be 'string').`;
+    }
+
+    if (!expression) {
+        throw `Parser: expression in 'body' of '${name}' cannot be empty.`;
     }
 }
 
 function validateBody(name, body) {
     if (jsType(body) != "array") {
-        throw `Parser: invalid 'body' type ('${jsType(
+        throw `Parser: type of 'body' of '${name}' invalid ('${jsType(
             body
-        )}', must be 'array') in function '${name}'.`;
-    }
-
-    for (const expression of body) {
-        validateExpression(name, expression);
+        )}', must be 'array').`;
     }
 }
 
@@ -57,6 +61,7 @@ function functionBody(name, func) {
         validateBody(name, func["body"]);
 
         for (const expression of func["body"]) {
+            validateExpression(name, expression);
             expressions.push(expressionAST(expression.trim()));
         }
     }
@@ -64,14 +69,25 @@ function functionBody(name, func) {
     return expressions;
 }
 
-function functionReturn(name, func) {
-    if (func["return"] && jsType(func["return"]) != "string") {
-        throw `Parser: invalid 'return' type ('${jsType(
-            func["return"]
-        )}', must be 'string') in function '${name}'.`;
+function validateReturn(name, returnValue) {
+    if (jsType(returnValue) != "string") {
+        throw `Parser: type of 'return' of '${name}' invalid ('${jsType(
+            returnValue
+        )}', must be 'string').`;
     }
 
-    return func["return"];
+    if (!returnValue) {
+        throw `Parser: 'return' of '${name}' cannot be empty.`;
+    }
+}
+
+function functionReturn(name, func) {
+    if ("return" in func) {
+        validateReturn(name, func["return"]);
+        return func["return"];
+    }
+
+    return undefined;
 }
 
 export function isFunction(token, schema) {

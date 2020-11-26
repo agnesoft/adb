@@ -13,9 +13,11 @@ test("function call", () => {
             body: [
                 {
                     type: "call",
+                    arguments: [],
                     value: "bar",
                 },
             ],
+            returnValue: undefined,
         },
     };
 
@@ -35,13 +37,16 @@ test("chained function call", () => {
             body: [
                 {
                     type: "call",
-                    value: "fizz",
+                    arguments: [],
+                    value: "buzz",
                     parent: {
                         type: "call",
-                        value: "buzz",
+                        arguments: [],
+                        value: "fizz",
                     },
                 },
             ],
+            returnValue: undefined,
         },
     };
 
@@ -61,13 +66,15 @@ test("method call", () => {
             body: [
                 {
                     type: "call",
+                    arguments: [],
                     value: "bar",
                     parent: {
-                        type: "object",
+                        type: "type",
                         value: "obj",
                     },
                 },
             ],
+            returnValue: undefined,
         },
     };
 
@@ -131,19 +138,5 @@ test("empty function name", () => {
 
     expect(parse).toThrow(
         "Parser: function name in function call in 'foo' cannot be empty."
-    );
-});
-
-test("empty argument", () => {
-    const data = {
-        foo: { body: ["bar(,arg2)"] },
-    };
-
-    const parse = () => {
-        parser.parse(data);
-    };
-
-    expect(parse).toThrow(
-        "Parser: argument in function call 'bar' in 'foo' cannot be empty."
     );
 });

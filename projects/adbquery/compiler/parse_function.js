@@ -62,7 +62,7 @@ function functionBody(name, func) {
 
         for (const expression of func["body"]) {
             validateExpression(name, expression);
-            expressions.push(expressionAST(expression.trim()));
+            expressions.push(expressionAST(name, expression.trim()));
         }
     }
 

@@ -1,6 +1,6 @@
 import * as parser from "../compiler/parser.js";
 
-test("function call", () => {
+test("simple", () => {
     const data = {
         foo: { body: ["bar()"] },
     };
@@ -24,7 +24,7 @@ test("function call", () => {
     expect(parser.parse(data)).toEqual(ast);
 });
 
-test("chained function call", () => {
+test("chained", () => {
     const data = {
         foo: { body: ["fizz().buzz()"] },
     };
@@ -53,7 +53,7 @@ test("chained function call", () => {
     expect(parser.parse(data)).toEqual(ast);
 });
 
-test("method call", () => {
+test("method", () => {
     const data = {
         foo: { body: ["obj.bar()"] },
     };

@@ -1,89 +1,91 @@
 import { expressionAST } from "./parse_expression.js";
 import { jsType } from "./parser_common.js";
 
-function validateArgument(name, arg) {
+let FUNCTION_NAME = "";
+
+function validateArgument(arg) {
     if (jsType(arg) != "string") {
-        throw `Parser: argument in 'arguments' of '${name}' invalid ('${jsType(
+        throw `Parser: argument in 'arguments' of '${FUNCTION_NAME}' invalid ('${jsType(
             arg
         )}', must be 'string').`;
     }
 
     if (!arg) {
-        throw `Parser: argument in 'arguments' of '${name}' cannot be empty.`;
+        throw `Parser: argument in 'arguments' of '${FUNCTION_NAME}' cannot be empty.`;
     }
 }
 
-function validateArguments(name, args) {
+function validateArguments(args) {
     if (jsType(args) != "array") {
-        throw `Parser: type of 'arguments' of '${name}' invalid ('${jsType(
+        throw `Parser: type of 'arguments' of '${FUNCTION_NAME}' invalid ('${jsType(
             args
         )}', must be 'array').`;
     }
 
     for (const argument of args) {
-        validateArgument(name, argument);
+        validateArgument(argument);
     }
 }
 
-function functionArguments(name, func) {
+function functionArguments(func) {
     if ("arguments" in func) {
-        validateArguments(name, func["arguments"]);
+        validateArguments(func["arguments"]);
         return func["arguments"];
     }
 
     return [];
 }
 
-function validateExpression(name, expression) {
+function validateExpression(expression) {
     if (jsType(expression) != "string") {
-        throw `Parser: expression in 'body' of '${name}' invalid ('${jsType(
+        throw `Parser: expression in 'body' of '${FUNCTION_NAME}' invalid ('${jsType(
             expression
         )}', must be 'string').`;
     }
 
     if (!expression) {
-        throw `Parser: expression in 'body' of '${name}' cannot be empty.`;
+        throw `Parser: expression in 'body' of '${FUNCTION_NAME}' cannot be empty.`;
     }
 }
 
-function validateBody(name, body) {
+function validateBody(body) {
     if (jsType(body) != "array") {
-        throw `Parser: type of 'body' of '${name}' invalid ('${jsType(
+        throw `Parser: type of 'body' of '${FUNCTION_NAME}' invalid ('${jsType(
             body
         )}', must be 'array').`;
     }
 }
 
-function functionBody(name, func) {
+function functionBody(func) {
     let expressions = [];
 
     if ("body" in func) {
-        validateBody(name, func["body"]);
+        validateBody(func["body"]);
 
         for (const expression of func["body"]) {
-            validateExpression(name, expression);
-            expressions.push(expressionAST(name, expression.trim()));
+            validateExpression(expression);
+            expressions.push(expressionAST(FUNCTION_NAME, expression.trim()));
         }
     }
 
     return expressions;
 }
 
-function validateReturn(name, returnValue) {
+function validateReturn(returnValue) {
     if (jsType(returnValue) != "string") {
-        throw `Parser: type of 'return' of '${name}' invalid ('${jsType(
+        throw `Parser: type of 'return' of '${FUNCTION_NAME}' invalid ('${jsType(
             returnValue
         )}', must be 'string').`;
     }
 
     if (!returnValue) {
-        throw `Parser: 'return' of '${name}' cannot be empty.`;
+        throw `Parser: 'return' of '${FUNCTION_NAME}' cannot be empty.`;
     }
 }
 
-function functionReturn(name, func) {
+function functionReturn(func) {
     if ("return" in func) {
-        validateReturn(name, func["return"]);
+        validateReturn(func["return"]);
         return func["return"];
     }
 
@@ -96,12 +98,14 @@ export function isFunction(token, schema) {
     return ["arguments", "body", "return"].some(test);
 }
 
-export function functionAST(name, func) {
+export function functionAST(name, func, objectName = undefined) {
+    FUNCTION_NAME = objectName ? `${objectName}::${name}` : name;
+
     return {
         type: "function",
         name: name,
-        arguments: functionArguments(name, func),
-        body: functionBody(name, func),
-        returnValue: functionReturn(name, func),
+        arguments: functionArguments(func),
+        body: functionBody(func),
+        returnValue: functionReturn(func),
     };
 }

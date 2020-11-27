@@ -48,10 +48,11 @@ test("type += type", () => {
                     },
                     right: {
                         type: "type",
-                        value: "from",
+                        value: "From",
                     },
                 },
             ],
+            returnValue: undefined,
         },
     };
 
@@ -81,7 +82,7 @@ test("type.type += type.type", () => {
                     },
                     right: {
                         type: "type",
-                        value: "from",
+                        value: "From",
                         parent: {
                             type: "type",
                             value: "Arg1",
@@ -89,6 +90,7 @@ test("type.type += type.type", () => {
                     },
                 },
             ],
+            returnValue: undefined,
         },
     };
 

@@ -63,7 +63,8 @@ function objectFunctions(token, schema) {
         for (const func in schema[token]["functions"]) {
             functions[func] = functionAST(
                 func,
-                schema[token]["functions"][func]
+                schema[token]["functions"][func],
+                token
             );
         }
     }

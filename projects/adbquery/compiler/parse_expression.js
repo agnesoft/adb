@@ -1,78 +1,4 @@
-function validateType(part) {
-    if (!part) {
-        throw `Parser: type name in expression in function '${functionName}' cannot be empty.`;
-    }
-}
-
-function expressionType(part) {
-    if (isNaN(part)) {
-        return "type";
-    } else {
-        return "number";
-    }
-}
-
-function expressionValue(part) {
-    validateType(part);
-
-    if (isNaN(part)) {
-        return part;
-    } else {
-        return Number(part);
-    }
-}
-
-function typeAST(part) {
-    return {
-        type: expressionType(part),
-        value: expressionValue(part),
-    };
-}
-
-function callName(part) {
-    if (part.startsWith("(")) {
-        throw `Parser: function name in function call in '${functionName}' cannot be empty.`;
-    }
-
-    return part.split("(")[0];
-}
-
-function callArguments(part) {
-    const args = [];
-    const callArgs = part
-        .slice(part.indexOf("(") + 1, part.length - 1)
-        .split(",");
-    for (const arg of callArgs) {
-        if (arg.trim()) {
-            args.push(arg.trim());
-        }
-    }
-    return args;
-}
-
-function partAST(part) {
-    if (part.includes("(")) {
-        return {
-            type: "call",
-            value: callName(part),
-            arguments: callArguments(part),
-        };
-    }
-
-    return typeAST(part);
-}
-
-function expressionASTBuilder(part, current) {
-    part["parent"] = partAST(current.trim());
-    return part["parent"];
-}
-
-function sideAST(side) {
-    let ast = {};
-    const parts = side.split(".");
-    parts.reduceRight(expressionASTBuilder, ast);
-    return ast["parent"];
-}
+let FUNCTION_NAME = "";
 
 function additionAST(expression) {
     const sides = expression.split("+=");
@@ -94,21 +20,109 @@ function assignmentAST(expression) {
     };
 }
 
-function callAST(expression) {
+function callArguments(part) {
+    let args = [];
+    part.slice(part.indexOf("(") + 1, part.length - 1)
+        .split(",")
+        .forEach((arg) => {
+            if (arg.trim()) {
+                args.push(arg.trim());
+            }
+        });
+    return args;
+}
+
+function callAST(part) {
+    return {
+        type: "call",
+        value: callName(part),
+        arguments: callArguments(part),
+    };
+}
+
+function callName(part) {
+    validateCallName(part);
+    return part.split("(")[0];
+}
+
+function expressionType(part) {
+    if (isNaN(part)) {
+        return "type";
+    } else {
+        return "number";
+    }
+}
+
+function expressionASTBuilder(part, current) {
+    part["parent"] = partAST(current.trim());
+    return part["parent"];
+}
+
+function expressionValue(part) {
+    validateType(part);
+
+    if (isNaN(part)) {
+        return part;
+    } else {
+        return Number(part);
+    }
+}
+
+function functionCallAST(expression) {
     return sideAST(expression);
 }
 
+function partAST(part) {
+    if (part.includes("(")) {
+        return callAST(part);
+    } else {
+        return typeAST(part);
+    }
+}
+
 function returnAST(expression) {
-    let ast = sideAST(expression.substr(7));
+    const returnExpression = expression.slice(6);
+    validateReturnType(returnExpression);
+    let ast = sideAST(returnExpression);
     ast["returnType"] = ast["type"];
     ast["type"] = "return";
     return ast;
 }
 
-let functionName = "";
+function sideAST(side) {
+    let ast = {};
+    const parts = side.split(".");
+    parts.reduceRight(expressionASTBuilder, ast);
+    return ast["parent"];
+}
+
+function typeAST(part) {
+    return {
+        type: expressionType(part),
+        value: expressionValue(part),
+    };
+}
+
+function validateCallName(part) {
+    if (part.startsWith("(")) {
+        throw `Parser: function name in function call in '${FUNCTION_NAME}' cannot be empty.`;
+    }
+}
+
+function validateReturnType(part) {
+    if (!part) {
+        throw `Parser: return type in expression in function '${FUNCTION_NAME}' cannot be empty.`;
+    }
+}
+
+function validateType(part) {
+    if (!part) {
+        throw `Parser: type name in expression in function '${FUNCTION_NAME}' cannot be empty.`;
+    }
+}
 
 export function expressionAST(name, expression) {
-    functionName = name;
+    FUNCTION_NAME = name;
 
     if (expression.includes("+=")) {
         return additionAST(expression);
@@ -119,12 +133,12 @@ export function expressionAST(name, expression) {
     }
 
     if (expression.endsWith(")")) {
-        return callAST(expression);
+        return functionCallAST(expression);
     }
 
-    if (expression.startsWith("return ")) {
+    if (expression.startsWith("return")) {
         return returnAST(expression);
     }
 
-    throw `Parser: unknown expression '${expression}' in '${functionName}'.`;
+    throw `Parser: unknown expression '${expression}' in '${FUNCTION_NAME}'.`;
 }

@@ -55,3 +55,17 @@ test("multiple", () => {
 
     expect(parser.parse(data)).toEqual(ast);
 });
+
+test("unknown expression", () => {
+    const data = {
+        foo: { body: ["SomeType * 2"] },
+    };
+
+    const parse = () => {
+        parser.parse(data);
+    };
+
+    expect(parse).toThrow(
+        "Parser: unknown expression 'SomeType * 2' in 'foo'."
+    );
+});

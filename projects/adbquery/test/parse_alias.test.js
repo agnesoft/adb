@@ -1,29 +1,39 @@
 import * as parser from "../compiler/parser.js";
 
-test("valid", () => {
-    const data = {
-        Size: "int64",
-    };
+describe("parse", () => {
+    describe("alias", () => {
+        describe("valid", () => {
+            test("native", () => {
+                const data = {
+                    Size: "int64",
+                };
 
-    const ast = {
-        Size: {
-            type: "alias",
-            name: "Size",
-            aliasedType: "int64",
-        },
-    };
+                const ast = {
+                    Size: {
+                        type: "alias",
+                        name: "Size",
+                        aliasedType: "int64",
+                    },
+                };
 
-    expect(parser.parse(data)).toEqual(ast);
-});
+                expect(parser.parse(data)).toEqual(ast);
+            });
+        });
 
-test("empty string", () => {
-    const data = {
-        Id: "",
-    };
+        describe("invalid", () => {
+            test("empty string as aliased type", () => {
+                const data = {
+                    Id: "",
+                };
 
-    const parse = () => {
-        parser.parse(data);
-    };
+                const parse = () => {
+                    parser.parse(data);
+                };
 
-    expect(parse).toThrow("Parser: type of alias 'Id' cannot be empty.");
+                expect(parse).toThrow(
+                    "Parser: type of alias 'Id' cannot be empty."
+                );
+            });
+        });
+    });
 });

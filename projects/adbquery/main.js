@@ -14,6 +14,10 @@
 
 import * as compiler from "./compiler/compiler.js";
 
+function analyze(sub) {
+    sub["type"] = "type";
+}
+
 function main() {
     const ast = compiler.compile("");
 }

@@ -18,7 +18,7 @@ import * as serializer from "./serializer.js";
 
 export function compile(data) {
     let ast = parser.parse(data);
-    analyzer.addContext(ast);
+    ast = analyzer.analyze(ast);
     serializer.addSerialization(ast);
     return ast;
 }

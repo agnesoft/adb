@@ -3,7 +3,7 @@ import * as parser from "../compiler/parser.js";
 describe("parse", () => {
     describe("alias", () => {
         describe("valid", () => {
-            test("native", () => {
+            test("native type", () => {
                 const data = {
                     Size: "int64",
                 };

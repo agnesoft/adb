@@ -8,17 +8,20 @@ function addCallTypes(expression, func) {
 function analyzeAddition(expression, context, ast) {
     analyzeSide(expression["left"], context, ast);
     analyzeSide(expression["right"], context, ast);
-    validateAddition(expression, ast);
+    validateAddition(expression["left"], expression["right"], ast);
 }
 
-function analyzeConstructorArguments(expression, context, ast) {}
-
-function analyzeFunctionArguments(expression, func, context, ast) {}
+function analyzeArguments(expression, context, ast) {
+    for (let i = 0; i < expression["arguments"].length; i++) {
+        analyzeSide(expression["arguments"][i], context, ast);
+        validateAssignment(ast[expected], expression["arguments"][i], ast);
+    }
+}
 
 function analyzeAssignment(expression, context, ast) {
     analyzeSide(expression["left"], context, ast);
     analyzeSide(expression["right"], context, ast);
-    validateAssignment(expression, ast);
+    validateAssignment(expression["left"], expression["right"], ast);
 }
 
 function analyzeCall(expression, context, ast) {
@@ -44,11 +47,19 @@ function analyzeCallWithParent(expression, context, ast) {
         addCallTypes(expression, func);
         analyzeFunctionArguments(expression, func, context, ast);
         expression["type"] = "method";
+    } else {
+        throw `Cannot call '${
+            expression["value"]
+        }' (not a function) on '${expressionAsString(expression["parent"])}'.`;
     }
+}
 
-    throw `Cannot call '${
-        expression["value"]
-    }' (not a function) on '${expressionAsString(expression["parent"])}'.`;
+function analyzeConstructorArguments(expression, context, ast) {
+    validateArgumentsLength(
+        expression,
+        ast[expression["realType"]]["arguments"]
+    );
+    analyzeArguments(expression, context, ast);
 }
 
 function analyzeConstructorCall(expression, context, ast) {
@@ -56,6 +67,11 @@ function analyzeConstructorCall(expression, context, ast) {
     expression["astType"] = astType(expression["realType"], ast);
     analyzeConstructorArguments(expression, context, ast);
     expression["type"] = "constructor";
+}
+
+function analyzeFunctionArguments(expression, func, context, ast) {
+    validateArgumentsLength(expression, func["arguments"]);
+    analyzeArguments(expression, context, ast);
 }
 
 function analyzeFunctionCall(expression, context, ast) {
@@ -230,38 +246,40 @@ function expressionAsString(expression) {
     return `'${expression["value"]}' (aka ${expression["realType"]} [${expression["astType"]}])`;
 }
 
-function validateAddition(expression, ast) {
+function validateAddition(left, right, ast) {
     const leftType = expression["left"]["realType"];
     const rightType = expression["right"]["realType"];
 
     if (
-        leftType == rightType ||
-        (isNumber(expression["left"]) && isNumber(expression["right"])) ||
-        isArrayType(leftType, rightType, ast)
+        leftType != rightType &&
+        !(isNumber(left) && isNumber(right)) &&
+        !isArrayType(left["realType"], right["realType"], ast)
     ) {
-        return;
+        throw `Cannot add ${expressionAsString(right)} to ${expressionAsString(
+            left
+        )}.`;
     }
-
-    throw `Cannot add ${expressionAsString(
-        expression["right"]
-    )} to ${expressionAsString(expression["left"])}.`;
 }
 
-function validateAssignment(expression, ast) {
-    const leftType = expression["left"]["realType"];
-    const rightType = expression["right"]["realType"];
+function validateArgumentsLength(expression, args) {
+    if (expression["arguments"].length != func["arguments"].length) {
+        throw `Incorrect number of arguments in call to '${expression["value"]}' (expected ${func["arguments"].length}, got ${expression["arguments"].length}).`;
+    }
+}
+
+function validateAssignment(left, right, ast) {
+    const leftType = left["realType"];
+    const rightType = right["realType"];
 
     if (
-        leftType == rightType ||
-        (isNumber(expression["left"]) && isNumber(expression["right"])) ||
-        isVariantType(leftType, rightType, ast)
+        leftType != rightType &&
+        !(isNumber(left) && isNumber(right)) &&
+        !isVariantType(left["realType"], right["realType"], ast)
     ) {
-        return;
+        throw `Cannot assign ${expressionAsString(
+            right
+        )} to ${expressionAsString(left)}.`;
     }
-
-    throw `Cannot assign ${expressionAsString(
-        expression["right"]
-    )} to ${expressionAsString(expression["left"])}.`;
 }
 
 function validateType(type, ast) {

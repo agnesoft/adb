@@ -40,14 +40,17 @@ describe("analyze", () => {
 
                 test("multiple with argument", () => {
                     const data = {
+                        Id: "int64",
+                        IdAlias: "Id",
                         MyObj: {
                             fields: ["Id"],
                             functions: {
                                 foo: {
-                                    arguments: ["arg1"],
-                                    body: ["Id = arg1"],
+                                    arguments: ["IdAlias"],
+                                    body: ["Id = IdAlias"],
                                 },
                                 bar: {
+                                    body: ["return Id"],
                                     return: "Id",
                                 },
                             },
@@ -55,6 +58,16 @@ describe("analyze", () => {
                     };
 
                     const ast = {
+                        Id: {
+                            type: "alias",
+                            name: "Id",
+                            aliasedType: "int64",
+                        },
+                        IdAlias: {
+                            type: "alias",
+                            name: "IdAlias",
+                            aliasedType: "Id",
+                        },
                         MyObj: {
                             type: "object",
                             name: "MyObj",
@@ -63,7 +76,7 @@ describe("analyze", () => {
                                 foo: {
                                     type: "function",
                                     name: "foo",
-                                    arguments: ["arg1"],
+                                    arguments: ["IdAlias"],
                                     body: [
                                         {
                                             type: "assignment",
@@ -73,16 +86,23 @@ describe("analyze", () => {
                                             },
                                             right: {
                                                 type: "type",
-                                                value: "arg1",
+                                                value: "IdAlias",
                                             },
                                         },
                                     ],
+                                    returnValue: undefined,
                                 },
                                 bar: {
                                     type: "function",
                                     name: "bar",
                                     arguments: [],
-                                    body: [],
+                                    body: [
+                                        {
+                                            type: "return",
+                                            value: "Id",
+                                            returnType: "type",
+                                        },
+                                    ],
                                     returnValue: "Id",
                                 },
                             },

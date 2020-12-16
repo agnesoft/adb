@@ -58,6 +58,11 @@ describe("analyze", () => {
                         };
 
                         const ast = {
+                            Id: {
+                                type: "alias",
+                                name: "Id",
+                                aliasedType: "int64",
+                            },
                             foo: {
                                 type: "function",
                                 name: "foo",
@@ -76,11 +81,12 @@ describe("analyze", () => {
                                         arguments: [
                                             {
                                                 type: "number",
-                                                value: 1,
+                                                value: "1",
                                             },
                                         ],
                                     },
                                 ],
+                                returnValue: undefined,
                             },
                         };
 
@@ -151,7 +157,7 @@ describe("analyze", () => {
                             Obj: { fields: ["Id"] },
                             foo: {
                                 arguments: ["Id"],
-                                body: ["Obj Obj(Id)"],
+                                body: ["Obj(Id)"],
                             },
                         };
 
@@ -173,21 +179,14 @@ describe("analyze", () => {
                                 arguments: ["Id"],
                                 body: [
                                     {
-                                        type: "assignment",
-                                        left: {
-                                            type: "new",
-                                            value: "Obj",
-                                        },
-                                        right: {
-                                            type: "call",
-                                            arguments: [
-                                                {
-                                                    type: "argument",
-                                                    value: "Id",
-                                                },
-                                            ],
-                                            value: "Obj",
-                                        },
+                                        type: "constructor",
+                                        arguments: [
+                                            {
+                                                type: "argument",
+                                                value: "Id",
+                                            },
+                                        ],
+                                        value: "Obj",
                                     },
                                 ],
                                 returnValue: undefined,
@@ -221,7 +220,7 @@ describe("analyze", () => {
                         };
 
                         expect(analyze).toThrow(
-                            "Analyzer: incorrect argument 'Id' for function call 'foo' in function 'bar'."
+                            "Analyzer: invalid expression in function 'bar'. Type 'Id' (int64) cannot be converted to 'Obj' (Obj)."
                         );
                     });
 
@@ -238,7 +237,7 @@ describe("analyze", () => {
                         };
 
                         expect(analyze).toThrow(
-                            "Analyzer: cannot call 'Arr' (not a function) in 'foo'."
+                            "Analyzer: invalid expression in function 'foo'. Cannot call 'Arr' (not a function)."
                         );
                     });
                 });

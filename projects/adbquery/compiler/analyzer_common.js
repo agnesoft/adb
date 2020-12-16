@@ -3,11 +3,15 @@ export function isNative(type) {
 }
 
 export function typeExists(type, ast) {
-    return isNative(type) || type in ast;
+    return type && (isNative(type) || type in ast);
 }
 
 export function realType(type, ast) {
-    if (!isNaN(type) || isNative(type)) {
+    if (!isNaN(type)) {
+        return "int64";
+    }
+
+    if (isNative(type)) {
         return type;
     }
 
@@ -22,9 +26,17 @@ export function realType(type, ast) {
     return type;
 }
 
-export function typeType(type, ast) {
-    if (!isNaN(type) || isNative(type)) {
+export function astType(type, ast) {
+    if (!isNaN(type)) {
+        return "number";
+    }
+
+    if (isNative(type)) {
         return "native";
+    }
+
+    if (!type || !(type in ast)) {
+        return undefined;
     }
 
     return ast[type]["type"];

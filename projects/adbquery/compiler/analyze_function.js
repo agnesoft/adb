@@ -1,12 +1,46 @@
 import { typeExists } from "./analyzer_common.js";
 import { analyzeExpression } from "./analyze_function_expression.js";
 
+function analyzeExpressions(node, object, ast) {
+    console.log(`Keys: ${object ? Object.keys(object) : ""}`);
+    let context = functionContext(node, object, ast);
+
+    for (let expression of node["body"]) {
+        try {
+            analyzeExpression(expression, context, ast);
+        } catch (e) {
+            throw `Analyzer: invalid expression in function '${functionName(
+                node,
+                object
+            )}'. ${e}`;
+        }
+    }
+}
+
+function functionContext(node, object) {
+    return {
+        func: node,
+        object: object ? object : { fields: [], functions: {} },
+        locals: [],
+    };
+}
+
 function functionName(node, object) {
     if (object) {
         return `${object["name"]}::${node["name"]}`;
     }
 
     return `${node["name"]}`;
+}
+
+function hasReturnStatement(node) {
+    for (const expression of node["body"]) {
+        if (expression["type"] == "return") {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 function validateArguments(node, object, ast) {
@@ -18,16 +52,6 @@ function validateArguments(node, object, ast) {
             )}' is not an existing type.`;
         }
     }
-}
-
-function hasReturnStatement(node) {
-    for (const expression of node["body"]) {
-        if (expression["type"] == "return") {
-            return true;
-        }
-    }
-
-    return false;
 }
 
 function validateReturn(node, object, ast) {
@@ -46,19 +70,6 @@ function validateReturn(node, object, ast) {
                 node,
                 object
             )}' that has a return value.`;
-        }
-    }
-}
-
-function analyzeExpressions(node, object, ast) {
-    for (let expression of node["body"]) {
-        try {
-            analyzeExpression(expression, node, object, ast);
-        } catch (e) {
-            throw `Analyzer: invalid expression in function '${functionName(
-                node,
-                object
-            )}'. ${e}`;
         }
     }
 }

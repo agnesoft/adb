@@ -1,6 +1,6 @@
 import { realType, typeExists, astType } from "./analyzer_common.js";
 
-function addCallTypes(expression, func) {
+function addCallTypes(expression, func, ast) {
     expression["realType"] = realType(func["returnValue"], ast);
     expression["astType"] = astType(expression["realType"], ast);
 }
@@ -11,10 +11,22 @@ function analyzeAddition(expression, context, ast) {
     validateAddition(expression["left"], expression["right"], ast);
 }
 
-function analyzeArguments(expression, context, ast) {
+function analyzeArgument(arg, expected, context, ast) {
+    analyzeSide(arg, context, ast);
+    validateAssignment(
+        {
+            value: expected,
+            realType: realType(expected, ast),
+            astType: astType(realType(expected, ast), ast),
+        },
+        arg,
+        ast
+    );
+}
+
+function analyzeArguments(expression, expected, context, ast) {
     for (let i = 0; i < expression["arguments"].length; i++) {
-        analyzeSide(expression["arguments"][i], context, ast);
-        validateAssignment(ast[expected], expression["arguments"][i], ast);
+        analyzeArgument(expression["arguments"][i], expected[i], context, ast);
     }
 }
 
@@ -25,6 +37,10 @@ function analyzeAssignment(expression, context, ast) {
 }
 
 function analyzeCall(expression, context, ast) {
+    analyzeSide(expression, context, ast);
+}
+
+function analyzeCallExpression(expression, context, ast) {
     if (hasParent(expression)) {
         analyzeCallWithParent(expression, context, ast);
     } else if (isFunction(expression, ast)) {
@@ -33,9 +49,9 @@ function analyzeCall(expression, context, ast) {
         analyzeMethodCall(expression, context, ast);
     } else if (isConstructor(expression, ast)) {
         analyzeConstructorCall(expression, context, ast);
+    } else {
+        throw `Cannot call '${expression["value"]}' (not a function).`;
     }
-
-    throw `Cannot call '${expression["value"]}' (not a function).`;
 }
 
 function analyzeCallWithParent(expression, context, ast) {
@@ -44,22 +60,24 @@ function analyzeCallWithParent(expression, context, ast) {
             ast[expression["parent"]["realType"]]["functions"][
                 expression["value"]
             ];
-        addCallTypes(expression, func);
+        addCallTypes(expression, func, ast);
         analyzeFunctionArguments(expression, func, context, ast);
         expression["type"] = "method";
     } else {
-        throw `Cannot call '${
-            expression["value"]
-        }' (not a function) on '${expressionAsString(expression["parent"])}'.`;
+        throw `Cannot call '${expression["value"]}' on ${expressionAsString(
+            expression["parent"]
+        )}.`;
     }
 }
 
 function analyzeConstructorArguments(expression, context, ast) {
-    validateArgumentsLength(
+    validateArgumentsLength(expression, ast[expression["realType"]]["fields"]);
+    analyzeArguments(
         expression,
-        ast[expression["realType"]]["arguments"]
+        ast[expression["realType"]]["fields"],
+        context,
+        ast
     );
-    analyzeArguments(expression, context, ast);
 }
 
 function analyzeConstructorCall(expression, context, ast) {
@@ -71,18 +89,18 @@ function analyzeConstructorCall(expression, context, ast) {
 
 function analyzeFunctionArguments(expression, func, context, ast) {
     validateArgumentsLength(expression, func["arguments"]);
-    analyzeArguments(expression, context, ast);
+    analyzeArguments(expression, func["arguments"], context, ast);
 }
 
 function analyzeFunctionCall(expression, context, ast) {
     let func = ast[expression["value"]];
-    addCallTypes(expression, func);
+    addCallTypes(expression, func, ast);
     analyzeFunctionArguments(expression, func, context, ast);
 }
 
 function analyzeMethodCall(expression, context, ast) {
     let func = context["object"]["functions"][expression["value"]];
-    addCallTypes(expression, func);
+    addCallTypes(expression, func, ast);
     analyzeFunctionArguments(expression, func, context, ast);
     expression["type"] = "method";
 }
@@ -104,20 +122,24 @@ function analyzeSide(expression, context, ast) {
     analyzeParent(expression, context, ast);
 
     if (expression["type"] == "call") {
-        analyzeCall(expression, context, ast);
+        analyzeCallExpression(expression, context, ast);
     } else {
-        analyzeType(expression, context, ast);
+        analyzeTypeExpression(expression, context, ast);
     }
 }
 
-function analyzeType(expression, context, ast) {
+function analyzeTypeExpression(expression, context, ast) {
     validateType(expression["value"], ast);
     expression["realType"] = realType(expression["value"], ast);
-    expression["astType"] = astType(expression["realTtype"], ast);
+    expression["astType"] = astType(expression["realType"], ast);
     expression["type"] = expressionType(expression, context, ast);
 }
 
 function expressionType(expression, context, ast) {
+    if (isLiteralNumber(expression)) {
+        return "number";
+    }
+
     if (isArgument(expression, context)) {
         return "argument";
     }
@@ -165,7 +187,7 @@ function isConstructor(expression, ast) {
 
 function isField(expression, context, ast) {
     return (
-        expression["value"] in context["object"]["fields"] ||
+        context["object"]["fields"].includes(expression["value"]) ||
         isParentField(expression, ast)
     );
 }
@@ -179,6 +201,10 @@ function isFunction(expression, ast) {
 
 function isMethod(expression, context) {
     return isFunction(expression, context);
+}
+
+function isLiteralNumber(expression) {
+    return !isNaN(expression["value"]);
 }
 
 function isLocal(expression, context) {
@@ -247,11 +273,8 @@ function expressionAsString(expression) {
 }
 
 function validateAddition(left, right, ast) {
-    const leftType = expression["left"]["realType"];
-    const rightType = expression["right"]["realType"];
-
     if (
-        leftType != rightType &&
+        left["realType"] != right["realType"] &&
         !(isNumber(left) && isNumber(right)) &&
         !isArrayType(left["realType"], right["realType"], ast)
     ) {
@@ -262,17 +285,14 @@ function validateAddition(left, right, ast) {
 }
 
 function validateArgumentsLength(expression, args) {
-    if (expression["arguments"].length != func["arguments"].length) {
-        throw `Incorrect number of arguments in call to '${expression["value"]}' (expected ${func["arguments"].length}, got ${expression["arguments"].length}).`;
+    if (expression["arguments"].length != args.length) {
+        throw `Incorrect number of arguments in call to '${expression["value"]}' (expected ${args.length}, got ${expression["arguments"].length}).`;
     }
 }
 
 function validateAssignment(left, right, ast) {
-    const leftType = left["realType"];
-    const rightType = right["realType"];
-
     if (
-        leftType != rightType &&
+        left["realType"] != right["realType"] &&
         !(isNumber(left) && isNumber(right)) &&
         !isVariantType(left["realType"], right["realType"], ast)
     ) {
@@ -283,7 +303,7 @@ function validateAssignment(left, right, ast) {
 }
 
 function validateType(type, ast) {
-    if (!typeExists(type, ast)) {
+    if (!astType(type, ast)) {
         throw `Unknown type '${type}'.`;
     }
 }

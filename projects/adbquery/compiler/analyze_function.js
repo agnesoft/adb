@@ -2,7 +2,6 @@ import { typeExists } from "./analyzer_common.js";
 import { analyzeExpression } from "./analyze_function_expression.js";
 
 function analyzeExpressions(node, object, ast) {
-    console.log(`Keys: ${object ? Object.keys(object) : ""}`);
     let context = functionContext(node, object, ast);
 
     for (let expression of node["body"]) {

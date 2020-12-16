@@ -77,11 +77,15 @@ describe("analyze", () => {
                                 body: [
                                     {
                                         type: "call",
+                                        realType: undefined,
+                                        astType: undefined,
                                         value: "foo",
                                         arguments: [
                                             {
                                                 type: "number",
                                                 value: "1",
+                                                realType: "int64",
+                                                astType: "native",
                                             },
                                         ],
                                     },
@@ -115,6 +119,7 @@ describe("analyze", () => {
                         const ast = {
                             SomeObj: {
                                 type: "object",
+                                name: "SomeObj",
                                 fields: [],
                                 functions: {
                                     foo: {
@@ -129,18 +134,23 @@ describe("analyze", () => {
                             bar: {
                                 type: "function",
                                 name: "bar",
-                                arguments: [],
+                                arguments: ["SomeObj"],
                                 body: [
                                     {
                                         type: "method",
                                         value: "foo",
+                                        astType: undefined,
+                                        realType: undefined,
                                         arguments: [],
                                         parent: {
                                             type: "argument",
                                             value: "SomeObj",
+                                            astType: "object",
+                                            realType: "SomeObj",
                                         },
                                     },
                                 ],
+                                returnValue: undefined,
                             },
                         };
 
@@ -180,10 +190,14 @@ describe("analyze", () => {
                                 body: [
                                     {
                                         type: "constructor",
+                                        realType: "Obj",
+                                        astType: "object",
                                         arguments: [
                                             {
                                                 type: "argument",
                                                 value: "Id",
+                                                realType: "int64",
+                                                astType: "native",
                                             },
                                         ],
                                         value: "Obj",
@@ -220,7 +234,7 @@ describe("analyze", () => {
                         };
 
                         expect(analyze).toThrow(
-                            "Analyzer: invalid expression in function 'bar'. Type 'Id' (int64) cannot be converted to 'Obj' (Obj)."
+                            "Analyzer: invalid expression in function 'bar'. Cannot assign 'Id' (aka int64 [native]) to 'Obj' (aka Obj [object])."
                         );
                     });
 

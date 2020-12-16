@@ -81,11 +81,15 @@ describe("analyze", () => {
                                         {
                                             type: "assignment",
                                             left: {
-                                                type: "type",
+                                                type: "field",
+                                                realType: "int64",
+                                                astType: "native",
                                                 value: "Id",
                                             },
                                             right: {
-                                                type: "type",
+                                                type: "argument",
+                                                realType: "int64",
+                                                astType: "native",
                                                 value: "IdAlias",
                                             },
                                         },
@@ -100,7 +104,9 @@ describe("analyze", () => {
                                         {
                                             type: "return",
                                             value: "Id",
-                                            returnType: "type",
+                                            realType: "int64",
+                                            astType: "native",
+                                            returnType: "field",
                                         },
                                     ],
                                     returnValue: "Id",

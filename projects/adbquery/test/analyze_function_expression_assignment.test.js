@@ -30,10 +30,14 @@ describe("analyze", () => {
                                         left: {
                                             type: "new",
                                             value: "Id",
+                                            realType: "int64",
+                                            astType: "native",
                                         },
                                         right: {
                                             type: "number",
                                             value: 1,
+                                            realType: "int64",
+                                            astType: "native",
                                         },
                                     },
                                 ],
@@ -78,10 +82,14 @@ describe("analyze", () => {
                                         type: "assignment",
                                         left: {
                                             type: "new",
+                                            realType: "int64",
+                                            astType: "native",
                                             value: "Id",
                                         },
                                         right: {
                                             type: "argument",
+                                            realType: "int64",
+                                            astType: "native",
                                             value: "From",
                                         },
                                     },
@@ -133,10 +141,14 @@ describe("analyze", () => {
                                         type: "assignment",
                                         left: {
                                             type: "new",
+                                            realType: "int64",
+                                            astType: "native",
                                             value: "Id",
                                         },
                                         right: {
                                             type: "argument",
+                                            realType: "int64",
+                                            astType: "native",
                                             value: "MyFrom",
                                         },
                                     },
@@ -154,11 +166,11 @@ describe("analyze", () => {
                 });
 
                 describe("invalid", () => {
-                    test("type = <unknown type>", () => {
+                    test("<unknown type> = type", () => {
                         const data = {
                             Id: "int64",
-                            MyArr: ["int64"],
                             foo: {
+                                arguments: ["Id"],
                                 body: ["MyArr = Id"],
                             },
                         };
@@ -168,7 +180,7 @@ describe("analyze", () => {
                         };
 
                         expect(analyze).toThrow(
-                            "Analyzer: value 'Id' used in assignment expression in function 'foo' undeclared."
+                            "Analyzer: invalid expression in function 'foo'. Unknown type 'MyArr'."
                         );
                     });
 
@@ -178,7 +190,7 @@ describe("analyze", () => {
                             SomeType: {},
                             foo: {
                                 arguments: ["SomeType"],
-                                body: ["MyArr = SomeType"],
+                                body: ["Id = SomeType"],
                             },
                         };
 
@@ -187,7 +199,7 @@ describe("analyze", () => {
                         };
 
                         expect(analyze).toThrow(
-                            "Analyzer: value 'SomeType' (object) in assignment expression in function 'foo' cannot be assigned to native 'Id' (int64)."
+                            "Analyzer: invalid expression in function 'foo'. Cannot assign 'SomeType' (aka SomeType [object]) to 'Id' (aka int64 [native])."
                         );
                     });
                 });

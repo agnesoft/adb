@@ -116,6 +116,18 @@ function analyzeReturn(expression, context, ast) {
     analyzeSide(expression, context, ast);
     expression["returnType"] = expression["type"];
     expression["type"] = "return";
+    validateAssignment(
+        {
+            value: context["func"]["returnValue"],
+            realType: realType(context["func"]["returnValue"], ast),
+            astType: astType(
+                realType(context["func"]["returnValue"], ast),
+                ast
+            ),
+        },
+        expression,
+        ast
+    );
 }
 
 function analyzeSide(expression, context, ast) {
@@ -208,7 +220,7 @@ function isLiteralNumber(expression) {
 }
 
 function isLocal(expression, context) {
-    return expression["value"] in context["locals"];
+    return context["locals"].includes(expression["value"]);
 }
 
 function isNumber(expression) {
@@ -238,7 +250,7 @@ function isParentMethod(expression, ast) {
 }
 
 function isVariant(type, ast) {
-    return type in ast && ast[type]["variant"] == "variant";
+    return type in ast && ast[type]["type"] == "variant";
 }
 
 function isParentVariant(expression, ast) {

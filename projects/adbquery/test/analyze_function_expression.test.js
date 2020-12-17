@@ -44,7 +44,7 @@ describe("analyze", () => {
                     };
 
                     expect(analyze).toThrow(
-                        `Analyzer: invalid expression in function 'foo'. The 'Id' cannot be accessed via 'MyVar'.`
+                        `Analyzer: invalid expression in function 'foo'. Invalid parent 'MyVar' (aka MyVar [variant]) of 'Id' (aka int64 [native]).`
                     );
                 });
             });

@@ -30,10 +30,14 @@ describe("analyze", () => {
                                         left: {
                                             type: "new",
                                             value: "Id",
+                                            realType: "int64",
+                                            astType: "native",
                                         },
                                         right: {
                                             type: "number",
                                             value: 1,
+                                            realType: "int64",
+                                            astType: "native",
                                         },
                                     },
                                 ],
@@ -78,11 +82,15 @@ describe("analyze", () => {
                                         type: "addition",
                                         left: {
                                             type: "new",
+                                            realType: "MyArr",
+                                            astType: "array",
                                             value: "MyArr",
                                         },
                                         right: {
                                             type: "argument",
                                             value: "Id",
+                                            realType: "int64",
+                                            astType: "native",
                                         },
                                     },
                                 ],
@@ -134,10 +142,14 @@ describe("analyze", () => {
                                         left: {
                                             type: "new",
                                             value: "MyArr",
+                                            astType: "array",
+                                            realType: "MyArr",
                                         },
                                         right: {
                                             type: "argument",
                                             value: "OtherArr",
+                                            realType: "MyArr",
+                                            astType: "array",
                                         },
                                     },
                                 ],
@@ -156,7 +168,6 @@ describe("analyze", () => {
                 describe("invalid", () => {
                     test("array += <unknown value>", () => {
                         const data = {
-                            Id: "int64",
                             MyArr: ["int64"],
                             foo: {
                                 body: ["MyArr += Id"],
@@ -168,13 +179,12 @@ describe("analyze", () => {
                         };
 
                         expect(addContext).toThrow(
-                            "Analyzer: value 'Id' used in addition expression in function 'foo' undeclared."
+                            "Analyzer: invalid expression in function 'foo'. Unknown type 'Id'."
                         );
                     });
 
                     test("array += <incompatible type>", () => {
                         const data = {
-                            Id: "int64",
                             MyArr: ["int64"],
                             SomeType: {},
                             foo: {
@@ -188,7 +198,7 @@ describe("analyze", () => {
                         };
 
                         expect(analyze).toThrow(
-                            "Analyzer: value 'SomeType' (object) in addition expression in function 'foo' cannot be added to array 'MyArr' (int64)."
+                            "Analyzer: invalid expression in function 'foo'. Cannot add 'SomeType' (aka SomeType [object]) to 'MyArr' (aka MyArr [array])."
                         );
                     });
                 });

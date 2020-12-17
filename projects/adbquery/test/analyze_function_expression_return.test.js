@@ -29,6 +29,8 @@ describe("analyze", () => {
                                     {
                                         type: "return",
                                         value: 1,
+                                        astType: "native",
+                                        realType: "int64",
                                         returnType: "number",
                                     },
                                 ],
@@ -76,11 +78,15 @@ describe("analyze", () => {
                                         arguments: [
                                             {
                                                 type: "argument",
+                                                astType: "native",
+                                                realType: "int64",
                                                 value: "Id",
                                             },
                                         ],
                                         value: "Obj",
-                                        returnType: "call",
+                                        realType: "Obj",
+                                        astType: "object",
+                                        returnType: "constructor",
                                     },
                                 ],
                                 returnValue: "Obj",
@@ -117,7 +123,6 @@ describe("analyze", () => {
                             MyObj: {
                                 type: "object",
                                 name: "MyObj",
-                                base: undefined,
                                 fields: ["Id"],
                                 functions: {
                                     foo: {
@@ -129,6 +134,8 @@ describe("analyze", () => {
                                             {
                                                 type: "return",
                                                 value: "Id",
+                                                realType: "int64",
+                                                astType: "native",
                                                 returnType: "field",
                                             },
                                         ],
@@ -189,9 +196,13 @@ describe("analyze", () => {
                                             {
                                                 type: "return",
                                                 value: "Id",
+                                                realType: "int64",
+                                                astType: "native",
                                                 returnType: "field",
                                                 parent: {
                                                     type: "field",
+                                                    realType: "SubObj",
+                                                    astType: "object",
                                                     value: "SubObj",
                                                 },
                                             },
@@ -211,110 +222,14 @@ describe("analyze", () => {
                     test("variant of field", () => {
                         const data = {
                             Id: "int64",
-                            SubObj: {
-                                fields: ["Id"],
-                            },
-                            MyVar: ["Id", "SubObj"],
-                            MyObj: {
-                                fields: ["MyVar"],
-                                functions: {
-                                    foo: {
-                                        body: [
-                                            "MyVar.SubObj.Id = 1",
-                                            "return MyVar.SubObj.Id",
-                                        ],
-                                        return: "Id",
-                                    },
-                                },
-                            },
-                        };
-
-                        const ast = {
-                            Id: {
-                                type: "alias",
-                                name: "Id",
-                                aliasedType: "int64",
-                            },
-                            SubObj: {
-                                type: "object",
-                                name: "SubObj",
-                                base: undefined,
-                                fields: ["Id"],
-                                functions: {},
-                            },
-                            MyVar: {
-                                type: "variant",
-                                name: "MyVar",
-                                variants: ["Id", "SubObj"],
-                            },
-                            MyObj: {
-                                type: "object",
-                                name: "MyObj",
-                                base: undefined,
-                                fields: ["MyVar"],
-                                functions: {
-                                    foo: {
-                                        type: "function",
-                                        name: "foo",
-                                        arguments: [],
-                                        returnValue: "Id",
-                                        body: [
-                                            {
-                                                type: "assignment",
-                                                left: {
-                                                    type: "field",
-                                                    value: "Id",
-                                                    parent: {
-                                                        type: "variant",
-                                                        value: "SubObj",
-                                                        parent: {
-                                                            type: "field",
-                                                            value: "MyVar",
-                                                        },
-                                                    },
-                                                },
-                                                right: {
-                                                    type: "number",
-                                                    value: 1,
-                                                },
-                                            },
-                                            {
-                                                type: "return",
-                                                value: "Id",
-                                                returnType: "field",
-                                                parent: {
-                                                    type: "variant",
-                                                    value: "SubObj",
-                                                    parent: {
-                                                        type: "field",
-                                                        value: "MyVar",
-                                                    },
-                                                },
-                                            },
-                                        ],
-                                    },
-                                },
-                            },
-                        };
-
-                        const analyze = () => {
-                            return analyzer.analyze(parser.parse(data));
-                        };
-
-                        expect(analyze()).toEqual(ast);
-                    });
-
-                    test("array from variant from field", () => {
-                        const data = {
-                            Id: "int64",
                             MyArr: ["Id"],
                             MyVar: ["Id", "MyArr"],
                             MyObj: {
                                 fields: ["MyVar"],
                                 functions: {
                                     foo: {
-                                        body: ["return MyVar.MyArr.Id"],
-                                        return: "Id",
+                                        body: ["return MyVar.MyArr"],
+                                        return: "MyArr",
                                     },
                                 },
                             },
@@ -346,19 +261,19 @@ describe("analyze", () => {
                                         type: "function",
                                         name: "foo",
                                         arguments: [],
-                                        returnValue: "Id",
+                                        returnValue: "MyArr",
                                         body: [
                                             {
                                                 type: "return",
-                                                value: "Id",
-                                                returnType: "arrayType",
+                                                value: "MyArr",
+                                                realType: "MyArr",
+                                                astType: "array",
+                                                returnType: "variant",
                                                 parent: {
-                                                    type: "variant",
-                                                    value: "MyArr",
-                                                    parent: {
-                                                        type: "field",
-                                                        value: "MyVar",
-                                                    },
+                                                    type: "field",
+                                                    value: "MyVar",
+                                                    realType: "MyVar",
+                                                    astType: "variant",
                                                 },
                                             },
                                         ],
@@ -390,7 +305,7 @@ describe("analyze", () => {
                         };
 
                         expect(analyze).toThrow(
-                            `Analyzer: return expression type 'number' does not match return type 'Obj' in function 'foo'.`
+                            `Analyzer: invalid expression in function 'foo'. Cannot assign '1' (aka int64 [native]) to 'Obj' (aka Obj [object]).`
                         );
                     });
                 });
@@ -398,5 +313,3 @@ describe("analyze", () => {
         });
     });
 });
-
-// incompatible return -> throw

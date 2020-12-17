@@ -111,7 +111,7 @@ Each expression is composed of types. Object fields, array types, variant types 
 
 The referenced type names serve also as the name of the instances. It simplifies the syntax and identification that is inferred from the context. But it also has limitations in that it is not possible to have two variables of the same type used in the same context. Use an `alias` to create a new type for a different purpose (e.g. `Id`, `Count` or `Distance` all being aliases of `int64` or each other). The local variable, field or argument names need to be invented by the code generator.
 
-Special case are constructors that can be called as any function (with object's fields as arguments) to construct an object (e.g. in a return expression).
+Constructors of objects are special case. These can be called as any function by calling the object type with object's fields as arguments (e.g. in a return expression).
 
 Examples:
 
@@ -136,7 +136,7 @@ A collection of properties (fields) and functions (methods). An object has follo
 -   fields
 -   functions
 
-The fields is the list of existing types (native or custom) that are properties of the given object. Functions are its methods defined as an object with the same syntax as the standalone functions (keys are function names etc.). Object functions work in the same way as standalone ones but have the types declared in the object `fields` property available in their context. The `fields` are also arguments to automatically declared constructor.
+The fields is the list of existing types (native or custom) that are properties of the given object. Functions are its methods defined as an object with the same syntax as the standalone functions (keys are function names etc.). Object functions work in the same way as standalone ones but have the types declared in the object `fields` property available in their context. The `fields` are also arguments to constructor call of each object type.
 
 Syntax:
 

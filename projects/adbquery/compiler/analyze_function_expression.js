@@ -212,7 +212,7 @@ function isFunction(expression, ast) {
 }
 
 function isMethod(expression, context) {
-    return isFunction(expression, context);
+    return isFunction(expression, context["object"]["functions"]);
 }
 
 function isLiteralNumber(expression) {
@@ -221,10 +221,6 @@ function isLiteralNumber(expression) {
 
 function isLocal(expression, context) {
     return context["locals"].includes(expression["value"]);
-}
-
-function isNumber(expression) {
-    return expression["astType"] == "number";
 }
 
 function isParentField(expression, ast) {
@@ -284,10 +280,14 @@ function expressionAsString(expression) {
     return `'${expression["value"]}' (aka ${expression["realType"]} [${expression["astType"]}])`;
 }
 
+function isNumeric(left, right) {
+    return left["realType"] == "int64" && right["type"] == "number";
+}
+
 function validateAddition(left, right, ast) {
     if (
         left["realType"] != right["realType"] &&
-        !(isNumber(left) && isNumber(right)) &&
+        !isNumeric(left, right) &&
         !isArrayType(left["realType"], right["realType"], ast)
     ) {
         throw `Cannot add ${expressionAsString(right)} to ${expressionAsString(
@@ -305,7 +305,7 @@ function validateArgumentsLength(expression, args) {
 function validateAssignment(left, right, ast) {
     if (
         left["realType"] != right["realType"] &&
-        !(isNumber(left) && isNumber(right)) &&
+        !isNumeric(left, right) &&
         !isVariantType(left["realType"], right["realType"], ast)
     ) {
         throw `Cannot assign ${expressionAsString(

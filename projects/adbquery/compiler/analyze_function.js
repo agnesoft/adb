@@ -33,13 +33,10 @@ function functionName(node, object) {
 }
 
 function hasReturnStatement(node) {
-    for (const expression of node["body"]) {
-        if (expression["type"] == "return") {
-            return true;
-        }
-    }
-
-    return false;
+    return (
+        node["body"].length > 0 &&
+        node["body"][node["body"].length - 1]["type"] == "return"
+    );
 }
 
 function validateArguments(node, object, ast) {

@@ -163,6 +163,74 @@ describe("analyze", () => {
 
                         expect(addContext()).toEqual(ast);
                     });
+
+                    test("local += argument", () => {
+                        const data = {
+                            Id: "int64",
+                            ArgId: "Id",
+                            foo: {
+                                arguments: ["ArgId"],
+                                body: ["Id = ArgId", "Id += 3"],
+                            },
+                        };
+
+                        const ast = {
+                            Id: {
+                                type: "alias",
+                                name: "Id",
+                                aliasedType: "int64",
+                            },
+                            ArgId: {
+                                type: "alias",
+                                name: "ArgId",
+                                aliasedType: "Id",
+                            },
+                            foo: {
+                                type: "function",
+                                name: "foo",
+                                arguments: ["ArgId"],
+                                body: [
+                                    {
+                                        type: "assignment",
+                                        left: {
+                                            type: "new",
+                                            value: "Id",
+                                            realType: "int64",
+                                            astType: "native",
+                                        },
+                                        right: {
+                                            type: "argument",
+                                            value: "ArgId",
+                                            realType: "int64",
+                                            astType: "native",
+                                        },
+                                    },
+                                    {
+                                        type: "addition",
+                                        left: {
+                                            type: "local",
+                                            value: "Id",
+                                            realType: "int64",
+                                            astType: "native",
+                                        },
+                                        right: {
+                                            type: "number",
+                                            value: 3,
+                                            realType: "int64",
+                                            astType: "native",
+                                        },
+                                    },
+                                ],
+                                returnValue: undefined,
+                            },
+                        };
+
+                        const addContext = () => {
+                            return analyzer.analyze(parser.parse(data));
+                        };
+
+                        expect(addContext()).toEqual(ast);
+                    });
                 });
 
                 describe("invalid", () => {
@@ -199,6 +267,26 @@ describe("analyze", () => {
 
                         expect(analyze).toThrow(
                             "Analyzer: invalid expression in function 'foo'. Cannot add 'SomeType' (aka SomeType [object]) to 'MyArr' (aka MyArr [array])."
+                        );
+                    });
+
+                    test("<non number> += number", () => {
+                        const data = {
+                            Id: "int64",
+                            MyArr: ["int64"],
+                            SomeType: {},
+                            foo: {
+                                arguments: ["SomeType"],
+                                body: ["SomeType += 1"],
+                            },
+                        };
+
+                        const analyze = () => {
+                            return analyzer.analyze(parser.parse(data));
+                        };
+
+                        expect(analyze).toThrow(
+                            "Analyzer: invalid expression in function 'foo'. Cannot add '1' (aka int64 [native]) to 'SomeType' (aka SomeType [object])."
                         );
                     });
                 });

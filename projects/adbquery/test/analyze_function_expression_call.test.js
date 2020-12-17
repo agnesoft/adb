@@ -1,5 +1,6 @@
 import * as parser from "../compiler/parser.js";
 import * as analyzer from "../compiler/analyzer.js";
+import { realType } from "../compiler/analyzer_common.js";
 
 describe("analyze", () => {
     describe("function", () => {
@@ -102,6 +103,59 @@ describe("analyze", () => {
                     });
 
                     test("method", () => {
+                        const data = {
+                            SomeObj: {
+                                functions: {
+                                    foo: {
+                                        body: [],
+                                    },
+                                    bar: {
+                                        body: ["foo()"],
+                                    },
+                                },
+                            },
+                        };
+
+                        const ast = {
+                            SomeObj: {
+                                type: "object",
+                                name: "SomeObj",
+                                fields: [],
+                                functions: {
+                                    foo: {
+                                        type: "function",
+                                        name: "foo",
+                                        arguments: [],
+                                        body: [],
+                                        returnValue: undefined,
+                                    },
+                                    bar: {
+                                        type: "function",
+                                        name: "bar",
+                                        arguments: [],
+                                        body: [
+                                            {
+                                                type: "method",
+                                                value: "foo",
+                                                arguments: [],
+                                                realType: undefined,
+                                                astType: undefined,
+                                            },
+                                        ],
+                                        returnValue: undefined,
+                                    },
+                                },
+                            },
+                        };
+
+                        const analyze = () => {
+                            return analyzer.analyze(parser.parse(data));
+                        };
+
+                        expect(analyze()).toEqual(ast);
+                    });
+
+                    test("argument's method", () => {
                         const data = {
                             SomeObj: {
                                 functions: {
@@ -252,6 +306,65 @@ describe("analyze", () => {
 
                         expect(analyze).toThrow(
                             "Analyzer: invalid expression in function 'foo'. Cannot call 'Arr' (not a function)."
+                        );
+                    });
+
+                    test("non-existent method", () => {
+                        const data = {
+                            SomeObj: {},
+                            foo: {
+                                arguments: ["SomeObj"],
+                                body: ["SomeObj.bar()"],
+                            },
+                        };
+
+                        const analyze = () => {
+                            return analyzer.analyze(parser.parse(data));
+                        };
+
+                        expect(analyze).toThrow(
+                            "Analyzer: invalid expression in function 'foo'. Cannot call 'bar' on 'SomeObj' (aka SomeObj [object])."
+                        );
+                    });
+
+                    test("too few arguments", () => {
+                        const data = {
+                            Id: "int64",
+                            FromId: "Id",
+                            foo: {
+                                arguments: ["Id", "FromId"],
+                            },
+                            bar: {
+                                body: ["foo(1)"],
+                            },
+                        };
+
+                        const analyze = () => {
+                            return analyzer.analyze(parser.parse(data));
+                        };
+
+                        expect(analyze).toThrow(
+                            "Analyzer: invalid expression in function 'bar'. Incorrect number of arguments in call to 'foo' (expected 2, got 1)."
+                        );
+                    });
+
+                    test("too many arguments", () => {
+                        const data = {
+                            Id: "int64",
+                            foo: {
+                                arguments: ["Id"],
+                            },
+                            bar: {
+                                body: ["foo(1, 3)"],
+                            },
+                        };
+
+                        const analyze = () => {
+                            return analyzer.analyze(parser.parse(data));
+                        };
+
+                        expect(analyze).toThrow(
+                            "Analyzer: invalid expression in function 'bar'. Incorrect number of arguments in call to 'foo' (expected 1, got 2)."
                         );
                     });
                 });

@@ -102,6 +102,20 @@ describe("parse", () => {
                         "Parser: type of 'functions' of 'MyObj' invalid ('array', must be 'object')."
                     );
                 });
+
+                test("string as function's type", () => {
+                    const data = {
+                        MyObj: { functions: { foo: "" } },
+                    };
+
+                    const parse = () => {
+                        parser.parse(data);
+                    };
+
+                    expect(parse).toThrow(
+                        "Parser: type of function 'MyObj::foo' invalid ('string', must be 'object')."
+                    );
+                });
             });
         });
     });

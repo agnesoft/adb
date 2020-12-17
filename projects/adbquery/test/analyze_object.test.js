@@ -1,6 +1,7 @@
 import * as parser from "../compiler/parser.js";
+import * as analyzer from "../compiler/analyzer.js";
 
-describe("parse", () => {
+describe("analyze", () => {
     describe("object", () => {
         describe("valid", () => {
             test("empty", () => {
@@ -12,12 +13,16 @@ describe("parse", () => {
                     MyObj: {
                         type: "object",
                         name: "MyObj",
-                        fields: [],
                         functions: {},
+                        fields: [],
                     },
                 };
 
-                expect(parser.parse(data)).toEqual(ast);
+                const analyze = () => {
+                    return analyzer.analyze(parser.parse(data));
+                };
+
+                expect(analyze()).toEqual(ast);
             });
         });
     });

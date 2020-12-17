@@ -1,43 +1,52 @@
 import * as parser from "../compiler/parser.js";
 
-test("valid", () => {
-    const data = {
-        String: ["byte"],
-    };
+describe("parse", () => {
+    describe("array", () => {
+        describe("valid", () => {
+            test("native type", () => {
+                const data = {
+                    String: ["byte"],
+                };
 
-    const ast = {
-        String: {
-            type: "array",
-            name: "String",
-            arrayType: "byte",
-        },
-    };
+                const ast = {
+                    String: {
+                        type: "array",
+                        name: "String",
+                        arrayType: "byte",
+                    },
+                };
 
-    expect(parser.parse(data)).toEqual(ast);
-});
+                expect(parser.parse(data)).toEqual(ast);
+            });
+        });
+        describe("invalid", () => {
+            test("empty string as array type", () => {
+                const data = {
+                    MyArr: [""],
+                };
 
-test("empty string", () => {
-    const data = {
-        MyArr: [""],
-    };
+                const parse = () => {
+                    parser.parse(data);
+                };
 
-    const parse = () => {
-        parser.parse(data);
-    };
+                expect(parse).toThrow(
+                    "Parser: type of array 'MyArr' cannot be empty."
+                );
+            });
 
-    expect(parse).toThrow("Parser: type of array 'MyArr' cannot be empty.");
-});
+            test("object as array type", () => {
+                const data = {
+                    MyArr: [{}],
+                };
 
-test("invalid array", () => {
-    const data = {
-        MyArr: [{}],
-    };
+                const parse = () => {
+                    parser.parse(data);
+                };
 
-    const parse = () => {
-        parser.parse(data);
-    };
-
-    expect(parse).toThrow(
-        "Parser: type of array 'MyArr' invalid ('object', must be 'string')."
-    );
+                expect(parse).toThrow(
+                    "Parser: type of array 'MyArr' invalid ('object', must be 'string')."
+                );
+            });
+        });
+    });
 });

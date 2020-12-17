@@ -1,6 +1,7 @@
 import * as parser from "../compiler/parser.js";
+import * as analyzer from "../compiler/analyzer.js";
 
-describe("parse", () => {
+describe("analyze", () => {
     describe("function", () => {
         describe("valid", () => {
             test("empty", () => {
@@ -14,26 +15,15 @@ describe("parse", () => {
                         name: "foo",
                         arguments: [],
                         body: [],
+                        returnValue: undefined,
                     },
                 };
 
-                expect(parser.parse(data)).toEqual(ast);
-            });
-        });
-
-        describe("invalid", () => {
-            test("array as body", () => {
-                const data = {
-                    foo: { body: {} },
+                const analyze = () => {
+                    return analyzer.analyze(parser.parse(data));
                 };
 
-                const parse = () => {
-                    parser.parse(data);
-                };
-
-                expect(parse).toThrow(
-                    "Parser: type of 'body' of 'foo' invalid ('object', must be 'array')."
-                );
+                expect(analyze()).toEqual(ast);
             });
         });
     });

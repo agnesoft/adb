@@ -1,57 +1,83 @@
 import * as parser from "../compiler/parser.js";
 
-test("valid", () => {
-    const data = {
-        Operator: ["And", "Or"],
-    };
+describe("parse", () => {
+    describe("variant", () => {
+        describe("valid", () => {
+            test("two", () => {
+                const data = {
+                    Operator: ["And", "Or"],
+                };
 
-    const ast = {
-        Operator: {
-            type: "variant",
-            name: "Operator",
-            variants: ["And", "Or"],
-        },
-    };
+                const ast = {
+                    Operator: {
+                        type: "variant",
+                        name: "Operator",
+                        variants: ["And", "Or"],
+                    },
+                };
 
-    expect(parser.parse(data)).toEqual(ast);
-});
+                expect(parser.parse(data)).toEqual(ast);
+            });
 
-test("empty array", () => {
-    const data = {
-        MyVar: [],
-    };
+            test("three", () => {
+                const data = {
+                    Operator: ["And", "Or", "Where"],
+                };
 
-    const parse = () => {
-        parser.parse(data);
-    };
+                const ast = {
+                    Operator: {
+                        type: "variant",
+                        name: "Operator",
+                        variants: ["And", "Or", "Where"],
+                    },
+                };
 
-    expect(parse).toThrow(
-        "Parser: list of variants of 'MyVar' cannot be empty."
-    );
-});
+                expect(parser.parse(data)).toEqual(ast);
+            });
+        });
 
-test("empty string", () => {
-    const data = {
-        MyVar: ["Id", ""],
-    };
+        describe("invalid", () => {
+            test("empty array as variants", () => {
+                const data = {
+                    MyVar: [],
+                };
 
-    const parse = () => {
-        parser.parse(data);
-    };
+                const parse = () => {
+                    parser.parse(data);
+                };
 
-    expect(parse).toThrow("Parser: variant of 'MyVar' cannot be empty.");
-});
+                expect(parse).toThrow(
+                    "Parser: list of variants of 'MyVar' cannot be empty."
+                );
+            });
 
-test("invalid variant type", () => {
-    const data = {
-        MyVar: ["Id", {}],
-    };
+            test("empty string as variant", () => {
+                const data = {
+                    MyVar: ["Id", ""],
+                };
 
-    const parse = () => {
-        parser.parse(data);
-    };
+                const parse = () => {
+                    parser.parse(data);
+                };
 
-    expect(parse).toThrow(
-        "Parser: variant of 'MyVar' invalid ('object', must be 'string')."
-    );
+                expect(parse).toThrow(
+                    "Parser: variant of 'MyVar' cannot be empty."
+                );
+            });
+
+            test("object as variant", () => {
+                const data = {
+                    MyVar: ["Id", {}],
+                };
+
+                const parse = () => {
+                    parser.parse(data);
+                };
+
+                expect(parse).toThrow(
+                    "Parser: variant of 'MyVar' invalid ('object', must be 'string')."
+                );
+            });
+        });
+    });
 });

@@ -1,4 +1,4 @@
-import { expressionAST } from "./parse_expression.js";
+import { expressionAST } from "./parse_function_expression.js";
 import { jsType } from "./parser_common.js";
 
 let FUNCTION_NAME = "";

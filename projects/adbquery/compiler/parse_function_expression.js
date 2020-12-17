@@ -26,7 +26,10 @@ function callArguments(part) {
         .split(",")
         .forEach((arg) => {
             if (arg.trim()) {
-                args.push(arg.trim());
+                args.push({
+                    type: "argument",
+                    value: arg.trim(),
+                });
             }
         });
     return args;
@@ -132,12 +135,12 @@ export function expressionAST(name, expression) {
         return assignmentAST(expression);
     }
 
-    if (expression.endsWith(")")) {
-        return functionCallAST(expression);
-    }
-
     if (expression.startsWith("return")) {
         return returnAST(expression);
+    }
+
+    if (expression.endsWith(")")) {
+        return functionCallAST(expression);
     }
 
     throw `Parser: unknown expression '${expression}' in '${FUNCTION_NAME}'.`;

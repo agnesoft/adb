@@ -23,13 +23,11 @@ There are native types that are in-built and needs to be provided by the support
 
 ### Native Types
 
-These types and functions must be available and provided by every supported language:
+These types must be available and provided by every supported language:
 
 -   `byte` (8-bit value)
 -   `int64` (64-bit signed two's complement integer)
 -   `double` (64-bit floating point integer)
--   `toLittleEndian(int64)` (a function that takes `int64` value and returns it in little endian byte order)
--   `fromLittleEndian(int64)` (a function that takes `int64` value in little endian byte order and returns it in native byte order)
 
 ### Custom Types
 
@@ -41,7 +39,7 @@ Each custom type can be one of the following:
 -   `object`
 -   `variant`
 
-These constructs must also be available and provided by every supported language.
+These constructs must be available and provided by every supported language.
 
 #### alias
 
@@ -69,7 +67,12 @@ Syntax:
 "Ids": ["int64"]
 ```
 
-Implicit array declarations:
+Implicit functions declarations:
+
+-   `"arraySize": { "arguments": ["array"], "body": <implementation defined>, "return": "int64" }` (a function that takes any array and returns `int64` value as the array size/length)
+-   `"arrayValue": { "arguments": ["array", "int64"], "body": <implementation defined>, "return": "value" }` (a function that takes an array and index `int64` and returns the value at that index from the array)
+
+Implicit declarations:
 
 -   `"ByteArray": ["byte"]`
 
@@ -95,8 +98,12 @@ Syntax:
 
 Implicit function declarations:
 
--   `"toLittleEndian": { "arguments": ["int64"], "body": <implementation defined>, "return": "int64" }`
--   `"fromLittleEndian": { "arguments": ["int64"], "body": <implementation defined>, "return": "int64" }`
+-   `"toLittleEndian": { "arguments": ["int64"], "body": <implementation defined>, "return": "int64" }` (a function that takes `int64` value in native endianness and returns it in little endian byte order)
+-   `"toNativeEndian": { "arguments": ["int64"], "body": <implementation defined>, "return": "int64" }` (a function that takes little endian `int64` value and returns it in native byte order)
+-   `"serializeInt64": { "arguments": ["ByteArray", "int64", "int64"], "body": <implementation defined> }"` (a function that takes `ByteArray` buffer, `int64` offset and `int64` value serializing the value as-is at offset into the buffer)
+-   `"deserializeInt64": { "arguments": ["ByteArray", "int64"], "body": <implementation defined>, "return": "int64" }"` (a function that takes `ByteArray` buffer and `int64` offset and returns the `int64` value at offset from the buffer)
+-   `"serializeDouble": { "arguments": ["ByteArray", "int64", "double"], "body": <implementation defined> }"` (a function that takes `ByteArray` buffer, `int64` offset and `double` value serializing the value as-is at offset into the buffer)
+-   `"deserializeDouble": { "arguments": ["ByteArray", "int64"], "body": <implementation defined>, "return": "int64" }"` (a function that takes `ByteArray` buffer and `int64` offset and returns the `int64` value at offset from the buffer)
 
 #### Function Expressions
 
@@ -105,13 +112,17 @@ There are three types of expressions:
 -   function call
 -   assignment
 -   addition
+-   if
+-   for
 -   return
 
 Each expression is composed of types. Object fields, array types, variant types etc. are referenced using a dot syntax. Only valid combinations of known types (native or custom) or integer literals are allowed and only "compatible" types are allowed in an expression. If the given type is not accessible in the function context (is not an argument or object field) it will be declared as a local variable and can be referenced by its type name for example in the return statement.
 
 The referenced type names serve also as the name of the instances. It simplifies the syntax and identification that is inferred from the context. But it also has limitations in that it is not possible to have two variables of the same type used in the same context. Use an `alias` to create a new type for a different purpose (e.g. `Id`, `Count` or `Distance` all being aliases of `int64` or each other). The local variable, field or argument names need to be invented by the code generator.
 
-Constructors of objects are special case. These can be called as any function by calling the object type with object's fields as arguments (e.g. in a return expression).
+There are also two special kinds of expressions - `if` and `for`. The former allows conditional execution. The latter allows iteration and implicitly declares a variable `i` that represents the current iteration value.
+
+Constructors of objects are a special case. Objects can be called as any function by calling their name with object's fields as arguments (e.g. in a return expression).
 
 Examples:
 
@@ -127,6 +138,15 @@ SomeArray += ArgType
 
 //return
 return SomeType
+
+//constructor
+Obj(arg1)
+
+//if
+if(arg1 == arg2) foo()
+
+//for
+for(5) foo(i)
 ```
 
 #### object
@@ -158,6 +178,11 @@ There are no implicit objects.
 #### variant
 
 Represents a union type (a type that can be one of the other predefined types). There must be at least two variant types and max 256.
+
+Implicit function declarations:
+
+-   `"variantIndex": { "arguments": ["variant"], "body": <implementation defined>, "return": "byte" }` (a function that takes any variant and returns `byte` as the index of its currently active variant)
+-   `"variantValue": { "arguments": ["variant"], "body": <implementation defined>, "return": "value" }` (a fuction that takes any variant and returns its current value)
 
 Syntax
 
@@ -239,9 +264,26 @@ foo: {
             arguments: []
         },
         {
+            type: "constructor",
+            value: "Obj",
+            arguments: [arg1]
+        },
+        {
             type: "return",
             value: "ArgType1",
             returnType: "argument"
+        },
+        {
+            type: "if",
+            left: { type: "type", value: "arg1" },
+            comparison: "==",
+            right: { type: "type", value: "arg2" },
+            body: {}
+        },
+        {
+            type: "for",
+            iterations: { type: "number", value: 5 },
+            body: {}
         }
     ],
     return: "ArgType1"
@@ -309,6 +351,7 @@ Individual fields serialized after each other in the order of declaration (no al
 #### variant
 
 Index of currently active variant as a single `byte` index (interpreted as an unsigned 8-bit integer value) followed by the serialized active variant.
+Currently active variant.
 
 ---
 

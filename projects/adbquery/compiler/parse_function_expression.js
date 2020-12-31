@@ -89,6 +89,67 @@ function functionCallAST(expression) {
     return sideAST(expression);
 }
 
+function ifAST(expression) {
+    const parts = ifParts(expression);
+    return {
+        type: "if",
+        left: sideAST(parts["left"].trim()),
+        comparator: parts["comparator"],
+        right: sideAST(parts["right"].trim()),
+        body: [expressionAST(FUNCTION_NAME, parts["body"])],
+    };
+}
+
+function ifBody(expression) {
+    return expression
+        .slice(expression.indexOf("{") + 1, expression.lastIndexOf("}"))
+        .trim();
+}
+
+function ifComparator(expression) {
+    if (expression.includes("==")) {
+        return "==";
+    }
+
+    if (expression.includes("!=")) {
+        return "!=";
+    }
+
+    if (expression.includes("<=")) {
+        return "<=";
+    }
+
+    if (expression.includes(">=")) {
+        return ">=";
+    }
+
+    if (expression.includes("<")) {
+        return "<";
+    }
+
+    if (expression.includes(">")) {
+        return ">";
+    }
+
+    throw `Parser: no valid if comparator found in function '${FUNCTION_NAME}'.`;
+}
+
+function ifParts(expression) {
+    validateIf(expression);
+    const comparator = ifComparator(expression);
+    return {
+        left: expression.slice(3, expression.indexOf(comparator)).trim(),
+        comparator: comparator,
+        right: expression
+            .slice(
+                expression.indexOf(comparator) + comparator.length,
+                expression.indexOf(") {")
+            )
+            .trim(),
+        body: ifBody(expression),
+    };
+}
+
 function partAST(part) {
     if (part.includes("(")) {
         return callAST(part);
@@ -126,6 +187,12 @@ function validateCallName(part) {
     }
 }
 
+function validateIf(expression) {
+    if (!expression.includes(") {")) {
+        throw `Parser: invalid syntax in 'if' expression in function '${FUNCTION_NAME}' (missing whitespace? I.e. 'if() {}').`;
+    }
+}
+
 function validateReturnType(part) {
     if (!part) {
         throw `Parser: return type in expression in function '${FUNCTION_NAME}' cannot be empty.`;
@@ -140,6 +207,10 @@ function validateType(part) {
 
 export function expressionAST(name, expression) {
     FUNCTION_NAME = name;
+
+    if (expression.startsWith("if(")) {
+        return ifAST(expression);
+    }
 
     if (expression.includes("+=")) {
         return additionAST(expression);

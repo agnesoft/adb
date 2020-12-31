@@ -143,10 +143,10 @@ return SomeType
 Obj(arg1)
 
 //if
-if(arg1 == arg2) foo()
+if(arg1 == arg2) { foo() }
 
 //for
-for(5) foo(i)
+for(5) { foo(i) }
 ```
 
 #### object
@@ -278,12 +278,12 @@ foo: {
             left: { type: "type", value: "arg1" },
             comparison: "==",
             right: { type: "type", value: "arg2" },
-            body: {}
+            body: []
         },
         {
             type: "for",
             iterations: { type: "number", value: 5 },
-            body: {}
+            body: []
         }
     ],
     return: "ArgType1"

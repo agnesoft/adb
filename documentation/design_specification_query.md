@@ -143,10 +143,10 @@ return SomeType
 Obj(arg1)
 
 //if
-if(arg1 == arg2) { foo() }
+if (arg1 == arg2) { foo() }
 
 //for
-for(5) { foo(i) }
+for (5) { foo(i) }
 ```
 
 #### object

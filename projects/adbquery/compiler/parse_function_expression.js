@@ -85,6 +85,19 @@ function expressionValue(part) {
     }
 }
 
+function forAST(expression) {
+    validateIfFor(expression);
+    return {
+        type: "for",
+        iterations: sideAST(forIterations(expression)),
+        body: [expressionAST(FUNCTION_NAME, ifForBody(expression))],
+    };
+}
+
+function forIterations(expression) {
+    return expression.slice(5, expression.indexOf(") {"));
+}
+
 function functionCallAST(expression) {
     return sideAST(expression);
 }
@@ -100,7 +113,7 @@ function ifAST(expression) {
     };
 }
 
-function ifBody(expression) {
+function ifForBody(expression) {
     return expression
         .slice(expression.indexOf("{") + 1, expression.lastIndexOf("}"))
         .trim();
@@ -135,10 +148,10 @@ function ifComparator(expression) {
 }
 
 function ifParts(expression) {
-    validateIf(expression);
+    validateIfFor(expression);
     const comparator = ifComparator(expression);
     return {
-        left: expression.slice(3, expression.indexOf(comparator)).trim(),
+        left: expression.slice(4, expression.indexOf(comparator)).trim(),
         comparator: comparator,
         right: expression
             .slice(
@@ -146,7 +159,7 @@ function ifParts(expression) {
                 expression.indexOf(") {")
             )
             .trim(),
-        body: ifBody(expression),
+        body: ifForBody(expression),
     };
 }
 
@@ -187,9 +200,9 @@ function validateCallName(part) {
     }
 }
 
-function validateIf(expression) {
+function validateIfFor(expression) {
     if (!expression.includes(") {")) {
-        throw `Parser: invalid syntax in 'if' expression in function '${FUNCTION_NAME}' (missing whitespace? I.e. 'if() {}').`;
+        throw `Parser: invalid syntax in 'if/for' expression in function '${FUNCTION_NAME}' (missing whitespace? I.e. 'if/for () {}').`;
     }
 }
 
@@ -208,8 +221,12 @@ function validateType(part) {
 export function expressionAST(name, expression) {
     FUNCTION_NAME = name;
 
-    if (expression.startsWith("if(")) {
+    if (expression.startsWith("if (")) {
         return ifAST(expression);
+    }
+
+    if (expression.startsWith("for (")) {
+        return forAST(expression);
     }
 
     if (expression.includes("+=")) {

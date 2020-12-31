@@ -22,7 +22,7 @@ describe("parse", () => {
                     test("equals", () => {
                         const data = {
                             foo: {
-                                body: ["if(1 == 1) { bar() }"],
+                                body: ["if (1 == 1) { bar() }"],
                             },
                         };
 
@@ -62,7 +62,7 @@ describe("parse", () => {
                     test("not equals", () => {
                         const data = {
                             foo: {
-                                body: ["if(fizz(arg) != 3) { bar() }"],
+                                body: ["if (fizz(arg) != 3) { bar() }"],
                             },
                         };
 
@@ -108,7 +108,7 @@ describe("parse", () => {
                     test("less than", () => {
                         const data = {
                             foo: {
-                                body: ["if(arg < 3) { arr += arg }"],
+                                body: ["if (arg < 3) { arr += arg }"],
                             },
                         };
 
@@ -154,7 +154,7 @@ describe("parse", () => {
                     test("less than or equals", () => {
                         const data = {
                             foo: {
-                                body: ["if(arg <= 3) { arr += arg }"],
+                                body: ["if (arg <= 3) { arr += arg }"],
                             },
                         };
 
@@ -200,7 +200,7 @@ describe("parse", () => {
                     test("greater than", () => {
                         const data = {
                             foo: {
-                                body: ["if(arg > 3) { var = arg }"],
+                                body: ["if (arg > 3) { var = arg }"],
                             },
                         };
 
@@ -246,7 +246,7 @@ describe("parse", () => {
                     test("greater than or equals", () => {
                         const data = {
                             foo: {
-                                body: ["if(arg >= 3) { var = arg }"],
+                                body: ["if (arg >= 3) { var = arg }"],
                             },
                         };
 
@@ -291,10 +291,10 @@ describe("parse", () => {
                 });
 
                 describe("invalid", () => {
-                    test("missing whitespace", () => {
+                    test("missing whitespace after if", () => {
                         const data = {
                             foo: {
-                                body: ["if(1 == 1){ bar() }"],
+                                body: ["if(1 == 1) { bar() }"],
                             },
                         };
 
@@ -303,14 +303,30 @@ describe("parse", () => {
                         };
 
                         expect(parse).toThrow(
-                            "Parser: invalid syntax in 'if' expression in function 'foo' (missing whitespace? I.e. 'if() {}')."
+                            "Parser: type name in expression in function 'foo' cannot be empty."
+                        );
+                    });
+
+                    test("missing whitespace before body", () => {
+                        const data = {
+                            foo: {
+                                body: ["if (1 == 1){ bar() }"],
+                            },
+                        };
+
+                        const parse = () => {
+                            parser.parse(data);
+                        };
+
+                        expect(parse).toThrow(
+                            "Parser: invalid syntax in 'if/for' expression in function 'foo' (missing whitespace? I.e. 'if/for () {}')."
                         );
                     });
 
                     test("unknown comparator", () => {
                         const data = {
                             foo: {
-                                body: ["if(1 IS 1) { bar() }"],
+                                body: ["if (1 IS 1) { bar() }"],
                             },
                         };
 

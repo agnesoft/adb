@@ -68,6 +68,17 @@ function analyzeCallExpression(expression, context, ast) {
     }
 }
 
+function analyzeIf(expression, context, ast) {
+    analyzeSide(expression["left"], context, ast);
+    analyzeSide(expression["right"], context, ast);
+
+    for (let ifBodyExpression of expression["body"]) {
+        analyzeExpression(ifBodyExpression, context, ast);
+    }
+
+    validateComparison(expression["left"], expression["right"], ast);
+}
+
 function analyzeCallWithParent(expression, context, ast) {
     if (isParentMethod(expression, ast)) {
         let func =
@@ -328,6 +339,14 @@ function validateAssignment(left, right, ast) {
     }
 }
 
+function validateComparison(left, right, ast) {
+    if (left["realType"] != right["realType"]) {
+        throw `Cannot compare ${expressionAsString(
+            left
+        )} and ${expressionAsString(right)}.`;
+    }
+}
+
 function validateType(type, ast) {
     if (!astType(type, ast)) {
         throw `Unknown type '${type}'.`;
@@ -344,6 +363,9 @@ export function analyzeExpression(expression, context, ast) {
             break;
         case "call":
             analyzeCall(expression, context, ast);
+            break;
+        case "if":
+            analyzeIf(expression, context, ast);
             break;
         case "return":
             analyzeReturn(expression, context, ast);

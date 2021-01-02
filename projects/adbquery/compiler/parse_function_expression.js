@@ -62,6 +62,19 @@ function callName(part) {
     return part.split("(")[0];
 }
 
+function elseAST(expression) {
+    return {
+        type: "else",
+        body: [expressionAST(FUNCTION_NAME, ifForBody(expression))],
+    };
+}
+
+function elseIfAST(expression) {
+    let ast = ifAST(expression.slice(5));
+    ast["type"] = "elseif";
+    return ast;
+}
+
 function expressionType(part) {
     if (isNaN(part)) {
         return "type";
@@ -223,6 +236,14 @@ export function expressionAST(name, expression) {
 
     if (expression.startsWith("if (")) {
         return ifAST(expression);
+    }
+
+    if (expression.startsWith("else if (")) {
+        return elseIfAST(expression);
+    }
+
+    if (expression.startsWith("else")) {
+        return elseAST(expression);
     }
 
     if (expression.startsWith("for (")) {

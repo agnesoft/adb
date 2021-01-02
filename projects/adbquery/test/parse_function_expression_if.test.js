@@ -288,6 +288,121 @@ describe("parse", () => {
 
                         expect(parser.parse(data)).toEqual(ast);
                     });
+
+                    test("else", () => {
+                        const data = {
+                            foo: {
+                                body: [
+                                    "if (1 == 1) { fizz() }",
+                                    "else { bazz() }",
+                                ],
+                            },
+                        };
+
+                        const ast = {
+                            foo: {
+                                type: "function",
+                                name: "foo",
+                                arguments: [],
+                                body: [
+                                    {
+                                        type: "if",
+                                        left: {
+                                            type: "number",
+                                            value: 1,
+                                        },
+                                        comparator: "==",
+                                        right: {
+                                            type: "number",
+                                            value: 1,
+                                        },
+                                        body: [
+                                            {
+                                                type: "call",
+                                                value: "fizz",
+                                                arguments: [],
+                                            },
+                                        ],
+                                    },
+                                    {
+                                        type: "else",
+                                        body: [
+                                            {
+                                                type: "call",
+                                                value: "bazz",
+                                                arguments: [],
+                                            },
+                                        ],
+                                    },
+                                ],
+                                returnValue: undefined,
+                            },
+                        };
+
+                        expect(parser.parse(data)).toEqual(ast);
+                    });
+
+                    test("else if", () => {
+                        const data = {
+                            foo: {
+                                body: [
+                                    "if (Arg == 1) { fizz() }",
+                                    "else if (Arg == 2) { bazz() }",
+                                ],
+                            },
+                        };
+
+                        const ast = {
+                            foo: {
+                                type: "function",
+                                name: "foo",
+                                arguments: [],
+                                body: [
+                                    {
+                                        type: "if",
+                                        left: {
+                                            type: "type",
+                                            value: "Arg",
+                                        },
+                                        comparator: "==",
+                                        right: {
+                                            type: "number",
+                                            value: 1,
+                                        },
+                                        body: [
+                                            {
+                                                type: "call",
+                                                value: "fizz",
+                                                arguments: [],
+                                            },
+                                        ],
+                                    },
+                                    {
+                                        type: "elseif",
+                                        left: {
+                                            type: "type",
+                                            value: "Arg",
+                                        },
+                                        comparator: "==",
+                                        right: {
+                                            type: "number",
+                                            value: 2,
+                                        },
+                                        body: [
+                                            {
+                                                type: "call",
+                                                value: "bazz",
+                                                arguments: [],
+                                            },
+                                        ],
+                                    },
+                                ],
+                                returnValue: undefined,
+                            },
+                        };
+
+                        expect(parser.parse(data)).toEqual(ast);
+                    });
                 });
 
                 describe("invalid", () => {

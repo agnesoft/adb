@@ -12,38 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const a = {
-    serializeArray: {
-        type: "function",
-        name: "serializeArray",
-        arguments: ["array"],
-        body: [
-            {
-                type: "assignment",
-                left: {
-                    type: "new",
-                    value: "ByteArray",
-                    realType: "ByteArray",
-                    astType: "array",
-                },
-                right: {
-                    type: "call",
-                    value: "arraySize",
-                    arguments: ["array"],
-                    realType: "int64",
-                    astType: "native",
-                },
-            },
-            {
-                type: "return",
-                value: "ByteArray",
-                realType: "ByteArray",
-                astType: "array",
-                returnType: "ByteArray",
-            },
-        ],
-        returnValue: "ByteArray",
-    },
-};
-
-export function serialize(ast) {}
+export function serialize(ast) {
+    return ast;
+}

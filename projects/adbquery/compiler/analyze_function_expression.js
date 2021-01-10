@@ -107,6 +107,12 @@ function analyzeBody(expression, context, ast) {
     }
 }
 
+function analyzeFor(expression, context, ast) {
+    analyzeIterations(expression["iterations"], context, ast);
+    context["locals"].push("i");
+    analyzeBody(expression, context, ast);
+}
+
 function analyzeFunctionArguments(expression, func, context, ast) {
     validateArgumentsLength(expression, func["arguments"]);
     analyzeArguments(expression, func["arguments"], context, ast);
@@ -122,7 +128,12 @@ function analyzeIf(expression, context, ast) {
     analyzeSide(expression["left"], context, ast);
     analyzeSide(expression["right"], context, ast);
     analyzeBody(expression, context, ast);
-    validateComparison(expression["left"], expression["right"], ast);
+    validateComparison(expression["left"], expression["right"]);
+}
+
+function analyzeIterations(iterations, context, ast) {
+    analyzeSide(iterations, context, ast);
+    validateIterations(iterations, ast);
 }
 
 function analyzeMethodCall(expression, context, ast) {
@@ -341,11 +352,17 @@ function validateAssignment(left, right, ast) {
     }
 }
 
-function validateComparison(left, right, ast) {
+function validateComparison(left, right) {
     if (left["realType"] != right["realType"]) {
         throw `Cannot compare ${expressionAsString(
             left
         )} and ${expressionAsString(right)}.`;
+    }
+}
+
+function validateIterations(iterations, ast) {
+    if (iterations["realType"] != "int64") {
+        throw `The 'for' iterations' type must be an 'int64', got '${iterations["realType"]}'.`;
     }
 }
 
@@ -371,6 +388,9 @@ export function analyzeExpression(expression, context, ast) {
             break;
         case "elseif":
             analyzeIf(expression, context, ast);
+            break;
+        case "for":
+            analyzeFor(expression, context, ast);
             break;
         case "if":
             analyzeIf(expression, context, ast);

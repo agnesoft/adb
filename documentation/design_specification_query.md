@@ -56,6 +56,8 @@ Implicit aliases:
 -   `"byte": <implementation defined>`
 -   `"int64": <implementation defined>`
 -   `"double": <implementation defined>`
+-   `"i": "int64"`
+-   `"offset": "int64"`
 
 #### array
 

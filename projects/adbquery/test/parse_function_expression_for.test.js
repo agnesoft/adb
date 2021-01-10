@@ -55,6 +55,7 @@ describe("parse", () => {
                                 returnValue: undefined,
                             },
                         };
+
                         expect(parser.parse(data)).toEqual(ast);
                     });
 

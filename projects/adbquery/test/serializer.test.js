@@ -12,13 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as parser from "./parser.js";
-import * as analyzer from "./analyzer.js";
-import * as serializer from "./serializer.js";
+import * as parser from "../compiler/parser.js";
+import * as analyzer from "../compiler/analyzer.js";
+import * as serializer from "../compiler/serializer.js";
 
-export function compile(data) {
-    let ast = parser.parse(data);
-    ast = analyzer.analyze(ast);
-    ast = serializer.serialize(ast);
-    return ast;
-}
+describe("serializer", () => {
+    describe("valid", () => {
+        test("", () => {});
+    });
+});

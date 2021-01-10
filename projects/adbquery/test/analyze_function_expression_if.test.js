@@ -112,6 +112,181 @@ describe("analyze", () => {
 
                         expect(analyze()).toEqual(ast);
                     });
+
+                    test("if/else", () => {
+                        const data = {
+                            fizz: { body: [] },
+                            buzz: { body: [] },
+                            foo: {
+                                body: [
+                                    "if (1 == 2) { fizz() }",
+                                    "else { buzz() }",
+                                ],
+                            },
+                        };
+
+                        const ast = {
+                            fizz: {
+                                type: "function",
+                                name: "fizz",
+                                arguments: [],
+                                body: [],
+                                returnValue: undefined,
+                            },
+                            buzz: {
+                                type: "function",
+                                name: "buzz",
+                                arguments: [],
+                                body: [],
+                                returnValue: undefined,
+                            },
+                            foo: {
+                                type: "function",
+                                name: "foo",
+                                arguments: [],
+                                body: [
+                                    {
+                                        type: "if",
+                                        left: {
+                                            type: "number",
+                                            realType: "int64",
+                                            astType: "native",
+                                            value: 1,
+                                        },
+                                        right: {
+                                            type: "number",
+                                            realType: "int64",
+                                            astType: "native",
+                                            value: 2,
+                                        },
+                                        comparator: "==",
+                                        body: [
+                                            {
+                                                type: "call",
+                                                value: "fizz",
+                                                arguments: [],
+                                                realType: undefined,
+                                                astType: undefined,
+                                            },
+                                        ],
+                                    },
+                                    {
+                                        type: "else",
+                                        body: [
+                                            {
+                                                type: "call",
+                                                value: "buzz",
+                                                arguments: [],
+                                                realType: undefined,
+                                                astType: undefined,
+                                            },
+                                        ],
+                                    },
+                                ],
+                                returnValue: undefined,
+                            },
+                        };
+
+                        const analyze = () => {
+                            return analyzer.analyze(parser.parse(data));
+                        };
+
+                        expect(analyze()).toEqual(ast);
+                    });
+
+                    test("if/else if", () => {
+                        const data = {
+                            fizz: { body: [] },
+                            buzz: { body: [] },
+                            foo: {
+                                body: [
+                                    "if (1 == 2) { fizz() }",
+                                    "else if (2 == 2) { buzz() }",
+                                ],
+                            },
+                        };
+
+                        const ast = {
+                            fizz: {
+                                type: "function",
+                                name: "fizz",
+                                arguments: [],
+                                body: [],
+                                returnValue: undefined,
+                            },
+                            buzz: {
+                                type: "function",
+                                name: "buzz",
+                                arguments: [],
+                                body: [],
+                                returnValue: undefined,
+                            },
+                            foo: {
+                                type: "function",
+                                name: "foo",
+                                arguments: [],
+                                body: [
+                                    {
+                                        type: "if",
+                                        left: {
+                                            type: "number",
+                                            realType: "int64",
+                                            astType: "native",
+                                            value: 1,
+                                        },
+                                        right: {
+                                            type: "number",
+                                            realType: "int64",
+                                            astType: "native",
+                                            value: 2,
+                                        },
+                                        comparator: "==",
+                                        body: [
+                                            {
+                                                type: "call",
+                                                value: "fizz",
+                                                arguments: [],
+                                                realType: undefined,
+                                                astType: undefined,
+                                            },
+                                        ],
+                                    },
+                                    {
+                                        type: "elseif",
+                                        left: {
+                                            type: "number",
+                                            realType: "int64",
+                                            astType: "native",
+                                            value: 2,
+                                        },
+                                        right: {
+                                            type: "number",
+                                            realType: "int64",
+                                            astType: "native",
+                                            value: 2,
+                                        },
+                                        comparator: "==",
+                                        body: [
+                                            {
+                                                type: "call",
+                                                value: "buzz",
+                                                arguments: [],
+                                                realType: undefined,
+                                                astType: undefined,
+                                            },
+                                        ],
+                                    },
+                                ],
+                                returnValue: undefined,
+                            },
+                        };
+
+                        const analyze = () => {
+                            return analyzer.analyze(parser.parse(data));
+                        };
+
+                        expect(analyze()).toEqual(ast);
+                    });
                 });
 
                 describe("invalid", () => {
@@ -135,6 +310,38 @@ describe("analyze", () => {
 
                         expect(analyze).toThrow(
                             `Analyzer: invalid expression in function 'foo'. Cannot compare 'Float' (aka double [native]) and 'Id' (aka int64 [native]).`
+                        );
+                    });
+
+                    test("else without if", () => {
+                        const data = {
+                            foo: {
+                                body: ["else { foo() }"],
+                            },
+                        };
+
+                        const analyze = () => {
+                            return analyzer.analyze(parser.parse(data));
+                        };
+
+                        expect(analyze).toThrow(
+                            `Analyzer: invalid expression in function 'foo'. The 'else/if' must follow 'if' or 'else if'.`
+                        );
+                    });
+
+                    test("else if without if", () => {
+                        const data = {
+                            foo: {
+                                body: ["else if (1 == 1) { foo() }"],
+                            },
+                        };
+
+                        const analyze = () => {
+                            return analyzer.analyze(parser.parse(data));
+                        };
+
+                        expect(analyze).toThrow(
+                            `Analyzer: invalid expression in function 'foo'. The 'else/if' must follow 'if' or 'else if'.`
                         );
                     });
                 });

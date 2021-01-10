@@ -68,17 +68,6 @@ function analyzeCallExpression(expression, context, ast) {
     }
 }
 
-function analyzeIf(expression, context, ast) {
-    analyzeSide(expression["left"], context, ast);
-    analyzeSide(expression["right"], context, ast);
-
-    for (let ifBodyExpression of expression["body"]) {
-        analyzeExpression(ifBodyExpression, context, ast);
-    }
-
-    validateComparison(expression["left"], expression["right"], ast);
-}
-
 function analyzeCallWithParent(expression, context, ast) {
     if (isParentMethod(expression, ast)) {
         let func =
@@ -112,6 +101,12 @@ function analyzeConstructorCall(expression, context, ast) {
     expression["type"] = "constructor";
 }
 
+function analyzeBody(expression, context, ast) {
+    for (let ifBodyExpression of expression["body"]) {
+        analyzeExpression(ifBodyExpression, context, ast);
+    }
+}
+
 function analyzeFunctionArguments(expression, func, context, ast) {
     validateArgumentsLength(expression, func["arguments"]);
     analyzeArguments(expression, func["arguments"], context, ast);
@@ -121,6 +116,13 @@ function analyzeFunctionCall(expression, context, ast) {
     let func = ast[expression["value"]];
     addCallTypes(expression, func, ast);
     analyzeFunctionArguments(expression, func, context, ast);
+}
+
+function analyzeIf(expression, context, ast) {
+    analyzeSide(expression["left"], context, ast);
+    analyzeSide(expression["right"], context, ast);
+    analyzeBody(expression, context, ast);
+    validateComparison(expression["left"], expression["right"], ast);
 }
 
 function analyzeMethodCall(expression, context, ast) {
@@ -363,6 +365,12 @@ export function analyzeExpression(expression, context, ast) {
             break;
         case "call":
             analyzeCall(expression, context, ast);
+            break;
+        case "else":
+            analyzeBody(expression, context, ast);
+            break;
+        case "elseif":
+            analyzeIf(expression, context, ast);
             break;
         case "if":
             analyzeIf(expression, context, ast);

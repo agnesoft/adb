@@ -1,6 +1,6 @@
 # Specification: Agnesoft Database Query
 
-Code generated interface to the Agnesoft Database. It consists of the Interface Description Language (IDL) schema and ADb Query Compiler that parses the IDL and generates it as code in supported languages.
+Code generated interface to the Agnesoft Database. It consists of the Interface Description Language (IDL) schema and ADb Query Compiler that parses the IDL and generates code in supported languages.
 
 -   [Interface Description Language IDL](#interface-description-language-idl)
     -   [Native Types](#native-types)
@@ -19,7 +19,7 @@ Code generated interface to the Agnesoft Database. It consists of the Interface 
 
 A JSON document that describes the types and functions (i.e. schema) of the query interface. The IDL is self contained and rely on very few "native" features in each supported langauge (described below). The root of the document is the object and each key represents a distinct type.
 
-There are native types that are in-built and needs to be provided by the supported language, and custom types described in the schema.
+There are native types that are built-in and needs to be provided by the supported language, and custom types described in the schema.
 
 ### Native Types
 
@@ -28,10 +28,11 @@ These types must be available and provided by every supported language:
 -   `byte` (8-bit value)
 -   `int64` (64-bit signed two's complement integer)
 -   `double` (64-bit floating point integer)
+-   `string` (implementation defined string representation)
 
 ### Custom Types
 
-Each custom type can be one of the following:
+Each custom type can be one of the following kind:
 
 -   `alias`
 -   `array`
@@ -43,7 +44,7 @@ These constructs must be available and provided by every supported language.
 
 #### alias
 
-Represents an alias of a different type. Its value must be an existing (defined) type. It can be any native or custom type including another alias.
+Represents an alias of a different type. Its value must be a defined type. It can be any native or custom type including another alias.
 
 Syntax:
 
@@ -56,8 +57,10 @@ Implicit aliases:
 -   `"byte": <implementation defined>`
 -   `"int64": <implementation defined>`
 -   `"double": <implementation defined>`
+-   `"string": <implementation defined>`
 -   `"i": "int64"`
 -   `"offset": "int64"`
+-   `"index": "int64"`
 
 #### array
 
@@ -69,24 +72,19 @@ Syntax:
 "Ids": ["int64"]
 ```
 
-Implicit functions declarations:
-
--   `"arraySize": { "arguments": ["array"], "body": <implementation defined>, "return": "int64" }` (a function that takes any array and returns `int64` value as the array size/length)
--   `"arrayValue": { "arguments": ["array", "int64"], "body": <implementation defined>, "return": "value" }` (a function that takes an array and index `int64` and returns the value at that index from the array)
-
-Implicit declarations:
+Implicit arrays:
 
 -   `"ByteArray": ["byte"]`
 
 #### function
 
-Represents a sequence of instructions. Can be a standalone type or a method (part of an `object`, see below). A function has following properties:
+Represents a sequence of instructions. Can be a standalone function or a method (part of an `object`, see below). A function has following properties:
 
--   arguments
--   body
--   return
+-   arguments (OPTIONAL: an array of existing types)
+-   body (REQUIRED: an array of strings each representing an expression)
+-   return (OPTIONAL: a single existing type that is the returned value)
 
-The only mandatory field is `body`. The `arguments` is a list of types (native or custom). The `return` must be a single type (native or custom). The `body` is the list of string expressions.
+The only mandatory field is `body`. The `arguments` is a list of types (native or custom) that are to be passed into the function as arguments. The `return` must be a single type (native or custom). The `body` is the list of string expressions (see below).
 
 Syntax:
 
@@ -100,16 +98,24 @@ Syntax:
 
 Implicit function declarations:
 
--   `"toLittleEndian": { "arguments": ["int64"], "body": <implementation defined>, "return": "int64" }` (a function that takes `int64` value in native endianness and returns it in little endian byte order)
--   `"toNativeEndian": { "arguments": ["int64"], "body": <implementation defined>, "return": "int64" }` (a function that takes little endian `int64` value and returns it in native byte order)
--   `"serializeInt64": { "arguments": ["ByteArray", "int64", "int64"], "body": <implementation defined> }"` (a function that takes `ByteArray` buffer, `int64` offset and `int64` value serializing the value as-is at offset into the buffer)
--   `"deserializeInt64": { "arguments": ["ByteArray", "int64"], "body": <implementation defined>, "return": "int64" }"` (a function that takes `ByteArray` buffer and `int64` offset and returns the `int64` value at offset from the buffer)
--   `"serializeDouble": { "arguments": ["ByteArray", "int64", "double"], "body": <implementation defined> }"` (a function that takes `ByteArray` buffer, `int64` offset and `double` value serializing the value as-is at offset into the buffer)
--   `"deserializeDouble": { "arguments": ["ByteArray", "int64"], "body": <implementation defined>, "return": "int64" }"` (a function that takes `ByteArray` buffer and `int64` offset and returns the `int64` value at offset from the buffer)
+-   `"arraySize": { "arguments": ["<array>"], "body": <implementation defined>, "return": "int64" }` (a function that takes any array and returns `int64` value as the array size/length)
+-   `"arrayValue": { "arguments": ["<array>", "index"], "body": <implementation defined>, "return": "value" }` (a function that takes an `array` and returns the value at the `index` from the array)
+-   `"deserializeDouble": { "arguments": ["ByteArray", "offset"], "body": <implementation defined>, "return": "double" }"` (a function that takes a `ByteArray` buffer and returns the `double` value at the `offset` from the buffer as-is)
+-   `"deserializeInt64": { "arguments": ["ByteArray", "offset"], "body": <implementation defined>, "return": "int64" }"` (a function that takes a `ByteArray` buffer and returns the `int64` value at the `offset` from the buffer as-is)
+-   `"deserializeString": { "arguments": ["ByteArray", "offset"], "body": <implementation defined>, "return": "string" }"` (a function that takes a `ByteArray` buffer and returns the `string` value at the `offset` from the buffer)
+-   `"serializeDouble": { "arguments": ["ByteArray", "offset", "double"], "body": <implementation defined> }"` (a function that takes a `ByteArray` buffer and serialzies the `double` value as-is at the `offset`)
+-   `"serializeInt64": { "arguments": ["ByteArray", "offset", "int64"], "body": <implementation defined> }"` (a function that takes a `ByteArray` buffer and serializes the `int64` value as-is at the `offset`)
+-   `"serializeString": { "arguments": ["ByteArray", "offset", "string"], "body": <implementation defined> }"` (a function that takes a `ByteArray` buffer and serialzies the `string` value at the `offset`)
+-   `"int64ToLittleEndian": { "arguments": ["int64"], "body": <implementation defined>, "return": "int64" }` (a function that takes an `int64` value in native endianness and returns it in the little endian byte order)
+-   `"doubleToLittleEndian": { "arguments": ["double"], "body": <implementation defined>, "return": "double" }` (a function that takes a `double` value in native endianness and returns it in the little endian byte order)
+-   `"int64ToNativeEndian": { "arguments": ["int64"], "body": <implementation defined>, "return": "int64" }` (a function that takes a little endian `int64` value and returns it in native byte order)
+-   `"doubleToNativeEndian": { "arguments": ["double"], "body": <implementation defined>, "return": "double" }` (a function that takes a little endian `double` value and returns it in native byte order)
+-   `"variantIndex": { "arguments": ["<variant>"], "body": <implementation defined>, "return": "byte" }` (a function that takes any variant and returns `byte` (unsigned 8-bit integer) value as the index of its currently active variant)
+-   `"variantValue": { "arguments": ["<variant>"], "body": <implementation defined>, "return": "value" }` (a fuction that takes any variant and returns its currently active value)
 
 #### Function Expressions
 
-There are three types of expressions:
+There are following types of expressions:
 
 -   function call
 -   assignment
@@ -118,11 +124,11 @@ There are three types of expressions:
 -   for
 -   return
 
-Each expression is composed of types. Object fields, array types, variant types etc. are referenced using a dot syntax. Only valid combinations of known types (native or custom) or integer literals are allowed and only "compatible" types are allowed in an expression. If the given type is not accessible in the function context (is not an argument or object field) it will be declared as a local variable and can be referenced by its type name for example in the return statement.
+Each expression is composed of types. Object fields, array types, variant types etc. are referenced using a dot syntax. Only valid combinations of known types (native or custom) or integer literals are allowed and only "compatible" types are allowed in an expression. If the given type is not accessible in the function context (is not an argument or an object field) it will be declared as a local variable and can be referenced by its type name for example in the return statement.
 
-The referenced type names serve also as the name of the instances. It simplifies the syntax and identification that is inferred from the context. But it also has limitations in that it is not possible to have two variables of the same type used in the same context. Use an `alias` to create a new type for a different purpose (e.g. `Id`, `Count` or `Distance` all being aliases of `int64` or each other). The local variable, field or argument names need to be invented by the code generator.
+The referenced type's names serve also as the name of the instances. This simplifies the syntax and the identification of the instance that is inferred from the context. But it also has limitations in that it is not possible to have two variables of the same type used in the same context. Use an `alias` to create a new type for a different purpose (e.g. `Id`, `Count` or `Distance` all being aliases of `int64`). The local variable, field or argument names need to be invented by the code generator.
 
-There are also two special kinds of expressions - `if` and `for`. The former allows conditional execution. The latter allows iteration and implicitly declares a variable `i` that represents the current iteration value.
+There are also two special kinds of expressions - `if` and `for`. The former allows conditional execution. The latter allows iteration and implicitly declares a local variable `i` that represents the current iteration's value.
 
 Constructors of objects are a special case. Objects can be called as any function by calling their name with object's fields as arguments (e.g. in a return expression).
 
@@ -130,6 +136,9 @@ Examples:
 
 ```
 //function call
+foo(Arg)
+
+//method call
 ObjType.foo(ArgType)
 
 //assignment
@@ -155,8 +164,8 @@ for (5) { foo(i) }
 
 A collection of properties (fields) and functions (methods). An object has following properties:
 
--   fields
--   functions
+-   fields (OPTIONAL: list of types that are properties of the object)
+-   functions (OPTIONAL: list of functions [see above] that are methods of the object)
 
 The fields is the list of existing types (native or custom) that are properties of the given object. Functions are its methods defined as an object with the same syntax as the standalone functions (keys are function names etc.). Object functions work in the same way as standalone ones but have the types declared in the object `fields` property available in their context. The `fields` are also arguments to constructor call of each object type.
 
@@ -181,11 +190,6 @@ There are no implicit objects.
 
 Represents a union type (a type that can be one of the other predefined types). There must be at least two variant types and max 256.
 
-Implicit function declarations:
-
--   `"variantIndex": { "arguments": ["variant"], "body": <implementation defined>, "return": "byte" }` (a function that takes any variant and returns `byte` as the index of its currently active variant)
--   `"variantValue": { "arguments": ["variant"], "body": <implementation defined>, "return": "value" }` (a fuction that takes any variant and returns its current value)
-
 Syntax
 
 ```
@@ -200,7 +204,7 @@ Javascript program that translates the ADb Query IDL first into the Abstract Syn
 
 ### Abstract Syntax Tree (AST)
 
-The IDL parser validates the schema and translates it into AST. The AST is a much richer version of the original JSON with additional deduced information suitable for code generation. Each type generates a different IDL object and all are stored under their original type names in a single AST object for cross referencing:
+The IDL parser validates the schema and translates it into AST. The AST is a much richer version of the original JSON with additional deduced information needed for code generation. Each type generates a different IDL object and all are stored under their original type names in a single AST object as its properties for cross referencing:
 
 #### alias
 
@@ -263,28 +267,49 @@ foo: {
         {
             type: "function",
             value: "bar",
+            realType: undefined,
+            astType: undefined,
             arguments: []
         },
         {
             type: "constructor",
             value: "Obj",
+            realType: "Obj",
+            astType: "object",
             arguments: [arg1]
         },
         {
             type: "return",
             value: "ArgType1",
+            realType: "int64",
+            astType: "native",
             returnType: "argument"
         },
         {
             type: "if",
-            left: { type: "type", value: "arg1" },
+            left: {
+                type: "type",
+                value: "arg1"
+                realType: "int64",
+                astType: "native"
+            },
             comparison: "==",
-            right: { type: "type", value: "arg2" },
+            right: {
+                type: "type",
+                value: "arg2"
+                realType: "int64,
+                astType: "native"
+            },
             body: []
         },
         {
             type: "for",
-            iterations: { type: "number", value: 5 },
+            iterations: {
+                type: "number",
+                value: 5,
+                realType: "int64",
+                astType: "native"
+            },
             body: []
         }
     ],
@@ -324,15 +349,15 @@ Obj: {
 
 ### Parser
 
-Parser translates the IDL into flat AST with no additional information. It performs syntax checking such as whether the type of the JSON token following another is validin the IDL context, whether given construct evaluates into something known etc. It also breaks down function expressions detecting their types and other basic information.
+Parser translates the IDL into flat AST with no additional information. It performs syntax checking such as whether the type of the JSON token following another is valid in the IDL context, whether given construct evaluates into something known etc. It also breaks down function expressions detecting their types and other basic information.
 
 ### Analyzer
 
-The AST is then passed over to the Analyzer that validates whether all referenced types are declared and everything makes sense by following aliases, analysing both sides of expressions in context of previous expressions etc. It also further augments the expressions with additional context information such as whether the given expression fragment references a field, an argument or is a new local variable.
+The AST is then passed over to the Analyzer that validates whether all referenced types are declared and everything makes sense by following aliases, analysing both sides of expressions in context of previous expressions, function calls, argument and type compatibility etc. It also further augments the expressions with additional context information such as whether the given expression fragment references a field, an argument or is a new local variable, adds information about underlying (real) types etc.
 
 ### Serializer
 
-The AST is then passed over to the Serializer that augments the existing types with the (de)serialization functions. They provide common AST representation of the code that produces the same binary data from any supported language. Individual types assume following serialization rules and layouts:
+The AST is then passed over to the Serializer that adds (de)serialization functions for all native and custom types. They provide common AST representation of the code that produces the same binary data from any supported language. Individual types assume following serialization rules and layouts:
 
 #### byte
 
@@ -359,7 +384,7 @@ Currently active variant.
 
 **NOTE ON STRINGS**
 
-The ADb Query assumes the `byte array` (`[byte]`) to represent all data including `strings`. Every programming language uses their own native string representation. In some languages this is UTF-16 (two bytes per character), in others this is UTF-8 (variable number of bytes per character) or even a choice between the two (e.g. C++ `std::string`, `QString` in Qt etc.). The binary representation differs (e.g. UTF-16 takes twice as many bytes as it has characters). Storing a string in one language and reading it in another without agreeing on the encoding can have surprising results. It is not feasible to enforce an encoding (e.g. UTF-8) due to many variations and because not all data are (human readable/interpretable) strings. It is therefore up to the user to make sure the right encoding is used when using strings.
+The ADb Query assumes the `byte array` (`[byte]`) to represent all data in serialized form. Every programming language uses their own native string representation that does not always adhere to this representation. In some languages strings are UTF-16 (two bytes per character), in others they are UTF-8 (variable number of bytes per character). Some languages offers a choice between the two (e.g. C++ `std::string`, `QString` in Qt etc.). The binary representation differs (e.g. UTF-16 takes twice as many bytes as it has characters). Storing a string in one language and reading it in another without agreeing on the encoding can have surprising results. It is not feasible to enforce an encoding (e.g. UTF-8) due to many variations and because not all data are (human readable/interpretable) strings. It is therefore up to the user to make sure the right encoding is used when using the `string` type for values.
 
 ---
 

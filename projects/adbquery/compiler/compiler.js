@@ -17,8 +17,6 @@ import * as analyzer from "./analyzer.js";
 import * as serializer from "./serializer.js";
 
 export function compile(data) {
-    let ast = parser.parse(data);
-    ast = analyzer.analyze(ast);
-    ast = serializer.serialize(ast);
-    return ast;
+    let internalData = serializer.addSerialization(data);
+    return analyzer.analyze(parser.parse(internalData));
 }

@@ -12,12 +12,62 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as parser from "../compiler/parser.js";
-import * as analyzer from "../compiler/analyzer.js";
 import * as serializer from "../compiler/serializer.js";
 
 describe("serializer", () => {
     describe("valid", () => {
-        test("", () => {});
+        test("native", () => {
+            const expected = {
+                serialize_byte: {},
+                deserialize_byte: {},
+                serialize_int64: {},
+                deserialize_int64: {},
+                serialize_double: {},
+                deserialize_double: {},
+                serialize_string: {},
+                deserialize_string: {},
+            };
+
+            expect(serializer.addSerialization({})).toMatchObject(expected);
+        });
+
+        test("array", () => {
+            const data = { ByteArray: ["byte"] };
+
+            const expected = {
+                serialize_ByteArray: {},
+                deserialize_ByteArray: {},
+            };
+
+            expect(serializer.addSerialization(data)).toMatchObject(expected);
+        });
+
+        test("object", () => {
+            const data = {
+                MyObj: {
+                    fields: ["string", "int64"],
+                },
+            };
+
+            const expected = {
+                serialize_MyObj: {},
+                deserialize_MyObj: {},
+            };
+
+            expect(serializer.addSerialization(data)).toMatchObject(expected);
+        });
+
+        test("variant", () => {
+            const data = {
+                MyVar: ["int64", "string"],
+            };
+
+            const expected = {
+                serialize_MyVar: {},
+                deserialize_MyVar: {},
+            };
+
+            expect(serializer.addSerialization(data)).toMatchObject(expected);
+        });
     });
 });

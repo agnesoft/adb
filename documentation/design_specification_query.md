@@ -64,13 +64,19 @@ Implicit aliases:
 
 #### array
 
-Represents an array of another defined type (native or custom). There can be only one type in the array.
+Represents a dynamic array of another defined type (native or custom). There can be only one type of values in an array.
 
 Syntax:
 
 ```
 "Ids": ["int64"]
 ```
+
+Array functions:
+
+-   `"size": { "arguments": [], "body": <implementation defined>, "return": "int64" }"` (a function that returns number of values in the array as `int64`)
+-   `"operator[]": { "arguments": ["index"], "body": <implementation defined>, "return": <arrayType> }` (subscript operator or access operator that takes `index` argument and returns mutable value at that position in the array)
+-   `"operator+=": { "arguments": [<arrayType>], "body": <implementation defined>, "return": <array> }` (addition assignment operator is a function that takes an array, pushes a new value at the end and returns it)
 
 Implicit arrays:
 
@@ -98,8 +104,6 @@ Syntax:
 
 Implicit function declarations:
 
--   `"arraySize": { "arguments": ["<array>"], "body": <implementation defined>, "return": "int64" }` (a function that takes any array and returns `int64` value as the array size/length)
--   `"arrayValue": { "arguments": ["<array>", "index"], "body": <implementation defined>, "return": "value" }` (a function that takes an `array` and returns the mutable value at the `index` from the array)
 -   `"deserializeDouble": { "arguments": ["ByteArray", "offset"], "body": <implementation defined>, "return": "double" }"` (a function that takes a `ByteArray` buffer and returns the `double` value at the `offset` from the buffer as-is and increments `offset` by the count of read bytes)
 -   `"deserializeInt64": { "arguments": ["ByteArray", "offset"], "body": <implementation defined>, "return": "int64" }"` (a function that takes a `ByteArray` buffer and returns the `int64` value at the `offset` from the buffer as-is and increments `offset` by the count of read bytes)
 -   `"serializeDouble": { "arguments": ["ByteArray", "offset", "double"], "body": <implementation defined> }"` (a function that takes a `ByteArray` buffer and serializes the `double` value as-is at the `offset` and increments `offset` by the count of written bytes)
@@ -110,8 +114,6 @@ Implicit function declarations:
 -   `"doubleToLittleEndian": { "arguments": ["double"], "body": <implementation defined>, "return": "double" }` (a function that takes a `double` value in native endianness and returns it in the little endian byte order)
 -   `"int64ToNativeEndian": { "arguments": ["int64"], "body": <implementation defined>, "return": "int64" }` (a function that takes a little endian `int64` value and returns it in native byte order)
 -   `"doubleToNativeEndian": { "arguments": ["double"], "body": <implementation defined>, "return": "double" }` (a function that takes a little endian `double` value and returns it in native byte order)
--   `"variantIndex": { "arguments": ["<variant>"], "body": <implementation defined>, "return": "byte" }` (a function that takes any variant and returns `byte` (unsigned 8-bit integer) value as the index of its currently active variant)
--   `"variantValue": { "arguments": ["<variant>"], "body": <implementation defined>, "return": "value" }` (a fuction that takes any variant and returns its currently active value)
 
 #### Function Expressions
 
@@ -195,6 +197,10 @@ Syntax
 ```
 "MyVariant": ["Var1", "Var2"]
 ```
+
+Variant functions:
+
+-   `"index": { "arguments": [], "body": <implementation defined>, "return": "byte" }` (returns `byte` index of the currently active value in the variant)
 
 There are no implicit variants.
 

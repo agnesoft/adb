@@ -15,15 +15,11 @@
 function addByteSerialization(data) {
     data["serialize_byte"] = {
         arguments: ["ByteArray", "offset", "byte"],
-        body: ["arrayValue(ByteArray, offset) = byte", "offset += 1"],
+        body: ["ByteArray[offset] = byte", "offset += 1"],
     };
     data["deserialize_byte"] = {
         arguments: ["ByteArray", "offset"],
-        body: [
-            "byte = arrayValue(ByteArray, offset)",
-            "offset += 1",
-            "return byte",
-        ],
+        body: ["byte = ByteArray[offset]", "offset += 1", "return byte"],
         return: "byte",
     };
 }
@@ -95,7 +91,7 @@ function addArraySerialization(array, arrayType, serialization) {
         arguments: ["ByteArray", "offset", array],
         body: [
             `serialize_int64(ByteArray, offset, arraySize(${array})`,
-            `for (arraySize(${array})) { serialize_${arrayType}(ByteArray, offset, arrayValue(${array}, i)) }`,
+            `for (arraySize(${array})) { serialize_${arrayType}(ByteArray, offset, ${array}[i])) }`,
         ],
     };
     serialization[`deserialize_${array}`] = {
@@ -155,13 +151,12 @@ function addObjectSerialization(object, definition, serialization) {
 
 function variantsSerializationExpressions(variant, variants) {
     let expressions = [
-        `serialize_byte(ByteArray, offset, variantIndex(${variant}))`,
+        `byte = ${variant}.index()`,
+        `serialize_byte(ByteArray, offset, byte)`,
     ];
     for (let i = 0; i < variants.length; i++) {
         expressions.push(
-            `${
-                i != 0 ? "else " : ""
-            }if (variantIndex(${variant}) == ${i}) { serialize_${
+            `${i != 0 ? "else " : ""}if (byte == ${i}) { serialize_${
                 variants[i]
             }(ByteArray, offset, ${variant}.${variants[i]}) }`
         );

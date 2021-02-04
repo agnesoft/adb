@@ -280,6 +280,15 @@ describe("analyze", () => {
                                 type: "variant",
                                 name: "MyVar",
                                 variants: ["Id", "MyArr"],
+                                functions: {
+                                    index: {
+                                        type: "function",
+                                        name: "index",
+                                        arguments: [],
+                                        body: [],
+                                        returnValue: "byte",
+                                    },
+                                },
                             },
                             MyObj: {
                                 type: "object",

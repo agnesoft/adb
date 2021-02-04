@@ -35,6 +35,15 @@ describe("analyze", () => {
                         type: "variant",
                         name: "MyVariant",
                         variants: ["SomeType", "int64"],
+                        functions: {
+                            index: {
+                                type: "function",
+                                name: "index",
+                                arguments: [],
+                                body: [],
+                                returnValue: "byte",
+                            },
+                        },
                     },
                 };
 

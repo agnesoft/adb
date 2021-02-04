@@ -21,5 +21,15 @@ export function analyzeVariant(node, ast) {
         }
     }
 
+    node["functions"] = {
+        index: {
+            type: "function",
+            name: "index",
+            arguments: [],
+            body: [],
+            returnValue: "byte",
+        },
+    };
+
     return node;
 }

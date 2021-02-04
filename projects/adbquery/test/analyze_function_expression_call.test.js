@@ -413,6 +413,62 @@ describe("analyze", () => {
 
                         expect(analyze()).toEqual(ast);
                     });
+
+                    test("<variant>.index()", () => {
+                        const data = {
+                            MyVar: ["byte", "int64"],
+                            foo: {
+                                arguments: ["MyVar"],
+                                body: ["return MyVar.index()"],
+                                return: "byte",
+                            },
+                        };
+
+                        const ast = {
+                            MyVar: {
+                                type: "variant",
+                                name: "MyVar",
+                                variants: ["byte", "int64"],
+                                functions: {
+                                    index: {
+                                        type: "function",
+                                        name: "index",
+                                        arguments: [],
+                                        body: [],
+                                        returnValue: "byte",
+                                    },
+                                },
+                            },
+                            foo: {
+                                type: "function",
+                                name: "foo",
+                                arguments: ["MyVar"],
+                                body: [
+                                    {
+                                        type: "return",
+                                        returnType: "method",
+                                        value: "index",
+                                        realType: "byte",
+                                        astType: "native",
+                                        arguments: [],
+                                        parent: {
+                                            type: "argument",
+                                            value: "MyVar",
+                                            realType: "MyVar",
+                                            astType: "variant",
+                                        },
+                                    },
+                                ],
+                                returnValue: "byte",
+                            },
+                        };
+
+                        const analyze = () => {
+                            return analyzer.analyze(parser.parse(data));
+                        };
+
+                        expect(analyze()).toEqual(ast);
+                    });
                 });
 
                 describe("invalid", () => {

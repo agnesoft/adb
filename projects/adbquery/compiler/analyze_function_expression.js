@@ -281,10 +281,16 @@ function isParentObject(expression) {
 
 function isParentMethod(expression, ast) {
     return (
-        (isParentArray(expression) || isParentObject(expression)) &&
+        (isParentArray(expression) ||
+            isParentTypeVariant(expression) ||
+            isParentObject(expression)) &&
         expression["value"] in
             ast[expression["parent"]["realType"]]["functions"]
     );
+}
+
+function isParentTypeVariant(expression) {
+    return expression["parent"]["astType"] == "variant";
 }
 
 function isVariant(type, ast) {

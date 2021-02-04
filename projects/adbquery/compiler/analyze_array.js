@@ -19,5 +19,22 @@ export function analyzeArray(node, ast) {
         throw `Analyzer: unknown type '${node["arrayType"]}' used as an array type of '${node["name"]}'.`;
     }
 
+    node["functions"] = {
+        at: {
+            type: "function",
+            name: "at",
+            arguments: ["int64"],
+            body: [],
+            returnValue: node["arrayType"],
+        },
+        size: {
+            type: "function",
+            name: "size",
+            arguments: [],
+            body: [],
+            returnValue: "int64",
+        },
+    };
+
     return node;
 }

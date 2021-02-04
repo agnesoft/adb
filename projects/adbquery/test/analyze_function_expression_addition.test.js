@@ -86,6 +86,22 @@ describe("analyze", () => {
                                 type: "array",
                                 name: "MyArr",
                                 arrayType: "int64",
+                                functions: {
+                                    at: {
+                                        type: "function",
+                                        name: "at",
+                                        arguments: ["int64"],
+                                        body: [],
+                                        returnValue: "int64",
+                                    },
+                                    size: {
+                                        type: "function",
+                                        name: "size",
+                                        arguments: [],
+                                        body: [],
+                                        returnValue: "int64",
+                                    },
+                                },
                             },
                             foo: {
                                 type: "function",
@@ -140,6 +156,22 @@ describe("analyze", () => {
                                 type: "array",
                                 name: "MyArr",
                                 arrayType: "int64",
+                                functions: {
+                                    at: {
+                                        type: "function",
+                                        name: "at",
+                                        arguments: ["int64"],
+                                        body: [],
+                                        returnValue: "int64",
+                                    },
+                                    size: {
+                                        type: "function",
+                                        name: "size",
+                                        arguments: [],
+                                        body: [],
+                                        returnValue: "int64",
+                                    },
+                                },
                             },
                             OtherArr: {
                                 type: "alias",

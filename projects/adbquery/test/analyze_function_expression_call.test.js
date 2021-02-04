@@ -280,6 +280,139 @@ describe("analyze", () => {
 
                         expect(analyze()).toEqual(ast);
                     });
+
+                    test("<array>.size()", () => {
+                        const data = {
+                            IntAr: ["int64"],
+                            foo: {
+                                arguments: ["IntAr"],
+                                body: ["return IntAr.size()"],
+                                return: "int64",
+                            },
+                        };
+
+                        const ast = {
+                            IntAr: {
+                                type: "array",
+                                name: "IntAr",
+                                arrayType: "int64",
+                                functions: {
+                                    at: {
+                                        type: "function",
+                                        name: "at",
+                                        arguments: ["int64"],
+                                        body: [],
+                                        returnValue: "int64",
+                                    },
+                                    size: {
+                                        type: "function",
+                                        name: "size",
+                                        arguments: [],
+                                        body: [],
+                                        returnValue: "int64",
+                                    },
+                                },
+                            },
+                            foo: {
+                                type: "function",
+                                name: "foo",
+                                arguments: ["IntAr"],
+                                body: [
+                                    {
+                                        type: "return",
+                                        realType: "int64",
+                                        astType: "native",
+                                        arguments: [],
+                                        value: "size",
+                                        returnType: "method",
+                                        parent: {
+                                            type: "argument",
+                                            value: "IntAr",
+                                            realType: "IntAr",
+                                            astType: "array",
+                                        },
+                                    },
+                                ],
+                                returnValue: "int64",
+                            },
+                        };
+
+                        const analyze = () => {
+                            return analyzer.analyze(parser.parse(data));
+                        };
+
+                        expect(analyze()).toEqual(ast);
+                    });
+
+                    test("<array>.at(index)", () => {
+                        const data = {
+                            IntAr: ["int64"],
+                            foo: {
+                                arguments: ["IntAr"],
+                                body: ["return IntAr.at(3)"],
+                                return: "int64",
+                            },
+                        };
+
+                        const ast = {
+                            IntAr: {
+                                type: "array",
+                                name: "IntAr",
+                                arrayType: "int64",
+                                functions: {
+                                    at: {
+                                        type: "function",
+                                        name: "at",
+                                        arguments: ["int64"],
+                                        body: [],
+                                        returnValue: "int64",
+                                    },
+                                    size: {
+                                        type: "function",
+                                        name: "size",
+                                        arguments: [],
+                                        body: [],
+                                        returnValue: "int64",
+                                    },
+                                },
+                            },
+                            foo: {
+                                type: "function",
+                                name: "foo",
+                                arguments: ["IntAr"],
+                                body: [
+                                    {
+                                        type: "return",
+                                        realType: "int64",
+                                        astType: "native",
+                                        arguments: [
+                                            {
+                                                type: "number",
+                                                value: "3",
+                                                realType: "int64",
+                                                astType: "native",
+                                            },
+                                        ],
+                                        value: "at",
+                                        returnType: "method",
+                                        parent: {
+                                            type: "argument",
+                                            value: "IntAr",
+                                            realType: "IntAr",
+                                            astType: "array",
+                                        },
+                                    },
+                                ],
+                                returnValue: "int64",
+                            },
+                        };
+
+                        const analyze = () => {
+                            return analyzer.analyze(parser.parse(data));
+                        };
+
+                        expect(analyze()).toEqual(ast);
+                    });
                 });
 
                 describe("invalid", () => {

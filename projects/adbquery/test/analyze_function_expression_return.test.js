@@ -259,6 +259,22 @@ describe("analyze", () => {
                                 type: "array",
                                 name: "MyArr",
                                 arrayType: "Id",
+                                functions: {
+                                    at: {
+                                        type: "function",
+                                        name: "at",
+                                        arguments: ["int64"],
+                                        body: [],
+                                        returnValue: "Id",
+                                    },
+                                    size: {
+                                        type: "function",
+                                        name: "size",
+                                        arguments: [],
+                                        body: [],
+                                        returnValue: "int64",
+                                    },
+                                },
                             },
                             MyVar: {
                                 type: "variant",
@@ -268,7 +284,6 @@ describe("analyze", () => {
                             MyObj: {
                                 type: "object",
                                 name: "MyObj",
-                                base: undefined,
                                 fields: ["MyVar"],
                                 functions: {
                                     foo: {

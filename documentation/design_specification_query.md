@@ -75,8 +75,7 @@ Syntax:
 Array functions:
 
 -   `"size": { "arguments": [], "body": <implementation defined>, "return": "int64" }"` (a function that returns number of values in the array as `int64`)
--   `"operator[]": { "arguments": ["index"], "body": <implementation defined>, "return": <arrayType> }` (subscript operator or access operator that takes `index` argument and returns mutable value at that position in the array)
--   `"operator+=": { "arguments": [<arrayType>], "body": <implementation defined>, "return": <array> }` (addition assignment operator is a function that takes an array, pushes a new value at the end and returns it)
+-   `"at": { "arguments": ["int64"], "body": <implementation defined>, "return": <arrayType> }` (a function that takes index as `int64` argument and returns mutable value at that position in the array)
 
 Implicit arrays:
 

@@ -261,6 +261,10 @@ function isLocal(expression, context) {
     return context["locals"].includes(expression["value"]);
 }
 
+function isParentArray(expression) {
+    return expression["parent"]["astType"] == "array";
+}
+
 function isParentField(expression, ast) {
     return (
         hasParent(expression) &&
@@ -277,7 +281,7 @@ function isParentObject(expression) {
 
 function isParentMethod(expression, ast) {
     return (
-        isParentObject(expression) &&
+        (isParentArray(expression) || isParentObject(expression)) &&
         expression["value"] in
             ast[expression["parent"]["realType"]]["functions"]
     );

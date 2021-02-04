@@ -28,6 +28,22 @@ describe("analyze", () => {
                         type: "array",
                         name: "MyArr",
                         arrayType: "int64",
+                        functions: {
+                            at: {
+                                type: "function",
+                                name: "at",
+                                arguments: ["int64"],
+                                body: [],
+                                returnValue: "int64",
+                            },
+                            size: {
+                                type: "function",
+                                name: "size",
+                                arguments: [],
+                                body: [],
+                                returnValue: "int64",
+                            },
+                        },
                     },
                 };
 
@@ -55,6 +71,22 @@ describe("analyze", () => {
                         type: "array",
                         name: "MyArr",
                         arrayType: "SomeObj",
+                        functions: {
+                            at: {
+                                type: "function",
+                                name: "at",
+                                arguments: ["int64"],
+                                body: [],
+                                returnValue: "SomeObj",
+                            },
+                            size: {
+                                type: "function",
+                                name: "size",
+                                arguments: [],
+                                body: [],
+                                returnValue: "int64",
+                            },
+                        },
                     },
                 };
 

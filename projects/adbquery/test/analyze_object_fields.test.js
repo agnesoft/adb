@@ -38,6 +38,22 @@ describe("analyze", () => {
                             type: "array",
                             name: "Ids",
                             arrayType: "Id",
+                            functions: {
+                                at: {
+                                    type: "function",
+                                    name: "at",
+                                    arguments: ["int64"],
+                                    body: [],
+                                    returnValue: "Id",
+                                },
+                                size: {
+                                    type: "function",
+                                    name: "size",
+                                    arguments: [],
+                                    body: [],
+                                    returnValue: "int64",
+                                },
+                            },
                         },
                         MyObj: {
                             type: "object",

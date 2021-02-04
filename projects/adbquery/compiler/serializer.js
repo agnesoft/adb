@@ -15,11 +15,11 @@
 function addByteSerialization(data) {
     data["serialize_byte"] = {
         arguments: ["ByteArray", "offset", "byte"],
-        body: ["ByteArray[offset] = byte", "offset += 1"],
+        body: ["ByteArray.at(offset) = byte", "offset += 1"],
     };
     data["deserialize_byte"] = {
         arguments: ["ByteArray", "offset"],
-        body: ["byte = ByteArray[offset]", "offset += 1", "return byte"],
+        body: ["byte = ByteArray.at(offset)", "offset += 1", "return byte"],
         return: "byte",
     };
 }
@@ -91,7 +91,7 @@ function addArraySerialization(array, arrayType, serialization) {
         arguments: ["ByteArray", "offset", array],
         body: [
             `serialize_int64(ByteArray, offset, arraySize(${array})`,
-            `for (arraySize(${array})) { serialize_${arrayType}(ByteArray, offset, ${array}[i])) }`,
+            `for (arraySize(${array})) { serialize_${arrayType}(ByteArray, offset, ${array}.at(i)) }`,
         ],
     };
     serialization[`deserialize_${array}`] = {

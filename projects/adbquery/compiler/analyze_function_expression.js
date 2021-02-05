@@ -329,7 +329,10 @@ function expressionAsString(expression) {
 }
 
 function isNumeric(left, right) {
-    return left["realType"] == "int64" && right["type"] == "number";
+    return (
+        (left["realType"] == "int64" || left["realType"] == "double") &&
+        (right["realType"] == "int64" || right["realType"] == "double")
+    );
 }
 
 function validateAddition(left, right, ast) {

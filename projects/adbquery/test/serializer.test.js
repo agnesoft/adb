@@ -69,5 +69,26 @@ describe("serializer", () => {
 
             expect(serializer.addSerialization(data)).toMatchObject(expected);
         });
+
+        test("function", () => {
+            const data = {
+                foo: { body: [] },
+            };
+
+            expect(
+                "serialize_foo" in serializer.addSerialization(data)
+            ).toBeFalsy();
+        });
+
+        test("alias", () => {
+            const data = {
+                obj: {},
+                objalias: "obj",
+            };
+
+            expect(
+                "serialize_objalias" in serializer.addSerialization(data)
+            ).toBeFalsy();
+        });
     });
 });

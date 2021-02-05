@@ -75,11 +75,7 @@ function isArray(type, data) {
 }
 
 function isObject(type, data) {
-    return (
-        Object.keys(data[type]).length == 0 ||
-        "fields" in data[type] ||
-        "functions" in data[type]
-    );
+    return Object.keys(data[type]).includes("fields");
 }
 
 function isVariant(type, data) {
@@ -106,10 +102,6 @@ function addArraySerialization(array, arrayType, serialization) {
 }
 
 function fieldsSerializationExpressions(object, fields) {
-    if (!fields) {
-        return [];
-    }
-
     let expressions = [];
     for (const field of fields) {
         expressions.push(
@@ -120,10 +112,6 @@ function fieldsSerializationExpressions(object, fields) {
 }
 
 function fieldsDeserializationExpression(object, fields) {
-    if (!fields) {
-        return "";
-    }
-
     let expressions = [];
     for (const field of fields) {
         expressions.push(
@@ -142,6 +130,7 @@ function addObjectSerialization(object, definition, serialization) {
         arguments: ["ByteArray", "offset"],
         body: [
             `return ${object}(${fieldsDeserializationExpression(
+                object,
                 definition["fields"]
             )})`,
         ],

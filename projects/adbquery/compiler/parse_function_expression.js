@@ -35,17 +35,15 @@ function assignmentAST(expression) {
 }
 
 function callArguments(part) {
+    const params = part.slice(part.indexOf("(") + 1, part.length - 1);
+    const regex = /([^,]+\(.+?\))|([^,]+)/g;
+    const matches = params.matchAll(regex);
     let args = [];
-    part.slice(part.indexOf("(") + 1, part.length - 1)
-        .split(",")
-        .forEach((arg) => {
-            if (arg.trim()) {
-                args.push({
-                    type: "argument",
-                    value: arg.trim(),
-                });
-            }
-        });
+
+    for (const match of matches) {
+        args.push(parseArg(match[0].trim()));
+    }
+
     return args;
 }
 
@@ -181,6 +179,17 @@ function partAST(part) {
         return callAST(part);
     } else {
         return typeAST(part);
+    }
+}
+
+function parseArg(arg) {
+    if (arg.includes("(")) {
+        return callAST(arg);
+    } else {
+        return {
+            type: "argument",
+            value: arg.trim(),
+        };
     }
 }
 

@@ -159,6 +159,99 @@ describe("parse", () => {
 
                         expect(parser.parse(data)).toEqual(ast);
                     });
+
+                    test("nested call", () => {
+                        const data = {
+                            bar: { body: [] },
+                            foo: { body: ["foo(1, bar())"] },
+                        };
+
+                        const ast = {
+                            bar: {
+                                type: "function",
+                                name: "bar",
+                                arguments: [],
+                                body: [],
+                                returnValue: undefined,
+                            },
+                            foo: {
+                                type: "function",
+                                name: "foo",
+                                arguments: [],
+                                body: [
+                                    {
+                                        type: "call",
+                                        value: "foo",
+                                        arguments: [
+                                            {
+                                                type: "argument",
+                                                value: "1",
+                                            },
+                                            {
+                                                type: "call",
+                                                arguments: [],
+                                                value: "bar",
+                                            },
+                                        ],
+                                    },
+                                ],
+                                returnValue: undefined,
+                            },
+                        };
+
+                        expect(parser.parse(data)).toEqual(ast);
+                    });
+
+                    test("nested call with parameters", () => {
+                        const data = {
+                            bar: { body: [] },
+                            foo: { body: ["foo(1, bar(2, 3))"] },
+                        };
+
+                        const ast = {
+                            bar: {
+                                type: "function",
+                                name: "bar",
+                                arguments: [],
+                                body: [],
+                                returnValue: undefined,
+                            },
+                            foo: {
+                                type: "function",
+                                name: "foo",
+                                arguments: [],
+                                body: [
+                                    {
+                                        type: "call",
+                                        value: "foo",
+                                        arguments: [
+                                            {
+                                                type: "argument",
+                                                value: "1",
+                                            },
+                                            {
+                                                type: "call",
+                                                arguments: [
+                                                    {
+                                                        type: "argument",
+                                                        value: "2",
+                                                    },
+                                                    {
+                                                        type: "argument",
+                                                        value: "3",
+                                                    },
+                                                ],
+                                                value: "bar",
+                                            },
+                                        ],
+                                    },
+                                ],
+                                returnValue: undefined,
+                            },
+                        };
+
+                        expect(parser.parse(data)).toEqual(ast);
+                    });
                 });
 
                 describe("invalid", () => {

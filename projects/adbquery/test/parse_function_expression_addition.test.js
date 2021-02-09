@@ -26,9 +26,6 @@ describe("parse", () => {
 
                         const ast = {
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: [],
                                 body: [
                                     {
                                         type: "addition",
@@ -45,7 +42,7 @@ describe("parse", () => {
                             },
                         };
 
-                        expect(parser.parse(data)).toEqual(ast);
+                        expect(parser.parse(data)).toMatchObject(ast);
                     });
 
                     test("type += type", () => {
@@ -55,9 +52,6 @@ describe("parse", () => {
 
                         const ast = {
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: [],
                                 body: [
                                     {
                                         type: "addition",
@@ -71,11 +65,10 @@ describe("parse", () => {
                                         },
                                     },
                                 ],
-                                returnValue: undefined,
                             },
                         };
 
-                        expect(parser.parse(data)).toEqual(ast);
+                        expect(parser.parse(data)).toMatchObject(ast);
                     });
 
                     test("type.type += type.type", () => {
@@ -85,9 +78,6 @@ describe("parse", () => {
 
                         const ast = {
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: [],
                                 body: [
                                     {
                                         type: "addition",
@@ -109,11 +99,10 @@ describe("parse", () => {
                                         },
                                     },
                                 ],
-                                returnValue: undefined,
                             },
                         };
 
-                        expect(parser.parse(data)).toEqual(ast);
+                        expect(parser.parse(data)).toMatchObject(ast);
                     });
                 });
 

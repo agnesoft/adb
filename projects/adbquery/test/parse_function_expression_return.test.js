@@ -29,9 +29,6 @@ describe("parse", () => {
 
                         const ast = {
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: [],
                                 body: [
                                     {
                                         type: "return",
@@ -39,11 +36,10 @@ describe("parse", () => {
                                         returnType: "type",
                                     },
                                 ],
-                                returnValue: "Id",
                             },
                         };
 
-                        expect(parser.parse(data)).toEqual(ast);
+                        expect(parser.parse(data)).toMatchObject(ast);
                     });
 
                     test("field", () => {
@@ -56,9 +52,6 @@ describe("parse", () => {
 
                         const ast = {
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: [],
                                 body: [
                                     {
                                         type: "return",
@@ -70,11 +63,10 @@ describe("parse", () => {
                                         },
                                     },
                                 ],
-                                returnValue: "Id",
                             },
                         };
 
-                        expect(parser.parse(data)).toEqual(ast);
+                        expect(parser.parse(data)).toMatchObject(ast);
                     });
 
                     test("call", () => {
@@ -84,9 +76,6 @@ describe("parse", () => {
 
                         const ast = {
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: [],
                                 body: [
                                     {
                                         type: "return",
@@ -95,11 +84,10 @@ describe("parse", () => {
                                         returnType: "call",
                                     },
                                 ],
-                                returnValue: "Id",
                             },
                         };
 
-                        expect(parser.parse(data)).toEqual(ast);
+                        expect(parser.parse(data)).toMatchObject(ast);
                     });
                 });
 

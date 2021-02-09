@@ -26,9 +26,6 @@ describe("parse", () => {
 
                         const ast = {
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: [],
                                 body: [
                                     {
                                         type: "assignment",
@@ -45,7 +42,7 @@ describe("parse", () => {
                             },
                         };
 
-                        expect(parser.parse(data)).toEqual(ast);
+                        expect(parser.parse(data)).toMatchObject(ast);
                     });
                 });
 
@@ -56,9 +53,6 @@ describe("parse", () => {
 
                     const ast = {
                         foo: {
-                            type: "function",
-                            name: "foo",
-                            arguments: [],
                             body: [
                                 {
                                     type: "assignment",
@@ -72,11 +66,10 @@ describe("parse", () => {
                                     },
                                 },
                             ],
-                            returnValue: undefined,
                         },
                     };
 
-                    expect(parser.parse(data)).toEqual(ast);
+                    expect(parser.parse(data)).toMatchObject(ast);
                 });
 
                 test("type.type = type.type", () => {
@@ -86,9 +79,6 @@ describe("parse", () => {
 
                     const ast = {
                         foo: {
-                            type: "function",
-                            name: "foo",
-                            arguments: [],
                             body: [
                                 {
                                     type: "assignment",
@@ -110,11 +100,10 @@ describe("parse", () => {
                                     },
                                 },
                             ],
-                            returnValue: undefined,
                         },
                     };
 
-                    expect(parser.parse(data)).toEqual(ast);
+                    expect(parser.parse(data)).toMatchObject(ast);
                 });
 
                 describe("invalid", () => {

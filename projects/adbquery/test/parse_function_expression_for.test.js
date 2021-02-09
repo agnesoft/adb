@@ -28,9 +28,6 @@ describe("parse", () => {
 
                         const ast = {
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: [],
                                 body: [
                                     {
                                         type: "for",
@@ -52,11 +49,10 @@ describe("parse", () => {
                                         ],
                                     },
                                 ],
-                                returnValue: undefined,
                             },
                         };
 
-                        expect(parser.parse(data)).toEqual(ast);
+                        expect(parser.parse(data)).toMatchObject(ast);
                     });
 
                     test("function call", () => {
@@ -68,9 +64,6 @@ describe("parse", () => {
 
                         const ast = {
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: [],
                                 body: [
                                     {
                                         type: "for",
@@ -98,10 +91,10 @@ describe("parse", () => {
                                         ],
                                     },
                                 ],
-                                returnValue: undefined,
                             },
                         };
-                        expect(parser.parse(data)).toEqual(ast);
+
+                        expect(parser.parse(data)).toMatchObject(ast);
                     });
                 });
 

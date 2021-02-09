@@ -25,14 +25,11 @@ describe("parse", () => {
 
                     const ast = {
                         foo: {
-                            type: "function",
-                            name: "foo",
                             arguments: ["arg1"],
-                            body: [],
                         },
                     };
 
-                    expect(parser.parse(data)).toEqual(ast);
+                    expect(parser.parse(data)).toMatchObject(ast);
                 });
 
                 test("multiple", () => {
@@ -42,14 +39,11 @@ describe("parse", () => {
 
                     const ast = {
                         foo: {
-                            type: "function",
-                            name: "foo",
                             arguments: ["arg1", "arg2"],
-                            body: [],
                         },
                     };
 
-                    expect(parser.parse(data)).toEqual(ast);
+                    expect(parser.parse(data)).toMatchObject(ast);
                 });
             });
             describe("invalid", () => {

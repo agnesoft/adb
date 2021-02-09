@@ -30,7 +30,7 @@ describe("parse", () => {
                     },
                 };
 
-                expect(parser.parse(data)).toEqual(ast);
+                expect(parser.parse(data)).toMatchObject(ast);
             });
         });
         describe("invalid", () => {

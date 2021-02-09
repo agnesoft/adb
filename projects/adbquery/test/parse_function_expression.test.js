@@ -30,9 +30,6 @@ describe("parse", () => {
 
                     const ast = {
                         foo: {
-                            type: "function",
-                            name: "foo",
-                            arguments: [],
                             body: [
                                 {
                                     type: "assignment",
@@ -76,7 +73,7 @@ describe("parse", () => {
                         },
                     };
 
-                    expect(parser.parse(data)).toEqual(ast);
+                    expect(parser.parse(data)).toMatchObject(ast);
                 });
             });
 

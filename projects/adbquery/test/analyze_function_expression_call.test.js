@@ -329,9 +329,99 @@ describe("analyze", () => {
                         expect(analyze()).toMatchObject(ast);
                     });
 
-                    test("nested call", () => {});
+                    test("nested call", () => {
+                        const data = {
+                            bar: { body: ["return 1"], return: "int64" },
+                            foo: { arguments: ["int64"], body: ["foo(bar())"] },
+                        };
 
-                    test("nested call with parameters", () => {});
+                        const ast = {
+                            foo: {
+                                body: [
+                                    {
+                                        type: "call",
+                                        arguments: [
+                                            {
+                                                type: "call",
+                                                arguments: [],
+                                                realType: "int64",
+                                                astType: "native",
+                                            },
+                                        ],
+                                        value: "foo",
+                                        realType: undefined,
+                                        astType: undefined,
+                                    },
+                                ],
+                            },
+                        };
+
+                        const analyze = () => {
+                            return analyzer.analyze(parser.parse(data));
+                        };
+
+                        expect(analyze()).toMatchObject(ast);
+                    });
+
+                    test("nested call with parameters", () => {
+                        const data = {
+                            bar: {
+                                arguments: ["int64", "double"],
+                                body: ["return 1"],
+                                return: "int64",
+                            },
+                            foo: {
+                                arguments: ["double", "int64"],
+                                body: ["foo(1, bar(2, 3))"],
+                            },
+                        };
+
+                        const ast = {
+                            foo: {
+                                body: [
+                                    {
+                                        type: "call",
+                                        arguments: [
+                                            {
+                                                type: "number",
+                                                value: "1",
+                                                realType: "int64",
+                                                astType: "native",
+                                            },
+                                            {
+                                                type: "call",
+                                                arguments: [
+                                                    {
+                                                        type: "number",
+                                                        value: "2",
+                                                        realType: "int64",
+                                                        astType: "native",
+                                                    },
+                                                    {
+                                                        type: "number",
+                                                        value: "3",
+                                                        realType: "int64",
+                                                        astType: "native",
+                                                    },
+                                                ],
+                                                realType: "int64",
+                                                astType: "native",
+                                            },
+                                        ],
+                                        value: "foo",
+                                        realType: undefined,
+                                        astType: undefined,
+                                    },
+                                ],
+                            },
+                        };
+
+                        const analyze = () => {
+                            return analyzer.analyze(parser.parse(data));
+                        };
+
+                        expect(analyze()).toMatchObject(ast);
+                    });
                 });
 
                 describe("invalid", () => {

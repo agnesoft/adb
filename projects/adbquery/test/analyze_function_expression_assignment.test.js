@@ -29,15 +29,7 @@ describe("analyze", () => {
                         };
 
                         const ast = {
-                            Id: {
-                                type: "alias",
-                                name: "Id",
-                                aliasedType: "int64",
-                            },
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: [],
                                 body: [
                                     {
                                         type: "assignment",
@@ -55,7 +47,6 @@ describe("analyze", () => {
                                         },
                                     },
                                 ],
-                                returnValue: undefined,
                             },
                         };
 
@@ -63,7 +54,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze()).toEqual(ast);
+                        expect(analyze()).toMatchObject(ast);
                     });
 
                     test("type = type", () => {
@@ -77,20 +68,7 @@ describe("analyze", () => {
                         };
 
                         const ast = {
-                            Id: {
-                                type: "alias",
-                                name: "Id",
-                                aliasedType: "int64",
-                            },
-                            From: {
-                                type: "alias",
-                                name: "From",
-                                aliasedType: "int64",
-                            },
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: ["From"],
                                 body: [
                                     {
                                         type: "assignment",
@@ -108,7 +86,6 @@ describe("analyze", () => {
                                         },
                                     },
                                 ],
-                                returnValue: undefined,
                             },
                         };
 
@@ -116,7 +93,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze()).toEqual(ast);
+                        expect(analyze()).toMatchObject(ast);
                     });
 
                     test("type = alias", () => {
@@ -131,25 +108,7 @@ describe("analyze", () => {
                         };
 
                         const ast = {
-                            Id: {
-                                type: "alias",
-                                name: "Id",
-                                aliasedType: "int64",
-                            },
-                            From: {
-                                type: "alias",
-                                name: "From",
-                                aliasedType: "Id",
-                            },
-                            MyFrom: {
-                                type: "alias",
-                                name: "MyFrom",
-                                aliasedType: "From",
-                            },
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: ["MyFrom"],
                                 body: [
                                     {
                                         type: "assignment",
@@ -167,7 +126,6 @@ describe("analyze", () => {
                                         },
                                     },
                                 ],
-                                returnValue: undefined,
                             },
                         };
 
@@ -175,7 +133,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze()).toEqual(ast);
+                        expect(analyze()).toMatchObject(ast);
                     });
                 });
 

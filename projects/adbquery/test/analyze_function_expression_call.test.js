@@ -31,17 +31,7 @@ describe("analyze", () => {
                         };
 
                         const ast = {
-                            foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: [],
-                                body: [],
-                                returnValue: undefined,
-                            },
                             bar: {
-                                type: "function",
-                                name: "bar",
-                                arguments: [],
                                 body: [
                                     {
                                         type: "call",
@@ -56,7 +46,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze()).toEqual(ast);
+                        expect(analyze()).toMatchObject(ast);
                     });
 
                     test("free function with argument", () => {
@@ -72,22 +62,7 @@ describe("analyze", () => {
                         };
 
                         const ast = {
-                            Id: {
-                                type: "alias",
-                                name: "Id",
-                                aliasedType: "int64",
-                            },
-                            foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: ["int64"],
-                                body: [],
-                                returnValue: undefined,
-                            },
                             bar: {
-                                type: "function",
-                                name: "bar",
-                                arguments: [],
                                 body: [
                                     {
                                         type: "call",
@@ -104,7 +79,6 @@ describe("analyze", () => {
                                         ],
                                     },
                                 ],
-                                returnValue: undefined,
                             },
                         };
 
@@ -112,7 +86,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze()).toEqual(ast);
+                        expect(analyze()).toMatchObject(ast);
                     });
 
                     test("method", () => {
@@ -131,21 +105,8 @@ describe("analyze", () => {
 
                         const ast = {
                             SomeObj: {
-                                type: "object",
-                                name: "SomeObj",
-                                fields: [],
                                 functions: {
-                                    foo: {
-                                        type: "function",
-                                        name: "foo",
-                                        arguments: [],
-                                        body: [],
-                                        returnValue: undefined,
-                                    },
                                     bar: {
-                                        type: "function",
-                                        name: "bar",
-                                        arguments: [],
                                         body: [
                                             {
                                                 type: "method",
@@ -155,7 +116,6 @@ describe("analyze", () => {
                                                 astType: undefined,
                                             },
                                         ],
-                                        returnValue: undefined,
                                     },
                                 },
                             },
@@ -165,7 +125,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze()).toEqual(ast);
+                        expect(analyze()).toMatchObject(ast);
                     });
 
                     test("argument's method", () => {
@@ -184,24 +144,7 @@ describe("analyze", () => {
                         };
 
                         const ast = {
-                            SomeObj: {
-                                type: "object",
-                                name: "SomeObj",
-                                fields: [],
-                                functions: {
-                                    foo: {
-                                        type: "function",
-                                        name: "foo",
-                                        arguments: [],
-                                        body: [],
-                                        returnValue: undefined,
-                                    },
-                                },
-                            },
                             bar: {
-                                type: "function",
-                                name: "bar",
-                                arguments: ["SomeObj"],
                                 body: [
                                     {
                                         type: "method",
@@ -217,7 +160,6 @@ describe("analyze", () => {
                                         },
                                     },
                                 ],
-                                returnValue: undefined,
                             },
                         };
 
@@ -225,7 +167,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze()).toEqual(ast);
+                        expect(analyze()).toMatchObject(ast);
                     });
 
                     test("constructor", () => {
@@ -239,21 +181,7 @@ describe("analyze", () => {
                         };
 
                         const ast = {
-                            Id: {
-                                type: "alias",
-                                name: "Id",
-                                aliasedType: "int64",
-                            },
-                            Obj: {
-                                type: "object",
-                                name: "Obj",
-                                fields: ["Id"],
-                                functions: {},
-                            },
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: ["Id"],
                                 body: [
                                     {
                                         type: "constructor",
@@ -270,7 +198,6 @@ describe("analyze", () => {
                                         value: "Obj",
                                     },
                                 ],
-                                returnValue: undefined,
                             },
                         };
 
@@ -278,7 +205,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze()).toEqual(ast);
+                        expect(analyze()).toMatchObject(ast);
                     });
 
                     test("<array>.size()", () => {
@@ -292,31 +219,7 @@ describe("analyze", () => {
                         };
 
                         const ast = {
-                            IntAr: {
-                                type: "array",
-                                name: "IntAr",
-                                arrayType: "int64",
-                                functions: {
-                                    at: {
-                                        type: "function",
-                                        name: "at",
-                                        arguments: ["int64"],
-                                        body: [],
-                                        returnValue: "int64",
-                                    },
-                                    size: {
-                                        type: "function",
-                                        name: "size",
-                                        arguments: [],
-                                        body: [],
-                                        returnValue: "int64",
-                                    },
-                                },
-                            },
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: ["IntAr"],
                                 body: [
                                     {
                                         type: "return",
@@ -333,7 +236,6 @@ describe("analyze", () => {
                                         },
                                     },
                                 ],
-                                returnValue: "int64",
                             },
                         };
 
@@ -341,7 +243,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze()).toEqual(ast);
+                        expect(analyze()).toMatchObject(ast);
                     });
 
                     test("<array>.at(index)", () => {
@@ -355,31 +257,7 @@ describe("analyze", () => {
                         };
 
                         const ast = {
-                            IntAr: {
-                                type: "array",
-                                name: "IntAr",
-                                arrayType: "int64",
-                                functions: {
-                                    at: {
-                                        type: "function",
-                                        name: "at",
-                                        arguments: ["int64"],
-                                        body: [],
-                                        returnValue: "int64",
-                                    },
-                                    size: {
-                                        type: "function",
-                                        name: "size",
-                                        arguments: [],
-                                        body: [],
-                                        returnValue: "int64",
-                                    },
-                                },
-                            },
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: ["IntAr"],
                                 body: [
                                     {
                                         type: "return",
@@ -403,7 +281,6 @@ describe("analyze", () => {
                                         },
                                     },
                                 ],
-                                returnValue: "int64",
                             },
                         };
 
@@ -411,7 +288,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze()).toEqual(ast);
+                        expect(analyze()).toMatchObject(ast);
                     });
 
                     test("<variant>.index()", () => {
@@ -425,24 +302,7 @@ describe("analyze", () => {
                         };
 
                         const ast = {
-                            MyVar: {
-                                type: "variant",
-                                name: "MyVar",
-                                variants: ["byte", "int64"],
-                                functions: {
-                                    index: {
-                                        type: "function",
-                                        name: "index",
-                                        arguments: [],
-                                        body: [],
-                                        returnValue: "byte",
-                                    },
-                                },
-                            },
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: ["MyVar"],
                                 body: [
                                     {
                                         type: "return",
@@ -459,7 +319,6 @@ describe("analyze", () => {
                                         },
                                     },
                                 ],
-                                returnValue: "byte",
                             },
                         };
 
@@ -467,8 +326,12 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze()).toEqual(ast);
+                        expect(analyze()).toMatchObject(ast);
                     });
+
+                    test("nested call", () => {});
+
+                    test("nested call with parameters", () => {});
                 });
 
                 describe("invalid", () => {

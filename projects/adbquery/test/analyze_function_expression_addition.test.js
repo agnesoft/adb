@@ -29,15 +29,7 @@ describe("analyze", () => {
                         };
 
                         const ast = {
-                            Id: {
-                                type: "alias",
-                                name: "Id",
-                                aliasedType: "int64",
-                            },
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: [],
                                 body: [
                                     {
                                         type: "addition",
@@ -55,7 +47,6 @@ describe("analyze", () => {
                                         },
                                     },
                                 ],
-                                returnValue: undefined,
                             },
                         };
 
@@ -63,7 +54,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(addContext()).toEqual(ast);
+                        expect(addContext()).toMatchObject(ast);
                     });
 
                     test("array += value", () => {
@@ -77,36 +68,7 @@ describe("analyze", () => {
                         };
 
                         const ast = {
-                            Id: {
-                                type: "alias",
-                                name: "Id",
-                                aliasedType: "int64",
-                            },
-                            MyArr: {
-                                type: "array",
-                                name: "MyArr",
-                                arrayType: "int64",
-                                functions: {
-                                    at: {
-                                        type: "function",
-                                        name: "at",
-                                        arguments: ["int64"],
-                                        body: [],
-                                        returnValue: "int64",
-                                    },
-                                    size: {
-                                        type: "function",
-                                        name: "size",
-                                        arguments: [],
-                                        body: [],
-                                        returnValue: "int64",
-                                    },
-                                },
-                            },
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: ["Id"],
                                 body: [
                                     {
                                         type: "addition",
@@ -124,7 +86,6 @@ describe("analyze", () => {
                                         },
                                     },
                                 ],
-                                returnValue: undefined,
                             },
                         };
 
@@ -132,7 +93,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(addContext()).toEqual(ast);
+                        expect(addContext()).toMatchObject(ast);
                     });
 
                     test("array += array", () => {
@@ -147,41 +108,7 @@ describe("analyze", () => {
                         };
 
                         const ast = {
-                            Id: {
-                                type: "alias",
-                                name: "Id",
-                                aliasedType: "int64",
-                            },
-                            MyArr: {
-                                type: "array",
-                                name: "MyArr",
-                                arrayType: "int64",
-                                functions: {
-                                    at: {
-                                        type: "function",
-                                        name: "at",
-                                        arguments: ["int64"],
-                                        body: [],
-                                        returnValue: "int64",
-                                    },
-                                    size: {
-                                        type: "function",
-                                        name: "size",
-                                        arguments: [],
-                                        body: [],
-                                        returnValue: "int64",
-                                    },
-                                },
-                            },
-                            OtherArr: {
-                                type: "alias",
-                                name: "OtherArr",
-                                aliasedType: "MyArr",
-                            },
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: ["OtherArr"],
                                 body: [
                                     {
                                         type: "addition",
@@ -199,7 +126,6 @@ describe("analyze", () => {
                                         },
                                     },
                                 ],
-                                returnValue: undefined,
                             },
                         };
 
@@ -207,10 +133,10 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(addContext()).toEqual(ast);
+                        expect(addContext()).toMatchObject(ast);
                     });
 
-                    test("local += argument", () => {
+                    test("local = argument, local += argument", () => {
                         const data = {
                             Id: "int64",
                             ArgId: "Id",
@@ -221,20 +147,7 @@ describe("analyze", () => {
                         };
 
                         const ast = {
-                            Id: {
-                                type: "alias",
-                                name: "Id",
-                                aliasedType: "int64",
-                            },
-                            ArgId: {
-                                type: "alias",
-                                name: "ArgId",
-                                aliasedType: "Id",
-                            },
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: ["ArgId"],
                                 body: [
                                     {
                                         type: "assignment",
@@ -267,7 +180,6 @@ describe("analyze", () => {
                                         },
                                     },
                                 ],
-                                returnValue: undefined,
                             },
                         };
 
@@ -275,7 +187,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(addContext()).toEqual(ast);
+                        expect(addContext()).toMatchObject(ast);
                     });
                 });
 

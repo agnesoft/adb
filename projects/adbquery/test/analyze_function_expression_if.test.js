@@ -36,37 +36,7 @@ describe("analyze", () => {
                         };
 
                         const ast = {
-                            Arg: {
-                                type: "alias",
-                                name: "Arg",
-                                aliasedType: "int64",
-                            },
-                            bar: {
-                                type: "function",
-                                name: "bar",
-                                arguments: [],
-                                body: [],
-                                returnValue: undefined,
-                            },
-                            fizz: {
-                                type: "function",
-                                name: "fizz",
-                                arguments: ["Arg"],
-                                body: [
-                                    {
-                                        type: "return",
-                                        value: "Arg",
-                                        astType: "native",
-                                        realType: "int64",
-                                        returnType: "argument",
-                                    },
-                                ],
-                                returnValue: "int64",
-                            },
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: ["Arg"],
                                 body: [
                                     {
                                         type: "if",
@@ -102,7 +72,6 @@ describe("analyze", () => {
                                         ],
                                     },
                                 ],
-                                returnValue: undefined,
                             },
                         };
 
@@ -110,7 +79,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze()).toEqual(ast);
+                        expect(analyze()).toMatchObject(ast);
                     });
 
                     test("if/else", () => {
@@ -126,24 +95,7 @@ describe("analyze", () => {
                         };
 
                         const ast = {
-                            fizz: {
-                                type: "function",
-                                name: "fizz",
-                                arguments: [],
-                                body: [],
-                                returnValue: undefined,
-                            },
-                            buzz: {
-                                type: "function",
-                                name: "buzz",
-                                arguments: [],
-                                body: [],
-                                returnValue: undefined,
-                            },
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: [],
                                 body: [
                                     {
                                         type: "if",
@@ -183,7 +135,6 @@ describe("analyze", () => {
                                         ],
                                     },
                                 ],
-                                returnValue: undefined,
                             },
                         };
 
@@ -191,7 +142,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze()).toEqual(ast);
+                        expect(analyze()).toMatchObject(ast);
                     });
 
                     test("if/else if", () => {
@@ -207,24 +158,7 @@ describe("analyze", () => {
                         };
 
                         const ast = {
-                            fizz: {
-                                type: "function",
-                                name: "fizz",
-                                arguments: [],
-                                body: [],
-                                returnValue: undefined,
-                            },
-                            buzz: {
-                                type: "function",
-                                name: "buzz",
-                                arguments: [],
-                                body: [],
-                                returnValue: undefined,
-                            },
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: [],
                                 body: [
                                     {
                                         type: "if",
@@ -277,7 +211,6 @@ describe("analyze", () => {
                                         ],
                                     },
                                 ],
-                                returnValue: undefined,
                             },
                         };
 
@@ -285,7 +218,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze()).toEqual(ast);
+                        expect(analyze()).toMatchObject(ast);
                     });
                 });
 

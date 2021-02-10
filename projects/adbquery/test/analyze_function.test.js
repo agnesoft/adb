@@ -37,7 +37,7 @@ describe("analyze", () => {
                     return analyzer.analyze(parser.parse(data));
                 };
 
-                expect(analyze()).toEqual(ast);
+                expect(analyze()).toMatchObject(ast);
             });
         });
     });

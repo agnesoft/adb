@@ -31,14 +31,16 @@ describe("parse", () => {
                                 body: [
                                     {
                                         type: "if",
-                                        left: {
-                                            type: "number",
-                                            value: 1,
-                                        },
-                                        comparator: "==",
-                                        right: {
-                                            type: "number",
-                                            value: 1,
+                                        condition: {
+                                            left: {
+                                                type: "number",
+                                                value: 1,
+                                            },
+                                            type: "==",
+                                            right: {
+                                                type: "number",
+                                                value: 1,
+                                            },
                                         },
                                         body: [
                                             {
@@ -67,20 +69,22 @@ describe("parse", () => {
                                 body: [
                                     {
                                         type: "if",
-                                        left: {
-                                            type: "call",
-                                            arguments: [
-                                                {
-                                                    type: "argument",
-                                                    value: "arg",
-                                                },
-                                            ],
-                                            value: "fizz",
-                                        },
-                                        comparator: "!=",
-                                        right: {
-                                            type: "number",
-                                            value: 3,
+                                        condition: {
+                                            left: {
+                                                type: "call",
+                                                arguments: [
+                                                    {
+                                                        type: "identifier",
+                                                        value: "arg",
+                                                    },
+                                                ],
+                                                value: "fizz",
+                                            },
+                                            type: "!=",
+                                            right: {
+                                                type: "number",
+                                                value: 3,
+                                            },
                                         },
                                         body: [
                                             {
@@ -109,24 +113,26 @@ describe("parse", () => {
                                 body: [
                                     {
                                         type: "if",
-                                        left: {
-                                            type: "type",
-                                            value: "arg",
-                                        },
-                                        comparator: "<",
-                                        right: {
-                                            type: "number",
-                                            value: 3,
+                                        condition: {
+                                            left: {
+                                                type: "identifier",
+                                                value: "arg",
+                                            },
+                                            type: "<",
+                                            right: {
+                                                type: "number",
+                                                value: 3,
+                                            },
                                         },
                                         body: [
                                             {
-                                                type: "addition",
+                                                type: "+=",
                                                 left: {
-                                                    type: "type",
+                                                    type: "identifier",
                                                     value: "arr",
                                                 },
                                                 right: {
-                                                    type: "type",
+                                                    type: "identifier",
                                                     value: "arg",
                                                 },
                                             },
@@ -151,24 +157,26 @@ describe("parse", () => {
                                 body: [
                                     {
                                         type: "if",
-                                        left: {
-                                            type: "type",
-                                            value: "arg",
-                                        },
-                                        comparator: "<=",
-                                        right: {
-                                            type: "number",
-                                            value: 3,
+                                        condition: {
+                                            left: {
+                                                type: "identifier",
+                                                value: "arg",
+                                            },
+                                            type: "<=",
+                                            right: {
+                                                type: "number",
+                                                value: 3,
+                                            },
                                         },
                                         body: [
                                             {
-                                                type: "addition",
+                                                type: "+=",
                                                 left: {
-                                                    type: "type",
+                                                    type: "identifier",
                                                     value: "arr",
                                                 },
                                                 right: {
-                                                    type: "type",
+                                                    type: "identifier",
                                                     value: "arg",
                                                 },
                                             },
@@ -193,24 +201,26 @@ describe("parse", () => {
                                 body: [
                                     {
                                         type: "if",
-                                        left: {
-                                            type: "type",
-                                            value: "arg",
-                                        },
-                                        comparator: ">",
-                                        right: {
-                                            type: "number",
-                                            value: 3,
+                                        condition: {
+                                            left: {
+                                                type: "identifier",
+                                                value: "arg",
+                                            },
+                                            type: ">",
+                                            right: {
+                                                type: "number",
+                                                value: 3,
+                                            },
                                         },
                                         body: [
                                             {
-                                                type: "assignment",
+                                                type: "=",
                                                 left: {
-                                                    type: "type",
+                                                    type: "identifier",
                                                     value: "var",
                                                 },
                                                 right: {
-                                                    type: "type",
+                                                    type: "identifier",
                                                     value: "arg",
                                                 },
                                             },
@@ -235,24 +245,26 @@ describe("parse", () => {
                                 body: [
                                     {
                                         type: "if",
-                                        left: {
-                                            type: "type",
-                                            value: "arg",
-                                        },
-                                        comparator: ">=",
-                                        right: {
-                                            type: "number",
-                                            value: 3,
+                                        condition: {
+                                            left: {
+                                                type: "identifier",
+                                                value: "arg",
+                                            },
+                                            type: ">=",
+                                            right: {
+                                                type: "number",
+                                                value: 3,
+                                            },
                                         },
                                         body: [
                                             {
-                                                type: "assignment",
+                                                type: "=",
                                                 left: {
-                                                    type: "type",
+                                                    type: "identifier",
                                                     value: "var",
                                                 },
                                                 right: {
-                                                    type: "type",
+                                                    type: "identifier",
                                                     value: "arg",
                                                 },
                                             },
@@ -280,14 +292,16 @@ describe("parse", () => {
                                 body: [
                                     {
                                         type: "if",
-                                        left: {
-                                            type: "number",
-                                            value: 1,
-                                        },
-                                        comparator: "==",
-                                        right: {
-                                            type: "number",
-                                            value: 1,
+                                        condition: {
+                                            left: {
+                                                type: "number",
+                                                value: 1,
+                                            },
+                                            type: "==",
+                                            right: {
+                                                type: "number",
+                                                value: 1,
+                                            },
                                         },
                                         body: [
                                             {
@@ -329,14 +343,16 @@ describe("parse", () => {
                                 body: [
                                     {
                                         type: "if",
-                                        left: {
-                                            type: "type",
-                                            value: "Arg",
-                                        },
-                                        comparator: "==",
-                                        right: {
-                                            type: "number",
-                                            value: 1,
+                                        condition: {
+                                            left: {
+                                                type: "identifier",
+                                                value: "Arg",
+                                            },
+                                            type: "==",
+                                            right: {
+                                                type: "number",
+                                                value: 1,
+                                            },
                                         },
                                         body: [
                                             {
@@ -348,14 +364,16 @@ describe("parse", () => {
                                     },
                                     {
                                         type: "elseif",
-                                        left: {
-                                            type: "type",
-                                            value: "Arg",
-                                        },
-                                        comparator: "==",
-                                        right: {
-                                            type: "number",
-                                            value: 2,
+                                        condition: {
+                                            left: {
+                                                type: "identifier",
+                                                value: "Arg",
+                                            },
+                                            type: "==",
+                                            right: {
+                                                type: "number",
+                                                value: 2,
+                                            },
                                         },
                                         body: [
                                             {
@@ -374,42 +392,10 @@ describe("parse", () => {
                 });
 
                 describe("invalid", () => {
-                    test("missing whitespace after if", () => {
-                        const data = {
-                            foo: {
-                                body: ["if(1 == 1) { bar() }"],
-                            },
-                        };
-
-                        const parse = () => {
-                            parser.parse(data);
-                        };
-
-                        expect(parse).toThrow(
-                            "Parser: type name in expression in function 'foo' cannot be empty."
-                        );
-                    });
-
-                    test("missing whitespace before body", () => {
-                        const data = {
-                            foo: {
-                                body: ["if (1 == 1){ bar() }"],
-                            },
-                        };
-
-                        const parse = () => {
-                            parser.parse(data);
-                        };
-
-                        expect(parse).toThrow(
-                            "Parser: invalid syntax in 'if/for' expression in function 'foo' (missing whitespace? I.e. 'if/for () {}')."
-                        );
-                    });
-
                     test("unknown comparator", () => {
                         const data = {
                             foo: {
-                                body: ["if (1 IS 1) { bar() }"],
+                                body: ["if (1 IS 2) { bar() }"],
                             },
                         };
 
@@ -418,7 +404,7 @@ describe("parse", () => {
                         };
 
                         expect(parse).toThrow(
-                            "Parser: no valid if comparator found in function 'foo'."
+                            "Parser: expected '(' or '.' or an operator, got 'IS' [identifier] in 'foo'."
                         );
                     });
                 });

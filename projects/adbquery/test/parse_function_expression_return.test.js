@@ -33,7 +33,7 @@ describe("parse", () => {
                                     {
                                         type: "return",
                                         value: "Id",
-                                        returnType: "type",
+                                        returnType: "identifier",
                                     },
                                 ],
                             },
@@ -56,9 +56,9 @@ describe("parse", () => {
                                     {
                                         type: "return",
                                         value: "Id",
-                                        returnType: "type",
+                                        returnType: "identifier",
                                         parent: {
-                                            type: "type",
+                                            type: "identifier",
                                             value: "MyObj",
                                         },
                                     },
@@ -102,7 +102,7 @@ describe("parse", () => {
                         };
 
                         expect(parse).toThrow(
-                            "Parser: return type in expression in function 'foo' cannot be empty."
+                            "Parser: expected an identifier, got nothing in 'foo'."
                         );
                     });
                 });

@@ -68,13 +68,13 @@ describe("parse", () => {
                                     arguments: ["arg1"],
                                     body: [
                                         {
-                                            type: "assignment",
+                                            type: "=",
                                             left: {
-                                                type: "type",
+                                                type: "identifier",
                                                 value: "Id",
                                             },
                                             right: {
-                                                type: "type",
+                                                type: "identifier",
                                                 value: "arg1",
                                             },
                                         },

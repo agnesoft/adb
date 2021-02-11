@@ -20,7 +20,9 @@ function get() {
 }
 
 function identifierType(value) {
-    return ["if", "else", "for"].includes(value) ? "keyword" : "identifier";
+    return ["if", "else", "for", "return"].includes(value)
+        ? "keyword"
+        : "identifier";
 }
 
 function isAlphaNumeric(c) {
@@ -36,11 +38,11 @@ function isInteger(c) {
 }
 
 function isOperator(c) {
-    return /[+=<>]/.test(c);
+    return /[!+=<>]/.test(c);
 }
 
 function isPunctuation(c) {
-    return /[().,]/.test(c);
+    return /[().,{}]/.test(c);
 }
 
 function isWhitespace(c) {
@@ -100,7 +102,7 @@ function readWord(test) {
 
 function validateNumber(num) {
     if (isNaN(num)) {
-        throw `'${num}' is not a number.`;
+        throw `Tokenizer: '${num}' is not a number.`;
     }
 }
 
@@ -125,9 +127,16 @@ export function next() {
         } else if (isOperator(c)) {
             return readOperator();
         } else {
-            throw `Cannot handle character '${c}'.`;
+            throw `Tokenizer: Cannot handle character '${c}'.`;
         }
     }
 
     return undefined;
+}
+
+export function peekNext() {
+    const currentPos = pos;
+    const token = next();
+    pos = currentPos;
+    return token;
 }

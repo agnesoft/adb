@@ -77,7 +77,7 @@ describe("parse", () => {
                                         value: "bar",
                                         arguments: [],
                                         parent: {
-                                            type: "type",
+                                            type: "identifier",
                                             value: "obj",
                                         },
                                     },
@@ -101,7 +101,7 @@ describe("parse", () => {
                                         value: "bar",
                                         arguments: [
                                             {
-                                                type: "argument",
+                                                type: "identifier",
                                                 value: "arg1",
                                             },
                                         ],
@@ -126,11 +126,11 @@ describe("parse", () => {
                                         value: "bar",
                                         arguments: [
                                             {
-                                                type: "argument",
+                                                type: "identifier",
                                                 value: "arg1",
                                             },
                                             {
-                                                type: "argument",
+                                                type: "identifier",
                                                 value: "arg2",
                                             },
                                         ],
@@ -155,8 +155,8 @@ describe("parse", () => {
                                         value: "foo",
                                         arguments: [
                                             {
-                                                type: "argument",
-                                                value: "1",
+                                                type: "number",
+                                                value: 1,
                                             },
                                             {
                                                 type: "call",
@@ -188,22 +188,59 @@ describe("parse", () => {
                                         value: "foo",
                                         arguments: [
                                             {
-                                                type: "argument",
-                                                value: "1",
+                                                type: "number",
+                                                value: 1,
                                             },
                                             {
                                                 type: "call",
                                                 value: "bar",
                                                 arguments: [
                                                     {
-                                                        type: "argument",
-                                                        value: "2",
+                                                        type: "number",
+                                                        value: 2,
                                                     },
                                                     {
-                                                        type: "argument",
-                                                        value: "3",
+                                                        type: "number",
+                                                        value: 3,
                                                     },
                                                 ],
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        };
+
+                        expect(parser.parse(data)).toMatchObject(ast);
+                    });
+
+                    test("method call as argument", () => {
+                        const data = {
+                            foo: { body: ["foo(1, obj.bar())"] },
+                        };
+
+                        const ast = {
+                            foo: {
+                                type: "function",
+                                name: "foo",
+                                arguments: [],
+                                body: [
+                                    {
+                                        type: "call",
+                                        value: "foo",
+                                        arguments: [
+                                            {
+                                                type: "number",
+                                                value: 1,
+                                            },
+                                            {
+                                                type: "call",
+                                                value: "bar",
+                                                arguments: [],
+                                                parent: {
+                                                    type: "identifier",
+                                                    value: "obj",
+                                                },
                                             },
                                         ],
                                     },
@@ -226,7 +263,7 @@ describe("parse", () => {
                         };
 
                         expect(parse).toThrow(
-                            "Parser: function name in function call in 'foo' cannot be empty."
+                            "Parser: invalid expression '(arg2)' in 'foo'."
                         );
                     });
                 });

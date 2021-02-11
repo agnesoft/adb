@@ -28,9 +28,9 @@ describe("parse", () => {
                             foo: {
                                 body: [
                                     {
-                                        type: "addition",
+                                        type: "+=",
                                         left: {
-                                            type: "type",
+                                            type: "identifier",
                                             value: "Id",
                                         },
                                         right: {
@@ -54,13 +54,13 @@ describe("parse", () => {
                             foo: {
                                 body: [
                                     {
-                                        type: "addition",
+                                        type: "+=",
                                         left: {
-                                            type: "type",
+                                            type: "identifier",
                                             value: "Id",
                                         },
                                         right: {
-                                            type: "type",
+                                            type: "identifier",
                                             value: "From",
                                         },
                                     },
@@ -80,20 +80,20 @@ describe("parse", () => {
                             foo: {
                                 body: [
                                     {
-                                        type: "addition",
+                                        type: "+=",
                                         left: {
-                                            type: "type",
+                                            type: "identifier",
                                             value: "Id",
                                             parent: {
-                                                type: "type",
+                                                type: "identifier",
                                                 value: "Obj",
                                             },
                                         },
                                         right: {
-                                            type: "type",
+                                            type: "identifier",
                                             value: "From",
                                             parent: {
-                                                type: "type",
+                                                type: "identifier",
                                                 value: "Arg1",
                                             },
                                         },
@@ -117,7 +117,7 @@ describe("parse", () => {
                         };
 
                         expect(parse).toThrow(
-                            "Parser: type name in expression in function 'foo' cannot be empty."
+                            "Parser: expected an identifier, got '+=' [operator] in 'foo'."
                         );
                     });
                 });

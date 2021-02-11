@@ -86,14 +86,14 @@ function addArraySerialization(array, arrayType, serialization) {
     serialization[`serialize_${array}`] = {
         arguments: ["ByteArray", "offset", array],
         body: [
-            `serialize_int64(ByteArray, offset, arraySize(${array})`,
-            `for (arraySize(${array})) { serialize_${arrayType}(ByteArray, offset, ${array}.at(i)) }`,
+            `serialize_int64(ByteArray, offset, ${array}.size())`,
+            `for (${array}.size()) { serialize_${arrayType}(ByteArray, offset, ${array}.at(i)) }`,
         ],
     };
     serialization[`deserialize_${array}`] = {
         arguments: ["ByteArray", "offset"],
         body: [
-            `${array}()`,
+            `${array}`,
             `for (deserialize_int64(ByteArray, offset)) { ${array} += deserialize_${arrayType}(ByteArray, offset) }`,
             `return ${array}`,
         ],

@@ -155,13 +155,29 @@ describe("serializer", () => {
 
             expect(tokens).toEqual(expected);
         });
+
+        test("peekNext()", () => {
+            tokenizer.setData(")");
+
+            expect(tokenizer.peekNext()).toEqual({
+                type: "punctuation",
+                value: ")",
+            });
+
+            expect(tokenizer.next()).toEqual({
+                type: "punctuation",
+                value: ")",
+            });
+        });
     });
 
     describe("invalid", () => {
         test("bad token at the start", () => {
             tokenizer.setData("~");
 
-            expect(tokenizer.next).toThrow("Cannot handle character '~'.");
+            expect(tokenizer.next).toThrow(
+                "Tokenizer: Cannot handle character '~'."
+            );
         });
 
         test("bad token in the middle", () => {
@@ -172,13 +188,15 @@ describe("serializer", () => {
                 tokenizer.next();
             };
 
-            expect(next).toThrow("Cannot handle character '~'.");
+            expect(next).toThrow("Tokenizer: Cannot handle character '~'.");
         });
 
         test("bad number", () => {
             tokenizer.setData("123a");
 
-            expect(tokenizer.next).toThrow("'123a' is not a number.");
+            expect(tokenizer.next).toThrow(
+                "Tokenizer: '123a' is not a number."
+            );
         });
     });
 });

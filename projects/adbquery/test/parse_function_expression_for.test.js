@@ -41,7 +41,7 @@ describe("parse", () => {
                                                 value: "bar",
                                                 arguments: [
                                                     {
-                                                        type: "argument",
+                                                        type: "identifier",
                                                         value: "i",
                                                     },
                                                 ],
@@ -71,7 +71,7 @@ describe("parse", () => {
                                             type: "call",
                                             arguments: [
                                                 {
-                                                    type: "argument",
+                                                    type: "identifier",
                                                     value: "arg",
                                                 },
                                             ],
@@ -83,7 +83,7 @@ describe("parse", () => {
                                                 value: "bazz",
                                                 arguments: [
                                                     {
-                                                        type: "argument",
+                                                        type: "identifier",
                                                         value: "i",
                                                     },
                                                 ],
@@ -99,10 +99,10 @@ describe("parse", () => {
                 });
 
                 describe("invalid", () => {
-                    test("missing whitespace after for", () => {
+                    test("missing curly brackets", () => {
                         const data = {
                             foo: {
-                                body: ["for(1) { bar() }"],
+                                body: ["for(1) bar() }"],
                             },
                         };
 
@@ -111,23 +111,7 @@ describe("parse", () => {
                         };
 
                         expect(parse).toThrow(
-                            "Parser: unknown expression 'for(1) { bar() }' in 'foo'."
-                        );
-                    });
-
-                    test("missing whitespace before body", () => {
-                        const data = {
-                            foo: {
-                                body: ["for (1){ bar() }"],
-                            },
-                        };
-
-                        const parse = () => {
-                            parser.parse(data);
-                        };
-
-                        expect(parse).toThrow(
-                            "Parser: invalid syntax in 'if/for' expression in function 'foo' (missing whitespace? I.e. 'if/for () {}')."
+                            "Parser: expected '{', got 'bar' [identifier] in 'foo'."
                         );
                     });
                 });

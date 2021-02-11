@@ -32,34 +32,34 @@ describe("parse", () => {
                         foo: {
                             body: [
                                 {
-                                    type: "assignment",
+                                    type: "=",
                                     left: {
-                                        type: "type",
+                                        type: "identifier",
                                         value: "Id",
                                         parent: {
-                                            type: "type",
+                                            type: "identifier",
                                             value: "Obj",
                                         },
                                     },
                                     right: {
-                                        type: "type",
+                                        type: "identifier",
                                         value: "int64",
                                         parent: {
-                                            type: "type",
+                                            type: "identifier",
                                             value: "MyArr",
                                         },
                                     },
                                 },
                                 {
-                                    type: "addition",
+                                    type: "+=",
                                     left: {
-                                        type: "type",
+                                        type: "identifier",
                                         value: "Field1",
                                         parent: {
-                                            type: "type",
+                                            type: "identifier",
                                             value: "Obj",
                                             parent: {
-                                                type: "type",
+                                                type: "identifier",
                                                 value: "MyVar",
                                             },
                                         },
@@ -116,7 +116,7 @@ describe("parse", () => {
                     };
 
                     expect(parse).toThrow(
-                        "Parser: unknown expression 'SomeType * 2' in 'foo'."
+                        "Tokenizer: Cannot handle character '*'."
                     );
                 });
             });

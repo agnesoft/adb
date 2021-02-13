@@ -266,6 +266,20 @@ describe("parse", () => {
                             "Parser: invalid expression '(arg2)' in 'foo'."
                         );
                     });
+
+                    test("missing end bracket", () => {
+                        const data = {
+                            foo: { body: ["foo(arg"] },
+                        };
+
+                        const parse = () => {
+                            parser.parse(data);
+                        };
+
+                        expect(parse).toThrow(
+                            "Parser: unexpected end of data, expected an argument or ')' in 'foo'."
+                        );
+                    });
                 });
             });
         });

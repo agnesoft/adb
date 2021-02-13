@@ -20,7 +20,7 @@ function get() {
 }
 
 function identifierType(value) {
-    return ["if", "else", "for", "return"].includes(value)
+    return ["if", "else", "for", "return", "true", "false"].includes(value)
         ? "keyword"
         : "identifier";
 }

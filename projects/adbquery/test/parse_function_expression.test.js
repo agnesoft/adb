@@ -119,6 +119,34 @@ describe("parse", () => {
                         "Tokenizer: Cannot handle character '*'."
                     );
                 });
+
+                test("unexpected token", () => {
+                    const data = {
+                        foo: { body: ["obj{"] },
+                    };
+
+                    const parse = () => {
+                        parser.parse(data);
+                    };
+
+                    expect(parse).toThrow(
+                        "Parser: expected '(' or '.', got '{' in 'foo'."
+                    );
+                });
+
+                test("unknown keyword", () => {
+                    const data = {
+                        foo: { body: ["true"] },
+                    };
+
+                    const parse = () => {
+                        parser.parse(data);
+                    };
+
+                    expect(parse).toThrow(
+                        "Parser: unknown keyword 'true' in 'foo'."
+                    );
+                });
             });
         });
     });

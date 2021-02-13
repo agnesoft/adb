@@ -389,6 +389,42 @@ describe("parse", () => {
 
                         expect(parser.parse(data)).toMatchObject(ast);
                     });
+
+                    test("with return", () => {
+                        const data = {
+                            foo: { body: ["if (Float < Id) { return 1 }"] },
+                        };
+
+                        const ast = {
+                            foo: {
+                                body: [
+                                    {
+                                        type: "if",
+                                        condition: {
+                                            left: {
+                                                type: "identifier",
+                                                value: "Float",
+                                            },
+                                            type: "<",
+                                            right: {
+                                                type: "identifier",
+                                                value: "Id",
+                                            },
+                                        },
+                                        body: [
+                                            {
+                                                type: "return",
+                                                value: 1,
+                                                returnType: "number",
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        };
+
+                        expect(parser.parse(data)).toMatchObject(ast);
+                    });
                 });
 
                 describe("invalid", () => {

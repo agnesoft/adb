@@ -15,6 +15,7 @@
 import * as tokenizer from "./tokenizer.js";
 
 let FUNCTION_NAME = "";
+let EXPRESSION = "";
 
 function isComma(token) {
     return isPunctuation(token) && token["value"] == ",";
@@ -33,7 +34,7 @@ function isOperator(token) {
 }
 
 function parseBody() {
-    return [parseIdentifier(tokenizer.next())];
+    return [parseToken(tokenizer.next())];
 }
 
 function parseElse() {
@@ -198,17 +199,20 @@ function validateIdentifier(token) {
     }
 }
 
-export function expressionAST(name, expression) {
-    FUNCTION_NAME = name;
-    tokenizer.setData(expression);
-    let token = tokenizer.next();
-
+function parseToken(token) {
     switch (token["type"]) {
         case "keyword":
             return parseKeyword(token);
         case "identifier":
             return parseIdentifier(token);
         default:
-            throw `Parser: invalid expression '${expression}' in '${FUNCTION_NAME}'.`;
+            throw `Parser: invalid expression '${EXPRESSION}' in '${FUNCTION_NAME}'.`;
     }
+}
+
+export function expressionAST(name, expression) {
+    EXPRESSION = expression;
+    FUNCTION_NAME = name;
+    tokenizer.setData(expression);
+    return parseToken(tokenizer.next());
 }

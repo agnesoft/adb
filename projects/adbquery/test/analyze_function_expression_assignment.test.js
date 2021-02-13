@@ -32,7 +32,7 @@ describe("analyze", () => {
                             foo: {
                                 body: [
                                     {
-                                        type: "assignment",
+                                        type: "=",
                                         left: {
                                             type: "new",
                                             value: "Id",
@@ -71,7 +71,7 @@ describe("analyze", () => {
                             foo: {
                                 body: [
                                     {
-                                        type: "assignment",
+                                        type: "=",
                                         left: {
                                             type: "new",
                                             realType: "int64",
@@ -111,7 +111,7 @@ describe("analyze", () => {
                             foo: {
                                 body: [
                                     {
-                                        type: "assignment",
+                                        type: "=",
                                         left: {
                                             type: "new",
                                             realType: "int64",

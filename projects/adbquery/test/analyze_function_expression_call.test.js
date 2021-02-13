@@ -72,7 +72,7 @@ describe("analyze", () => {
                                         arguments: [
                                             {
                                                 type: "number",
-                                                value: "1",
+                                                value: 1,
                                                 realType: "int64",
                                                 astType: "native",
                                             },
@@ -266,7 +266,7 @@ describe("analyze", () => {
                                         arguments: [
                                             {
                                                 type: "number",
-                                                value: "3",
+                                                value: 3,
                                                 realType: "int64",
                                                 astType: "native",
                                             },
@@ -384,7 +384,7 @@ describe("analyze", () => {
                                         arguments: [
                                             {
                                                 type: "number",
-                                                value: "1",
+                                                value: 1,
                                                 realType: "int64",
                                                 astType: "native",
                                             },
@@ -393,13 +393,13 @@ describe("analyze", () => {
                                                 arguments: [
                                                     {
                                                         type: "number",
-                                                        value: "2",
+                                                        value: 2,
                                                         realType: "int64",
                                                         astType: "native",
                                                     },
                                                     {
                                                         type: "number",
-                                                        value: "3",
+                                                        value: 3,
                                                         realType: "int64",
                                                         astType: "native",
                                                     },
@@ -411,6 +411,74 @@ describe("analyze", () => {
                                         value: "foo",
                                         realType: undefined,
                                         astType: undefined,
+                                    },
+                                ],
+                            },
+                        };
+
+                        const analyze = () => {
+                            return analyzer.analyze(parser.parse(data));
+                        };
+
+                        expect(analyze()).toMatchObject(ast);
+                    });
+
+                    test("method call", () => {
+                        const data = {
+                            MyArr: ["int64"],
+                            bar: {
+                                arguments: ["int64", "double"],
+                                body: ["return 1"],
+                                return: "int64",
+                            },
+                            foo: {
+                                arguments: ["double", "int64", "MyArr"],
+                                body: ["bar(1, bar(2, MyArr.size()))"],
+                            },
+                        };
+
+                        const ast = {
+                            foo: {
+                                body: [
+                                    {
+                                        type: "call",
+                                        value: "bar",
+                                        arguments: [
+                                            {
+                                                type: "number",
+                                                value: 1,
+                                                realType: "int64",
+                                                astType: "native",
+                                            },
+                                            {
+                                                type: "call",
+                                                arguments: [
+                                                    {
+                                                        type: "number",
+                                                        value: 2,
+                                                        realType: "int64",
+                                                        astType: "native",
+                                                    },
+                                                    {
+                                                        type: "method",
+                                                        value: "size",
+                                                        arguments: [],
+                                                        realType: "int64",
+                                                        astType: "native",
+                                                        parent: {
+                                                            type: "argument",
+                                                            value: "MyArr",
+                                                            realType: "MyArr",
+                                                            astType: "array",
+                                                        },
+                                                    },
+                                                ],
+                                                realType: "int64",
+                                                astType: "native",
+                                            },
+                                        ],
+                                        realType: "int64",
+                                        astType: "native",
                                     },
                                 ],
                             },

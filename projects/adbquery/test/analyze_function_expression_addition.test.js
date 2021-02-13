@@ -32,7 +32,7 @@ describe("analyze", () => {
                             foo: {
                                 body: [
                                     {
-                                        type: "addition",
+                                        type: "+=",
                                         left: {
                                             type: "new",
                                             value: "Id",
@@ -71,7 +71,7 @@ describe("analyze", () => {
                             foo: {
                                 body: [
                                     {
-                                        type: "addition",
+                                        type: "+=",
                                         left: {
                                             type: "new",
                                             realType: "MyArr",
@@ -111,7 +111,7 @@ describe("analyze", () => {
                             foo: {
                                 body: [
                                     {
-                                        type: "addition",
+                                        type: "+=",
                                         left: {
                                             type: "new",
                                             value: "MyArr",
@@ -150,7 +150,7 @@ describe("analyze", () => {
                             foo: {
                                 body: [
                                     {
-                                        type: "assignment",
+                                        type: "=",
                                         left: {
                                             type: "new",
                                             value: "Id",
@@ -165,7 +165,7 @@ describe("analyze", () => {
                                         },
                                     },
                                     {
-                                        type: "addition",
+                                        type: "+=",
                                         left: {
                                             type: "local",
                                             value: "Id",

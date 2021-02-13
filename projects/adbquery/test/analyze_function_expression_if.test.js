@@ -40,26 +40,28 @@ describe("analyze", () => {
                                 body: [
                                     {
                                         type: "if",
-                                        left: {
-                                            type: "call",
-                                            astType: "native",
-                                            realType: "int64",
-                                            arguments: [
-                                                {
-                                                    type: "argument",
-                                                    astType: "native",
-                                                    realType: "int64",
-                                                    value: "Arg",
-                                                },
-                                            ],
-                                            value: "fizz",
-                                        },
-                                        comparator: "!=",
-                                        right: {
-                                            type: "number",
-                                            astType: "native",
-                                            realType: "int64",
-                                            value: 3,
+                                        condition: {
+                                            left: {
+                                                type: "call",
+                                                astType: "native",
+                                                realType: "int64",
+                                                arguments: [
+                                                    {
+                                                        type: "argument",
+                                                        astType: "native",
+                                                        realType: "int64",
+                                                        value: "Arg",
+                                                    },
+                                                ],
+                                                value: "fizz",
+                                            },
+                                            type: "!=",
+                                            right: {
+                                                type: "number",
+                                                astType: "native",
+                                                realType: "int64",
+                                                value: 3,
+                                            },
                                         },
                                         body: [
                                             {
@@ -99,19 +101,21 @@ describe("analyze", () => {
                                 body: [
                                     {
                                         type: "if",
-                                        left: {
-                                            type: "number",
-                                            realType: "int64",
-                                            astType: "native",
-                                            value: 1,
+                                        condition: {
+                                            type: "==",
+                                            left: {
+                                                type: "number",
+                                                realType: "int64",
+                                                astType: "native",
+                                                value: 1,
+                                            },
+                                            right: {
+                                                type: "number",
+                                                realType: "int64",
+                                                astType: "native",
+                                                value: 2,
+                                            },
                                         },
-                                        right: {
-                                            type: "number",
-                                            realType: "int64",
-                                            astType: "native",
-                                            value: 2,
-                                        },
-                                        comparator: "==",
                                         body: [
                                             {
                                                 type: "call",
@@ -162,19 +166,21 @@ describe("analyze", () => {
                                 body: [
                                     {
                                         type: "if",
-                                        left: {
-                                            type: "number",
-                                            realType: "int64",
-                                            astType: "native",
-                                            value: 1,
+                                        condition: {
+                                            type: "==",
+                                            left: {
+                                                type: "number",
+                                                realType: "int64",
+                                                astType: "native",
+                                                value: 1,
+                                            },
+                                            right: {
+                                                type: "number",
+                                                realType: "int64",
+                                                astType: "native",
+                                                value: 2,
+                                            },
                                         },
-                                        right: {
-                                            type: "number",
-                                            realType: "int64",
-                                            astType: "native",
-                                            value: 2,
-                                        },
-                                        comparator: "==",
                                         body: [
                                             {
                                                 type: "call",
@@ -187,19 +193,21 @@ describe("analyze", () => {
                                     },
                                     {
                                         type: "elseif",
-                                        left: {
-                                            type: "number",
-                                            realType: "int64",
-                                            astType: "native",
-                                            value: 2,
+                                        condition: {
+                                            type: "==",
+                                            left: {
+                                                type: "number",
+                                                realType: "int64",
+                                                astType: "native",
+                                                value: 2,
+                                            },
+                                            right: {
+                                                type: "number",
+                                                realType: "int64",
+                                                astType: "native",
+                                                value: 2,
+                                            },
                                         },
-                                        right: {
-                                            type: "number",
-                                            realType: "int64",
-                                            astType: "native",
-                                            value: 2,
-                                        },
-                                        comparator: "==",
                                         body: [
                                             {
                                                 type: "call",

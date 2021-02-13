@@ -125,10 +125,13 @@ function analyzeFunctionCall(expression, context, ast) {
 }
 
 function analyzeIf(expression, context, ast) {
-    analyzeSide(expression["left"], context, ast);
-    analyzeSide(expression["right"], context, ast);
+    analyzeSide(expression["condition"]["left"], context, ast);
+    analyzeSide(expression["condition"]["right"], context, ast);
     analyzeBody(expression, context, ast);
-    validateComparison(expression["left"], expression["right"]);
+    validateComparison(
+        expression["condition"]["left"],
+        expression["condition"]["right"]
+    );
 }
 
 function analyzeIterations(iterations, context, ast) {
@@ -387,10 +390,10 @@ function validateType(type, ast) {
 
 export function analyzeExpression(expression, context, ast) {
     switch (expression["type"]) {
-        case "addition":
+        case "+=":
             analyzeAddition(expression, context, ast);
             break;
-        case "assignment":
+        case "=":
             analyzeAssignment(expression, context, ast);
             break;
         case "call":

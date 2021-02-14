@@ -130,7 +130,7 @@ describe("parse", () => {
                     };
 
                     expect(parse).toThrow(
-                        "Parser: expected '(' or '.', got '{' in 'foo'."
+                        "Parser: expected '(' or '.', got '{' in function 'foo' when parsing expression 'obj{'."
                     );
                 });
 
@@ -144,7 +144,7 @@ describe("parse", () => {
                     };
 
                     expect(parse).toThrow(
-                        "Parser: unknown keyword 'true' in 'foo'."
+                        "Parser: unknown keyword 'true' in function 'foo' when parsing expression 'true'."
                     );
                 });
             });

@@ -117,7 +117,7 @@ describe("parse", () => {
                         };
 
                         expect(parse).toThrow(
-                            "Parser: expected an identifier, got '=' [operator] in 'foo'."
+                            "Parser: expected an identifier, got '=' [operator] in function 'foo' when parsing expression 'Obj. = Arg1.From'."
                         );
                     });
                 });

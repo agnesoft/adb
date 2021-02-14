@@ -111,7 +111,7 @@ describe("parse", () => {
                         };
 
                         expect(parse).toThrow(
-                            "Parser: expected '{', got 'bar' [identifier] in 'foo'."
+                            "Parser: expected '{', got 'bar' [identifier] in function 'foo' when parsing expression 'for(1) bar() }'."
                         );
                     });
                 });

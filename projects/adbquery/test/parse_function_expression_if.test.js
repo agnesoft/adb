@@ -440,7 +440,7 @@ describe("parse", () => {
                         };
 
                         expect(parse).toThrow(
-                            "Parser: expected '(' or '.' or an operator, got 'IS' [identifier] in 'foo'."
+                            "Parser: expected '(' or '.' or an operator, got 'IS' [identifier] in function 'foo' when parsing expression 'if (1 IS 2) { bar() }'."
                         );
                     });
                 });

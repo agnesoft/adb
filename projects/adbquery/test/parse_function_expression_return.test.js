@@ -102,7 +102,7 @@ describe("parse", () => {
                         };
 
                         expect(parse).toThrow(
-                            "Parser: expected an identifier, got nothing in 'foo'."
+                            "Parser: expected an identifier, got nothing in function 'foo' when parsing expression 'return'."
                         );
                     });
                 });

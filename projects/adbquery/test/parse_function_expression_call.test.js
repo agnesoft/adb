@@ -263,7 +263,7 @@ describe("parse", () => {
                         };
 
                         expect(parse).toThrow(
-                            "Parser: invalid expression '(arg2)' in 'foo'."
+                            "Parser: invalid expression in function 'foo' when parsing expression '(arg2)'."
                         );
                     });
 
@@ -277,7 +277,7 @@ describe("parse", () => {
                         };
 
                         expect(parse).toThrow(
-                            "Parser: unexpected end of data, expected an argument or ')' in 'foo'."
+                            "Parser: unexpected end of data, expected an identifier or ')' in function 'foo' when parsing expression 'foo(arg'."
                         );
                     });
                 });

@@ -26,7 +26,7 @@ function identifierType(value) {
 }
 
 function isAlphaNumeric(c) {
-    return /[a-zA-Z\d]/.test(c);
+    return /[a-zA-Z_\d]/.test(c);
 }
 
 function isCharacter(c) {

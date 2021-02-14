@@ -93,7 +93,7 @@ function addArraySerialization(array, arrayType, serialization) {
     serialization[`deserialize_${array}`] = {
         arguments: ["ByteArray", "offset"],
         body: [
-            `${array}`,
+            `${array} = ${array}`,
             `for (deserialize_int64(ByteArray, offset)) { ${array} += deserialize_${arrayType}(ByteArray, offset) }`,
             `return ${array}`,
         ],

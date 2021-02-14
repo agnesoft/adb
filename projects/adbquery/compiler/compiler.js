@@ -18,6 +18,7 @@ import * as serializer from "./serializer.js";
 
 export function compile(data) {
     let jsonData = {
+        i: "int64",
         offset: "int64",
         ByteArray: ["byte"],
         deserializeDouble: {

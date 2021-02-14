@@ -43,6 +43,15 @@ describe("serializer", () => {
             });
         });
 
+        test("identifier with underscore", () => {
+            tokenizer.setData("\nId_1");
+
+            expect(tokenizer.next()).toEqual({
+                type: "identifier",
+                value: "Id_1",
+            });
+        });
+
         test("operator", () => {
             tokenizer.setData("+=1");
 

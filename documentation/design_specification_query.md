@@ -240,37 +240,37 @@ foo: {
     arguments: ["ArgType1],
     body: [
         {
-            type: "assignment",
+            type: "=", //=, +=
             left: {
-                type: "new",
+                type: "new", //local, argument, field, number, new
                 realType: "int64,
                 astType: "native",
                 value: "int64"
             },
             right: {
-                type: "number",
+                type: "number", //local, argument, field, number, new
                 realType: "int64",
                 astType: "native",
                 value: 1
             }
         },
         {
-            type: "addition",
+            type: "+=", //=, +=
             left: {
-                type: "field",
+                type: "field", //local, argument, field, number, new
                 realType: "MyArr",
                 astType: "array",
                 value: "MyArr"
             },
             right: {
-                type: "argument",
+                type: "argument", //local, argument, field, number, new
                 realType: "...",
                 astType: "...",
                 value: "ArgType1"
             }
         },
         {
-            type: "function",
+            type: "call",
             value: "bar",
             realType: undefined,
             astType: undefined,
@@ -288,22 +288,24 @@ foo: {
             value: "ArgType1",
             realType: "int64",
             astType: "native",
-            returnType: "argument"
+            returnType: "argument" //local, argument, field, number, new, undefined
         },
         {
-            type: "if",
-            left: {
-                type: "type",
-                value: "arg1"
-                realType: "int64",
-                astType: "native"
-            },
-            comparison: "==",
-            right: {
-                type: "type",
-                value: "arg2"
-                realType: "int64,
-                astType: "native"
+            type: "if", //if, elseif, else
+            condition: {
+                left: {
+                    type: "argument", //local, argument, field, number, new
+                    value: "arg1"
+                    realType: "int64",
+                    astType: "native"
+                },
+                type: "==",
+                right: {
+                    type: "argument", //local, argument, field, number, new
+                    value: "arg2"
+                    realType: "int64,
+                    astType: "native"
+                },
             },
             body: []
         },
@@ -328,7 +330,6 @@ foo: {
 Obj: {
     type: "object",
     name: "Obj",
-    base: "BaseObj",
     fields: [ "FiedlType1", "FieldType2" ],
     functions: {
         foo: {

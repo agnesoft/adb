@@ -30,15 +30,7 @@ describe("analyze", () => {
                         };
 
                         const ast = {
-                            Id: {
-                                type: "alias",
-                                name: "Id",
-                                aliasedType: "int64",
-                            },
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: [],
                                 body: [
                                     {
                                         type: "return",
@@ -56,7 +48,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze()).toEqual(ast);
+                        expect(analyze()).toMatchObject(ast);
                     });
 
                     test("new custom", () => {
@@ -71,21 +63,7 @@ describe("analyze", () => {
                         };
 
                         const ast = {
-                            Id: {
-                                type: "alias",
-                                name: "Id",
-                                aliasedType: "int64",
-                            },
-                            Obj: {
-                                type: "object",
-                                name: "Obj",
-                                fields: ["Id"],
-                                functions: {},
-                            },
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: ["Id"],
                                 body: [
                                     {
                                         type: "return",
@@ -111,7 +89,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze()).toEqual(ast);
+                        expect(analyze()).toMatchObject(ast);
                     });
 
                     test("field", () => {
@@ -129,21 +107,9 @@ describe("analyze", () => {
                         };
 
                         const ast = {
-                            Id: {
-                                type: "alias",
-                                name: "Id",
-                                aliasedType: "int64",
-                            },
                             MyObj: {
-                                type: "object",
-                                name: "MyObj",
-                                fields: ["Id"],
                                 functions: {
                                     foo: {
-                                        type: "function",
-                                        name: "foo",
-                                        arguments: [],
-                                        returnValue: "Id",
                                         body: [
                                             {
                                                 type: "return",
@@ -153,6 +119,7 @@ describe("analyze", () => {
                                                 returnType: "field",
                                             },
                                         ],
+                                        returnValue: "Id",
                                     },
                                 },
                             },
@@ -162,7 +129,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze()).toEqual(ast);
+                        expect(analyze()).toMatchObject(ast);
                     });
 
                     test("field of field", () => {
@@ -183,29 +150,9 @@ describe("analyze", () => {
                         };
 
                         const ast = {
-                            Id: {
-                                type: "alias",
-                                name: "Id",
-                                aliasedType: "int64",
-                            },
-                            SubObj: {
-                                type: "object",
-                                name: "SubObj",
-                                base: undefined,
-                                fields: ["Id"],
-                                functions: {},
-                            },
                             MyObj: {
-                                type: "object",
-                                name: "MyObj",
-                                base: undefined,
-                                fields: ["SubObj"],
                                 functions: {
                                     foo: {
-                                        type: "function",
-                                        name: "foo",
-                                        arguments: [],
-                                        returnValue: "Id",
                                         body: [
                                             {
                                                 type: "return",
@@ -221,6 +168,7 @@ describe("analyze", () => {
                                                 },
                                             },
                                         ],
+                                        returnValue: "Id",
                                     },
                                 },
                             },
@@ -230,7 +178,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze()).toEqual(ast);
+                        expect(analyze()).toMatchObject(ast);
                     });
 
                     test("variant of field", () => {
@@ -250,32 +198,9 @@ describe("analyze", () => {
                         };
 
                         const ast = {
-                            Id: {
-                                type: "alias",
-                                name: "Id",
-                                aliasedType: "int64",
-                            },
-                            MyArr: {
-                                type: "array",
-                                name: "MyArr",
-                                arrayType: "Id",
-                            },
-                            MyVar: {
-                                type: "variant",
-                                name: "MyVar",
-                                variants: ["Id", "MyArr"],
-                            },
                             MyObj: {
-                                type: "object",
-                                name: "MyObj",
-                                base: undefined,
-                                fields: ["MyVar"],
                                 functions: {
                                     foo: {
-                                        type: "function",
-                                        name: "foo",
-                                        arguments: [],
-                                        returnValue: "MyArr",
                                         body: [
                                             {
                                                 type: "return",
@@ -291,6 +216,7 @@ describe("analyze", () => {
                                                 },
                                             },
                                         ],
+                                        returnValue: "MyArr",
                                     },
                                 },
                             },
@@ -300,7 +226,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze()).toEqual(ast);
+                        expect(analyze()).toMatchObject(ast);
                     });
                 });
 

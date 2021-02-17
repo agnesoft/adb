@@ -26,14 +26,11 @@ describe("parse", () => {
 
                         const ast = {
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: [],
                                 body: [
                                     {
-                                        type: "addition",
+                                        type: "+=",
                                         left: {
-                                            type: "type",
+                                            type: "identifier",
                                             value: "Id",
                                         },
                                         right: {
@@ -45,7 +42,7 @@ describe("parse", () => {
                             },
                         };
 
-                        expect(parser.parse(data)).toEqual(ast);
+                        expect(parser.parse(data)).toMatchObject(ast);
                     });
 
                     test("type += type", () => {
@@ -55,27 +52,23 @@ describe("parse", () => {
 
                         const ast = {
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: [],
                                 body: [
                                     {
-                                        type: "addition",
+                                        type: "+=",
                                         left: {
-                                            type: "type",
+                                            type: "identifier",
                                             value: "Id",
                                         },
                                         right: {
-                                            type: "type",
+                                            type: "identifier",
                                             value: "From",
                                         },
                                     },
                                 ],
-                                returnValue: undefined,
                             },
                         };
 
-                        expect(parser.parse(data)).toEqual(ast);
+                        expect(parser.parse(data)).toMatchObject(ast);
                     });
 
                     test("type.type += type.type", () => {
@@ -85,35 +78,31 @@ describe("parse", () => {
 
                         const ast = {
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: [],
                                 body: [
                                     {
-                                        type: "addition",
+                                        type: "+=",
                                         left: {
-                                            type: "type",
+                                            type: "identifier",
                                             value: "Id",
                                             parent: {
-                                                type: "type",
+                                                type: "identifier",
                                                 value: "Obj",
                                             },
                                         },
                                         right: {
-                                            type: "type",
+                                            type: "identifier",
                                             value: "From",
                                             parent: {
-                                                type: "type",
+                                                type: "identifier",
                                                 value: "Arg1",
                                             },
                                         },
                                     },
                                 ],
-                                returnValue: undefined,
                             },
                         };
 
-                        expect(parser.parse(data)).toEqual(ast);
+                        expect(parser.parse(data)).toMatchObject(ast);
                     });
                 });
 
@@ -128,7 +117,7 @@ describe("parse", () => {
                         };
 
                         expect(parse).toThrow(
-                            "Parser: type name in expression in function 'foo' cannot be empty."
+                            "Parser: expected an identifier, got '+=' [operator] in function 'foo' when parsing expression 'Obj. += Arg1.From'."
                         );
                     });
                 });

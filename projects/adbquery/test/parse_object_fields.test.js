@@ -27,14 +27,11 @@ describe("parse", () => {
 
                     const ast = {
                         MyObj: {
-                            type: "object",
-                            name: "MyObj",
                             fields: ["field1"],
-                            functions: {},
                         },
                     };
 
-                    expect(parser.parse(data)).toEqual(ast);
+                    expect(parser.parse(data)).toMatchObject(ast);
                 });
 
                 test("multiple", () => {
@@ -46,14 +43,11 @@ describe("parse", () => {
 
                     const ast = {
                         MyObj: {
-                            type: "object",
-                            name: "MyObj",
                             fields: ["field1", "field2"],
-                            functions: {},
                         },
                     };
 
-                    expect(parser.parse(data)).toEqual(ast);
+                    expect(parser.parse(data)).toMatchObject(ast);
                 });
             });
 

@@ -31,17 +31,7 @@ describe("analyze", () => {
                         };
 
                         const ast = {
-                            foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: [],
-                                body: [],
-                                returnValue: undefined,
-                            },
                             bar: {
-                                type: "function",
-                                name: "bar",
-                                arguments: [],
                                 body: [
                                     {
                                         type: "call",
@@ -56,7 +46,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze()).toEqual(ast);
+                        expect(analyze()).toMatchObject(ast);
                     });
 
                     test("free function with argument", () => {
@@ -72,22 +62,7 @@ describe("analyze", () => {
                         };
 
                         const ast = {
-                            Id: {
-                                type: "alias",
-                                name: "Id",
-                                aliasedType: "int64",
-                            },
-                            foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: ["int64"],
-                                body: [],
-                                returnValue: undefined,
-                            },
                             bar: {
-                                type: "function",
-                                name: "bar",
-                                arguments: [],
                                 body: [
                                     {
                                         type: "call",
@@ -97,14 +72,13 @@ describe("analyze", () => {
                                         arguments: [
                                             {
                                                 type: "number",
-                                                value: "1",
+                                                value: 1,
                                                 realType: "int64",
                                                 astType: "native",
                                             },
                                         ],
                                     },
                                 ],
-                                returnValue: undefined,
                             },
                         };
 
@@ -112,7 +86,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze()).toEqual(ast);
+                        expect(analyze()).toMatchObject(ast);
                     });
 
                     test("method", () => {
@@ -131,21 +105,8 @@ describe("analyze", () => {
 
                         const ast = {
                             SomeObj: {
-                                type: "object",
-                                name: "SomeObj",
-                                fields: [],
                                 functions: {
-                                    foo: {
-                                        type: "function",
-                                        name: "foo",
-                                        arguments: [],
-                                        body: [],
-                                        returnValue: undefined,
-                                    },
                                     bar: {
-                                        type: "function",
-                                        name: "bar",
-                                        arguments: [],
                                         body: [
                                             {
                                                 type: "method",
@@ -155,7 +116,6 @@ describe("analyze", () => {
                                                 astType: undefined,
                                             },
                                         ],
-                                        returnValue: undefined,
                                     },
                                 },
                             },
@@ -165,7 +125,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze()).toEqual(ast);
+                        expect(analyze()).toMatchObject(ast);
                     });
 
                     test("argument's method", () => {
@@ -184,24 +144,7 @@ describe("analyze", () => {
                         };
 
                         const ast = {
-                            SomeObj: {
-                                type: "object",
-                                name: "SomeObj",
-                                fields: [],
-                                functions: {
-                                    foo: {
-                                        type: "function",
-                                        name: "foo",
-                                        arguments: [],
-                                        body: [],
-                                        returnValue: undefined,
-                                    },
-                                },
-                            },
                             bar: {
-                                type: "function",
-                                name: "bar",
-                                arguments: ["SomeObj"],
                                 body: [
                                     {
                                         type: "method",
@@ -217,7 +160,6 @@ describe("analyze", () => {
                                         },
                                     },
                                 ],
-                                returnValue: undefined,
                             },
                         };
 
@@ -225,7 +167,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze()).toEqual(ast);
+                        expect(analyze()).toMatchObject(ast);
                     });
 
                     test("constructor", () => {
@@ -239,21 +181,7 @@ describe("analyze", () => {
                         };
 
                         const ast = {
-                            Id: {
-                                type: "alias",
-                                name: "Id",
-                                aliasedType: "int64",
-                            },
-                            Obj: {
-                                type: "object",
-                                name: "Obj",
-                                fields: ["Id"],
-                                functions: {},
-                            },
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: ["Id"],
                                 body: [
                                     {
                                         type: "constructor",
@@ -270,7 +198,6 @@ describe("analyze", () => {
                                         value: "Obj",
                                     },
                                 ],
-                                returnValue: undefined,
                             },
                         };
 
@@ -278,7 +205,290 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze()).toEqual(ast);
+                        expect(analyze()).toMatchObject(ast);
+                    });
+
+                    test("<array>.size()", () => {
+                        const data = {
+                            IntAr: ["int64"],
+                            foo: {
+                                arguments: ["IntAr"],
+                                body: ["return IntAr.size()"],
+                                return: "int64",
+                            },
+                        };
+
+                        const ast = {
+                            foo: {
+                                body: [
+                                    {
+                                        type: "return",
+                                        realType: "int64",
+                                        astType: "native",
+                                        arguments: [],
+                                        value: "size",
+                                        returnType: "method",
+                                        parent: {
+                                            type: "argument",
+                                            value: "IntAr",
+                                            realType: "IntAr",
+                                            astType: "array",
+                                        },
+                                    },
+                                ],
+                            },
+                        };
+
+                        const analyze = () => {
+                            return analyzer.analyze(parser.parse(data));
+                        };
+
+                        expect(analyze()).toMatchObject(ast);
+                    });
+
+                    test("<array>.at(index)", () => {
+                        const data = {
+                            IntAr: ["int64"],
+                            foo: {
+                                arguments: ["IntAr"],
+                                body: ["return IntAr.at(3)"],
+                                return: "int64",
+                            },
+                        };
+
+                        const ast = {
+                            foo: {
+                                body: [
+                                    {
+                                        type: "return",
+                                        realType: "int64",
+                                        astType: "native",
+                                        arguments: [
+                                            {
+                                                type: "number",
+                                                value: 3,
+                                                realType: "int64",
+                                                astType: "native",
+                                            },
+                                        ],
+                                        value: "at",
+                                        returnType: "method",
+                                        parent: {
+                                            type: "argument",
+                                            value: "IntAr",
+                                            realType: "IntAr",
+                                            astType: "array",
+                                        },
+                                    },
+                                ],
+                            },
+                        };
+
+                        const analyze = () => {
+                            return analyzer.analyze(parser.parse(data));
+                        };
+
+                        expect(analyze()).toMatchObject(ast);
+                    });
+
+                    test("<variant>.index()", () => {
+                        const data = {
+                            MyVar: ["byte", "int64"],
+                            foo: {
+                                arguments: ["MyVar"],
+                                body: ["return MyVar.index()"],
+                                return: "byte",
+                            },
+                        };
+
+                        const ast = {
+                            foo: {
+                                body: [
+                                    {
+                                        type: "return",
+                                        returnType: "method",
+                                        value: "index",
+                                        realType: "byte",
+                                        astType: "native",
+                                        arguments: [],
+                                        parent: {
+                                            type: "argument",
+                                            value: "MyVar",
+                                            realType: "MyVar",
+                                            astType: "variant",
+                                        },
+                                    },
+                                ],
+                            },
+                        };
+
+                        const analyze = () => {
+                            return analyzer.analyze(parser.parse(data));
+                        };
+
+                        expect(analyze()).toMatchObject(ast);
+                    });
+
+                    test("nested call", () => {
+                        const data = {
+                            bar: { body: ["return 1"], return: "int64" },
+                            foo: { arguments: ["int64"], body: ["foo(bar())"] },
+                        };
+
+                        const ast = {
+                            foo: {
+                                body: [
+                                    {
+                                        type: "call",
+                                        arguments: [
+                                            {
+                                                type: "call",
+                                                arguments: [],
+                                                realType: "int64",
+                                                astType: "native",
+                                            },
+                                        ],
+                                        value: "foo",
+                                        realType: undefined,
+                                        astType: undefined,
+                                    },
+                                ],
+                            },
+                        };
+
+                        const analyze = () => {
+                            return analyzer.analyze(parser.parse(data));
+                        };
+
+                        expect(analyze()).toMatchObject(ast);
+                    });
+
+                    test("nested call with parameters", () => {
+                        const data = {
+                            bar: {
+                                arguments: ["int64", "double"],
+                                body: ["return 1"],
+                                return: "int64",
+                            },
+                            foo: {
+                                arguments: ["double", "int64"],
+                                body: ["foo(1, bar(2, 3))"],
+                            },
+                        };
+
+                        const ast = {
+                            foo: {
+                                body: [
+                                    {
+                                        type: "call",
+                                        arguments: [
+                                            {
+                                                type: "number",
+                                                value: 1,
+                                                realType: "int64",
+                                                astType: "native",
+                                            },
+                                            {
+                                                type: "call",
+                                                arguments: [
+                                                    {
+                                                        type: "number",
+                                                        value: 2,
+                                                        realType: "int64",
+                                                        astType: "native",
+                                                    },
+                                                    {
+                                                        type: "number",
+                                                        value: 3,
+                                                        realType: "int64",
+                                                        astType: "native",
+                                                    },
+                                                ],
+                                                realType: "int64",
+                                                astType: "native",
+                                            },
+                                        ],
+                                        value: "foo",
+                                        realType: undefined,
+                                        astType: undefined,
+                                    },
+                                ],
+                            },
+                        };
+
+                        const analyze = () => {
+                            return analyzer.analyze(parser.parse(data));
+                        };
+
+                        expect(analyze()).toMatchObject(ast);
+                    });
+
+                    test("method call", () => {
+                        const data = {
+                            MyArr: ["int64"],
+                            bar: {
+                                arguments: ["int64", "double"],
+                                body: ["return 1"],
+                                return: "int64",
+                            },
+                            foo: {
+                                arguments: ["double", "int64", "MyArr"],
+                                body: ["bar(1, bar(2, MyArr.size()))"],
+                            },
+                        };
+
+                        const ast = {
+                            foo: {
+                                body: [
+                                    {
+                                        type: "call",
+                                        value: "bar",
+                                        arguments: [
+                                            {
+                                                type: "number",
+                                                value: 1,
+                                                realType: "int64",
+                                                astType: "native",
+                                            },
+                                            {
+                                                type: "call",
+                                                arguments: [
+                                                    {
+                                                        type: "number",
+                                                        value: 2,
+                                                        realType: "int64",
+                                                        astType: "native",
+                                                    },
+                                                    {
+                                                        type: "method",
+                                                        value: "size",
+                                                        arguments: [],
+                                                        realType: "int64",
+                                                        astType: "native",
+                                                        parent: {
+                                                            type: "argument",
+                                                            value: "MyArr",
+                                                            realType: "MyArr",
+                                                            astType: "array",
+                                                        },
+                                                    },
+                                                ],
+                                                realType: "int64",
+                                                astType: "native",
+                                            },
+                                        ],
+                                        realType: "int64",
+                                        astType: "native",
+                                    },
+                                ],
+                            },
+                        };
+
+                        const analyze = () => {
+                            return analyzer.analyze(parser.parse(data));
+                        };
+
+                        expect(analyze()).toMatchObject(ast);
                     });
                 });
 

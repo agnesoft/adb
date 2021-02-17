@@ -25,16 +25,19 @@ describe("analyze", () => {
                 };
 
                 const ast = {
-                    SomeType: {
-                        type: "object",
-                        name: "SomeType",
-                        functions: {},
-                        fields: [],
-                    },
                     MyVariant: {
                         type: "variant",
                         name: "MyVariant",
                         variants: ["SomeType", "int64"],
+                        functions: {
+                            index: {
+                                type: "function",
+                                name: "index",
+                                arguments: [],
+                                body: [],
+                                returnValue: "byte",
+                            },
+                        },
                     },
                 };
 
@@ -42,7 +45,7 @@ describe("analyze", () => {
                     return analyzer.analyze(parser.parse(data));
                 };
 
-                expect(analyze()).toEqual(ast);
+                expect(analyze()).toMatchObject(ast);
             });
         });
 

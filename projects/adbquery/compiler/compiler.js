@@ -17,8 +17,61 @@ import * as analyzer from "./analyzer.js";
 import * as serializer from "./serializer.js";
 
 export function compile(data) {
-    let ast = parser.parse(data);
-    ast = analyzer.analyze(ast);
-    serializer.addSerialization(ast);
-    return ast;
+    let jsonData = {
+        i: "int64",
+        offset: "int64",
+        ByteArray: ["byte"],
+        deserializeDouble: {
+            arguments: ["ByteArray", "offset"],
+            body: ["return 0"],
+            return: "double",
+        },
+        deserializeInt64: {
+            arguments: ["ByteArray", "offset"],
+            body: ["return 0"],
+            return: "int64",
+        },
+        serializeDouble: {
+            arguments: ["ByteArray", "offset", "double"],
+            body: [],
+        },
+        serializeInt64: {
+            arguments: ["ByteArray", "offset", "int64"],
+            body: [],
+        },
+        stringFromByteArray: {
+            arguments: ["ByteArray"],
+            body: ["return string"],
+            return: "string",
+        },
+        stringToByteArray: {
+            arguments: ["string"],
+            body: ["return ByteArray"],
+            return: "ByteArray",
+        },
+        int64ToLittleEndian: {
+            arguments: ["int64"],
+            body: ["return 0"],
+            return: "int64",
+        },
+        doubleToLittleEndian: {
+            arguments: ["double"],
+            body: ["return 0"],
+            return: "double",
+        },
+        int64ToNativeEndian: {
+            arguments: ["int64"],
+            body: ["return 0"],
+            return: "int64",
+        },
+        doubleToNativeEndian: {
+            arguments: ["double"],
+            body: ["return 0"],
+            return: "double",
+        },
+        ...JSON.parse(data),
+    };
+
+    let internalData = serializer.addSerialization(jsonData);
+    return analyzer.analyze(parser.parse(internalData));
 }

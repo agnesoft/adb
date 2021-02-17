@@ -108,8 +108,9 @@ function functionReturn(func) {
 
 export function isFunction(token, schema) {
     const keys = Object.keys(schema[token]);
-    const test = (element) => keys.includes(element);
-    return ["arguments", "body", "return"].some(test);
+    return ["arguments", "body", "return"].some((element) =>
+        keys.includes(element)
+    );
 }
 
 export function functionAST(name, func, objectName = undefined) {

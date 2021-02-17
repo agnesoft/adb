@@ -12,150 +12,225 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import * as tokenizer from "./tokenizer.js";
+
 let FUNCTION_NAME = "";
+let EXPRESSION = "";
 
-function additionAST(expression) {
-    const sides = expression.split("+=");
-
-    return {
-        type: "addition",
-        left: sideAST(sides[0].trim()),
-        right: sideAST(sides[1].trim()),
-    };
+function error(message) {
+    throw `Parser: ${message} in function '${FUNCTION_NAME}' when parsing expression '${EXPRESSION}'.`;
 }
 
-function assignmentAST(expression) {
-    const sides = expression.split("=");
-
-    return {
-        type: "assignment",
-        left: sideAST(sides[0].trim()),
-        right: sideAST(sides[1].trim()),
-    };
+function isComma(token) {
+    return isPunctuation(token) && token["value"] == ",";
 }
 
-function callArguments(part) {
+function isEndBracket(token) {
+    validateToken(token);
+    return isPunctuation(token) && token["value"] == ")";
+}
+
+function isExpressionEnd(token) {
+    return (
+        !token ||
+        token["value"] == ")" ||
+        token["value"] == "}" ||
+        isComma(token)
+    );
+}
+
+function isOperator(token) {
+    return token && token["type"] == "operator";
+}
+
+function isPunctuation(token) {
+    return token && token["type"] == "punctuation";
+}
+
+function parseBody() {
+    skipPunctuation("{");
+    const ast = [parseToken(tokenizer.next())];
+    skipPunctuation("}");
+    return ast;
+}
+
+function parseCall(ast) {
+    ast["arguments"] = parseCallArguments();
+    return parseNext(ast);
+}
+
+function nextArgument() {
+    const token = tokenizer.next();
+
+    if (isComma(token)) {
+        return tokenizer.next();
+    } else {
+        return token;
+    }
+}
+
+function parseCallArguments() {
     let args = [];
-    part.slice(part.indexOf("(") + 1, part.length - 1)
-        .split(",")
-        .forEach((arg) => {
-            if (arg.trim()) {
-                args.push({
-                    type: "argument",
-                    value: arg.trim(),
-                });
-            }
-        });
+    let token = tokenizer.next();
+
+    while (!isEndBracket(token)) {
+        args.push(parseIdentifier(token));
+        token = nextArgument();
+    }
+
     return args;
 }
 
-function callAST(part) {
+function parseElseOrElseIf() {
+    if (tokenizer.peekNext()["value"] == "if") {
+        tokenizer.next();
+        return parseIf("elseif");
+    } else {
+        return {
+            type: "else",
+            body: parseBody(),
+        };
+    }
+}
+
+function parseFor() {
     return {
-        type: "call",
-        value: callName(part),
-        arguments: callArguments(part),
+        type: "for",
+        iterations: parseSubExpression(),
+        body: parseBody(),
     };
 }
 
-function callName(part) {
-    validateCallName(part);
-    return part.split("(")[0];
+function parseIdentifier(token, ast = {}) {
+    validateIdentifier(token);
+    ast["type"] = token["type"];
+    ast["value"] = token["value"];
+    return parseNext(ast);
 }
 
-function expressionType(part) {
-    if (isNaN(part)) {
-        return "type";
-    } else {
-        return "number";
+function parseIf(type = "if") {
+    return {
+        type: type,
+        condition: parseSubExpression(),
+        body: parseBody(),
+    };
+}
+
+function parseKeyword(token) {
+    switch (token["value"]) {
+        case "if":
+            return parseIf();
+        case "else":
+            return parseElseOrElseIf();
+        case "for":
+            return parseFor();
+        case "return":
+            return parseReturn();
+        default:
+            error(`unknown keyword '${token["value"]}'`);
     }
 }
 
-function expressionASTBuilder(part, current) {
-    part["parent"] = partAST(current.trim());
-    return part["parent"];
-}
+function parseNext(ast) {
+    const next = tokenizer.peekNext();
 
-function expressionValue(part) {
-    validateType(part);
-
-    if (isNaN(part)) {
-        return part;
+    if (isExpressionEnd(next)) {
+        return ast;
     } else {
-        return Number(part);
+        return parseNextToken(ast);
     }
 }
 
-function functionCallAST(expression) {
-    return sideAST(expression);
-}
+function parseNextToken(ast) {
+    const token = tokenizer.next();
 
-function partAST(part) {
-    if (part.includes("(")) {
-        return callAST(part);
+    if (isPunctuation(token)) {
+        return parsePunctuation(token, ast);
+    } else if (isOperator(token)) {
+        return parseOperator(token, ast);
     } else {
-        return typeAST(part);
+        error(
+            `expected '(' or '.' or an operator, got '${token["value"]}' [${token["type"]}]`
+        );
     }
 }
 
-function returnAST(expression) {
-    const returnExpression = expression.slice(6);
-    validateReturnType(returnExpression);
-    let ast = sideAST(returnExpression);
+function parseOperator(token, ast) {
+    return {
+        type: token["value"],
+        left: ast,
+        right: parseIdentifier(tokenizer.next()),
+    };
+}
+
+function parsePunctuation(token, ast) {
+    switch (token["value"]) {
+        case ".":
+            return parseIdentifier(tokenizer.next(), { parent: ast });
+        case "(":
+            ast["type"] = "call";
+            return parseCall(ast);
+        default:
+            error(`expected '(' or '.', got '${token["value"]}'`);
+    }
+}
+
+function parseReturn() {
+    let ast = parseIdentifier(tokenizer.next());
     ast["returnType"] = ast["type"];
     ast["type"] = "return";
     return ast;
 }
 
-function sideAST(side) {
-    let ast = {};
-    const parts = side.split(".");
-    parts.reduceRight(expressionASTBuilder, ast);
-    return ast["parent"];
-}
-
-function typeAST(part) {
-    return {
-        type: expressionType(part),
-        value: expressionValue(part),
-    };
-}
-
-function validateCallName(part) {
-    if (part.startsWith("(")) {
-        throw `Parser: function name in function call in '${FUNCTION_NAME}' cannot be empty.`;
+function parseToken(token) {
+    switch (token["type"]) {
+        case "keyword":
+            return parseKeyword(token);
+        case "identifier":
+            return parseIdentifier(token);
+        default:
+            error(`invalid expression`);
     }
 }
 
-function validateReturnType(part) {
-    if (!part) {
-        throw `Parser: return type in expression in function '${FUNCTION_NAME}' cannot be empty.`;
+function parseSubExpression() {
+    skipPunctuation("(");
+    const ast = parseIdentifier(tokenizer.next());
+    skipPunctuation(")");
+    return ast;
+}
+
+function skipPunctuation(value) {
+    const token = tokenizer.next();
+
+    if (!(token["type"] == "punctuation" && token["value"] == value)) {
+        error(
+            `expected '${value}', got '${token["value"]}' [${token["type"]}]`
+        );
     }
 }
 
-function validateType(part) {
-    if (!part) {
-        throw `Parser: type name in expression in function '${FUNCTION_NAME}' cannot be empty.`;
+function validateIdentifier(token) {
+    if (!token) {
+        error(`expected an identifier, got nothing`);
+    }
+
+    if (!["number", "identifier"].includes(token["type"])) {
+        error(
+            `expected an identifier, got '${token["value"]}' [${token["type"]}]`
+        );
+    }
+}
+
+function validateToken(token) {
+    if (!token) {
+        error(`unexpected end of data, expected an identifier or ')'`);
     }
 }
 
 export function expressionAST(name, expression) {
+    EXPRESSION = expression;
     FUNCTION_NAME = name;
-
-    if (expression.includes("+=")) {
-        return additionAST(expression);
-    }
-
-    if (expression.includes("=")) {
-        return assignmentAST(expression);
-    }
-
-    if (expression.startsWith("return")) {
-        return returnAST(expression);
-    }
-
-    if (expression.endsWith(")")) {
-        return functionCallAST(expression);
-    }
-
-    throw `Parser: unknown expression '${expression}' in '${FUNCTION_NAME}'.`;
+    tokenizer.setData(expression);
+    return parseToken(tokenizer.next());
 }

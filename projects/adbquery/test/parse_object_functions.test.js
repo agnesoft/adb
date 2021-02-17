@@ -29,9 +29,6 @@ describe("parse", () => {
 
                     const ast = {
                         MyObj: {
-                            type: "object",
-                            name: "MyObj",
-                            fields: [],
                             functions: {
                                 foo: {
                                     type: "function",
@@ -44,13 +41,12 @@ describe("parse", () => {
                         },
                     };
 
-                    expect(parser.parse(data)).toEqual(ast);
+                    expect(parser.parse(data)).toMatchObject(ast);
                 });
 
                 test("multiple with argument", () => {
                     const data = {
                         MyObj: {
-                            fields: ["Id"],
                             functions: {
                                 foo: {
                                     arguments: ["arg1"],
@@ -65,9 +61,6 @@ describe("parse", () => {
 
                     const ast = {
                         MyObj: {
-                            type: "object",
-                            name: "MyObj",
-                            fields: ["Id"],
                             functions: {
                                 foo: {
                                     type: "function",
@@ -75,13 +68,13 @@ describe("parse", () => {
                                     arguments: ["arg1"],
                                     body: [
                                         {
-                                            type: "assignment",
+                                            type: "=",
                                             left: {
-                                                type: "type",
+                                                type: "identifier",
                                                 value: "Id",
                                             },
                                             right: {
-                                                type: "type",
+                                                type: "identifier",
                                                 value: "arg1",
                                             },
                                         },
@@ -98,7 +91,7 @@ describe("parse", () => {
                         },
                     };
 
-                    expect(parser.parse(data)).toEqual(ast);
+                    expect(parser.parse(data)).toMatchObject(ast);
                 });
             });
 

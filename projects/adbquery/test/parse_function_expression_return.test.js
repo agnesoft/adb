@@ -29,21 +29,17 @@ describe("parse", () => {
 
                         const ast = {
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: [],
                                 body: [
                                     {
                                         type: "return",
                                         value: "Id",
-                                        returnType: "type",
+                                        returnType: "identifier",
                                     },
                                 ],
-                                returnValue: "Id",
                             },
                         };
 
-                        expect(parser.parse(data)).toEqual(ast);
+                        expect(parser.parse(data)).toMatchObject(ast);
                     });
 
                     test("field", () => {
@@ -56,25 +52,21 @@ describe("parse", () => {
 
                         const ast = {
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: [],
                                 body: [
                                     {
                                         type: "return",
                                         value: "Id",
-                                        returnType: "type",
+                                        returnType: "identifier",
                                         parent: {
-                                            type: "type",
+                                            type: "identifier",
                                             value: "MyObj",
                                         },
                                     },
                                 ],
-                                returnValue: "Id",
                             },
                         };
 
-                        expect(parser.parse(data)).toEqual(ast);
+                        expect(parser.parse(data)).toMatchObject(ast);
                     });
 
                     test("call", () => {
@@ -84,9 +76,6 @@ describe("parse", () => {
 
                         const ast = {
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: [],
                                 body: [
                                     {
                                         type: "return",
@@ -95,11 +84,10 @@ describe("parse", () => {
                                         returnType: "call",
                                     },
                                 ],
-                                returnValue: "Id",
                             },
                         };
 
-                        expect(parser.parse(data)).toEqual(ast);
+                        expect(parser.parse(data)).toMatchObject(ast);
                     });
                 });
 
@@ -114,7 +102,7 @@ describe("parse", () => {
                         };
 
                         expect(parse).toThrow(
-                            "Parser: return type in expression in function 'foo' cannot be empty."
+                            "Parser: expected an identifier, got nothing in function 'foo' when parsing expression 'return'."
                         );
                     });
                 });

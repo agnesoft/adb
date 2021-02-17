@@ -15,5 +15,5 @@
 import * as compiler from "../compiler/compiler.js";
 
 test("", () => {
-    const ast = compiler.compile("");
+    const ast = compiler.compile("{}");
 });

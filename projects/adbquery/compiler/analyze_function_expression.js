@@ -101,6 +101,18 @@ function analyzeConstructorCall(expression, context, ast) {
     expression["type"] = "constructor";
 }
 
+function analyzeBody(expression, context, ast) {
+    for (let ifBodyExpression of expression["body"]) {
+        analyzeExpression(ifBodyExpression, context, ast);
+    }
+}
+
+function analyzeFor(expression, context, ast) {
+    analyzeIterations(expression["iterations"], context, ast);
+    context["locals"].push("i");
+    analyzeBody(expression, context, ast);
+}
+
 function analyzeFunctionArguments(expression, func, context, ast) {
     validateArgumentsLength(expression, func["arguments"]);
     analyzeArguments(expression, func["arguments"], context, ast);
@@ -110,6 +122,21 @@ function analyzeFunctionCall(expression, context, ast) {
     let func = ast[expression["value"]];
     addCallTypes(expression, func, ast);
     analyzeFunctionArguments(expression, func, context, ast);
+}
+
+function analyzeIf(expression, context, ast) {
+    analyzeSide(expression["condition"]["left"], context, ast);
+    analyzeSide(expression["condition"]["right"], context, ast);
+    analyzeBody(expression, context, ast);
+    validateComparison(
+        expression["condition"]["left"],
+        expression["condition"]["right"]
+    );
+}
+
+function analyzeIterations(iterations, context, ast) {
+    analyzeSide(iterations, context, ast);
+    validateIterations(iterations, ast);
 }
 
 function analyzeMethodCall(expression, context, ast) {
@@ -237,6 +264,10 @@ function isLocal(expression, context) {
     return context["locals"].includes(expression["value"]);
 }
 
+function isParentArray(expression) {
+    return expression["parent"]["astType"] == "array";
+}
+
 function isParentField(expression, ast) {
     return (
         hasParent(expression) &&
@@ -253,10 +284,16 @@ function isParentObject(expression) {
 
 function isParentMethod(expression, ast) {
     return (
-        isParentObject(expression) &&
+        (isParentArray(expression) ||
+            isParentTypeVariant(expression) ||
+            isParentObject(expression)) &&
         expression["value"] in
             ast[expression["parent"]["realType"]]["functions"]
     );
+}
+
+function isParentTypeVariant(expression) {
+    return expression["parent"]["astType"] == "variant";
 }
 
 function isVariant(type, ast) {
@@ -295,7 +332,10 @@ function expressionAsString(expression) {
 }
 
 function isNumeric(left, right) {
-    return left["realType"] == "int64" && right["type"] == "number";
+    return (
+        (left["realType"] == "int64" || left["realType"] == "double") &&
+        (right["realType"] == "int64" || right["realType"] == "double")
+    );
 }
 
 function validateAddition(left, right, ast) {
@@ -328,6 +368,20 @@ function validateAssignment(left, right, ast) {
     }
 }
 
+function validateComparison(left, right) {
+    if (left["realType"] != right["realType"]) {
+        throw `Cannot compare ${expressionAsString(
+            left
+        )} and ${expressionAsString(right)}.`;
+    }
+}
+
+function validateIterations(iterations, ast) {
+    if (iterations["realType"] != "int64") {
+        throw `The 'for' iterations' type must be an 'int64', got '${iterations["realType"]}'.`;
+    }
+}
+
 function validateType(type, ast) {
     if (!astType(type, ast)) {
         throw `Unknown type '${type}'.`;
@@ -336,14 +390,26 @@ function validateType(type, ast) {
 
 export function analyzeExpression(expression, context, ast) {
     switch (expression["type"]) {
-        case "addition":
+        case "+=":
             analyzeAddition(expression, context, ast);
             break;
-        case "assignment":
+        case "=":
             analyzeAssignment(expression, context, ast);
             break;
         case "call":
             analyzeCall(expression, context, ast);
+            break;
+        case "else":
+            analyzeBody(expression, context, ast);
+            break;
+        case "elseif":
+            analyzeIf(expression, context, ast);
+            break;
+        case "for":
+            analyzeFor(expression, context, ast);
+            break;
+        case "if":
+            analyzeIf(expression, context, ast);
             break;
         case "return":
             analyzeReturn(expression, context, ast);

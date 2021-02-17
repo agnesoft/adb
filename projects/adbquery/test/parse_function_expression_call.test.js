@@ -26,21 +26,17 @@ describe("parse", () => {
 
                         const ast = {
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: [],
                                 body: [
                                     {
                                         type: "call",
-                                        arguments: [],
                                         value: "bar",
+                                        arguments: [],
                                     },
                                 ],
-                                returnValue: undefined,
                             },
                         };
 
-                        expect(parser.parse(data)).toEqual(ast);
+                        expect(parser.parse(data)).toMatchObject(ast);
                     });
 
                     test("chained", () => {
@@ -50,14 +46,11 @@ describe("parse", () => {
 
                         const ast = {
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: [],
                                 body: [
                                     {
                                         type: "call",
-                                        arguments: [],
                                         value: "buzz",
+                                        arguments: [],
                                         parent: {
                                             type: "call",
                                             arguments: [],
@@ -65,11 +58,10 @@ describe("parse", () => {
                                         },
                                     },
                                 ],
-                                returnValue: undefined,
                             },
                         };
 
-                        expect(parser.parse(data)).toEqual(ast);
+                        expect(parser.parse(data)).toMatchObject(ast);
                     });
 
                     test("method", () => {
@@ -79,25 +71,21 @@ describe("parse", () => {
 
                         const ast = {
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: [],
                                 body: [
                                     {
                                         type: "call",
-                                        arguments: [],
                                         value: "bar",
+                                        arguments: [],
                                         parent: {
-                                            type: "type",
+                                            type: "identifier",
                                             value: "obj",
                                         },
                                     },
                                 ],
-                                returnValue: undefined,
                             },
                         };
 
-                        expect(parser.parse(data)).toEqual(ast);
+                        expect(parser.parse(data)).toMatchObject(ast);
                     });
 
                     test("with argument", () => {
@@ -107,16 +95,13 @@ describe("parse", () => {
 
                         const ast = {
                             foo: {
-                                type: "function",
-                                name: "foo",
-                                arguments: [],
                                 body: [
                                     {
                                         type: "call",
                                         value: "bar",
                                         arguments: [
                                             {
-                                                type: "argument",
+                                                type: "identifier",
                                                 value: "arg1",
                                             },
                                         ],
@@ -125,12 +110,71 @@ describe("parse", () => {
                             },
                         };
 
-                        expect(parser.parse(data)).toEqual(ast);
+                        expect(parser.parse(data)).toMatchObject(ast);
                     });
 
                     test("with arguments", () => {
                         const data = {
                             foo: { body: ["bar(arg1, arg2)"] },
+                        };
+
+                        const ast = {
+                            foo: {
+                                body: [
+                                    {
+                                        type: "call",
+                                        value: "bar",
+                                        arguments: [
+                                            {
+                                                type: "identifier",
+                                                value: "arg1",
+                                            },
+                                            {
+                                                type: "identifier",
+                                                value: "arg2",
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        };
+
+                        expect(parser.parse(data)).toMatchObject(ast);
+                    });
+
+                    test("nested call", () => {
+                        const data = {
+                            foo: { body: ["foo(1, bar())"] },
+                        };
+
+                        const ast = {
+                            foo: {
+                                body: [
+                                    {
+                                        type: "call",
+                                        value: "foo",
+                                        arguments: [
+                                            {
+                                                type: "number",
+                                                value: 1,
+                                            },
+                                            {
+                                                type: "call",
+                                                value: "bar",
+                                                arguments: [],
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        };
+
+                        expect(parser.parse(data)).toMatchObject(ast);
+                    });
+
+                    test("nested call with parameters", () => {
+                        const data = {
+                            foo: { body: ["foo(1, bar(2, 3))"] },
                         };
 
                         const ast = {
@@ -141,15 +185,25 @@ describe("parse", () => {
                                 body: [
                                     {
                                         type: "call",
-                                        value: "bar",
+                                        value: "foo",
                                         arguments: [
                                             {
-                                                type: "argument",
-                                                value: "arg1",
+                                                type: "number",
+                                                value: 1,
                                             },
                                             {
-                                                type: "argument",
-                                                value: "arg2",
+                                                type: "call",
+                                                value: "bar",
+                                                arguments: [
+                                                    {
+                                                        type: "number",
+                                                        value: 2,
+                                                    },
+                                                    {
+                                                        type: "number",
+                                                        value: 3,
+                                                    },
+                                                ],
                                             },
                                         ],
                                     },
@@ -157,7 +211,44 @@ describe("parse", () => {
                             },
                         };
 
-                        expect(parser.parse(data)).toEqual(ast);
+                        expect(parser.parse(data)).toMatchObject(ast);
+                    });
+
+                    test("method call as argument", () => {
+                        const data = {
+                            foo: { body: ["foo(1, obj.bar())"] },
+                        };
+
+                        const ast = {
+                            foo: {
+                                type: "function",
+                                name: "foo",
+                                arguments: [],
+                                body: [
+                                    {
+                                        type: "call",
+                                        value: "foo",
+                                        arguments: [
+                                            {
+                                                type: "number",
+                                                value: 1,
+                                            },
+                                            {
+                                                type: "call",
+                                                value: "bar",
+                                                arguments: [],
+                                                parent: {
+                                                    type: "identifier",
+                                                    value: "obj",
+                                                },
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        };
+
+                        expect(parser.parse(data)).toMatchObject(ast);
                     });
                 });
 
@@ -172,7 +263,21 @@ describe("parse", () => {
                         };
 
                         expect(parse).toThrow(
-                            "Parser: function name in function call in 'foo' cannot be empty."
+                            "Parser: invalid expression in function 'foo' when parsing expression '(arg2)'."
+                        );
+                    });
+
+                    test("missing end bracket", () => {
+                        const data = {
+                            foo: { body: ["foo(arg"] },
+                        };
+
+                        const parse = () => {
+                            parser.parse(data);
+                        };
+
+                        expect(parse).toThrow(
+                            "Parser: unexpected end of data, expected an identifier or ')' in function 'foo' when parsing expression 'foo(arg'."
                         );
                     });
                 });

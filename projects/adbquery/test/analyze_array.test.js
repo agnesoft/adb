@@ -28,6 +28,22 @@ describe("analyze", () => {
                         type: "array",
                         name: "MyArr",
                         arrayType: "int64",
+                        functions: {
+                            at: {
+                                type: "function",
+                                name: "at",
+                                arguments: ["int64"],
+                                body: [],
+                                returnValue: "int64",
+                            },
+                            size: {
+                                type: "function",
+                                name: "size",
+                                arguments: [],
+                                body: [],
+                                returnValue: "int64",
+                            },
+                        },
                     },
                 };
 
@@ -35,7 +51,7 @@ describe("analyze", () => {
                     return analyzer.analyze(parser.parse(data));
                 };
 
-                expect(analyze()).toEqual(ast);
+                expect(analyze()).toMatchObject(ast);
             });
 
             test("custom type", () => {
@@ -45,16 +61,26 @@ describe("analyze", () => {
                 };
 
                 const ast = {
-                    SomeObj: {
-                        type: "object",
-                        name: "SomeObj",
-                        functions: {},
-                        fields: [],
-                    },
                     MyArr: {
                         type: "array",
                         name: "MyArr",
                         arrayType: "SomeObj",
+                        functions: {
+                            at: {
+                                type: "function",
+                                name: "at",
+                                arguments: ["int64"],
+                                body: [],
+                                returnValue: "SomeObj",
+                            },
+                            size: {
+                                type: "function",
+                                name: "size",
+                                arguments: [],
+                                body: [],
+                                returnValue: "int64",
+                            },
+                        },
                     },
                 };
 
@@ -62,7 +88,7 @@ describe("analyze", () => {
                     return analyzer.analyze(parser.parse(data));
                 };
 
-                expect(analyze()).toEqual(ast);
+                expect(analyze()).toMatchObject(ast);
             });
         });
 

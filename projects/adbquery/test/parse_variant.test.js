@@ -17,7 +17,7 @@ import * as parser from "../compiler/parser.js";
 describe("parse", () => {
     describe("variant", () => {
         describe("valid", () => {
-            test("two", () => {
+            test("two variants", () => {
                 const data = {
                     Operator: ["And", "Or"],
                 };
@@ -30,10 +30,10 @@ describe("parse", () => {
                     },
                 };
 
-                expect(parser.parse(data)).toEqual(ast);
+                expect(parser.parse(data)).toMatchObject(ast);
             });
 
-            test("three", () => {
+            test("three variants", () => {
                 const data = {
                     Operator: ["And", "Or", "Where"],
                 };
@@ -46,7 +46,7 @@ describe("parse", () => {
                     },
                 };
 
-                expect(parser.parse(data)).toEqual(ast);
+                expect(parser.parse(data)).toMatchObject(ast);
             });
         });
 

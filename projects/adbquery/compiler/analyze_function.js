@@ -64,6 +64,25 @@ function validateArguments(node, object, ast) {
     }
 }
 
+function validateElseIf(expr, hasIf, node, object) {
+    if (!hasIf && (expr["type"] == "elseif" || expr["type"] == "else")) {
+        throw `Analyzer: invalid expression in function '${functionName(
+            node,
+            object
+        )}'. The 'else/if' must follow 'if' or 'else if'.`;
+    }
+
+    return ["if", "elseif"].includes(expr["type"]);
+}
+
+function validateIf(node, object) {
+    let hasIf = false;
+
+    for (const expr of node["body"]) {
+        hasIf = validateElseIf(expr, hasIf, node, object);
+    }
+}
+
 function validateReturn(node, object, ast) {
     if (node["returnValue"]) {
         if (!typeExists(node["returnValue"], ast)) {
@@ -86,6 +105,7 @@ function validateReturn(node, object, ast) {
 
 export function analyzeFunction(node, object, ast) {
     validateArguments(node, object, ast);
+    validateIf(node, object);
     validateReturn(node, object, ast);
     analyzeExpressions(node, object, ast);
     return ast;

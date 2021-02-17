@@ -30,39 +30,36 @@ describe("parse", () => {
 
                     const ast = {
                         foo: {
-                            type: "function",
-                            name: "foo",
-                            arguments: [],
                             body: [
                                 {
-                                    type: "assignment",
+                                    type: "=",
                                     left: {
-                                        type: "type",
+                                        type: "identifier",
                                         value: "Id",
                                         parent: {
-                                            type: "type",
+                                            type: "identifier",
                                             value: "Obj",
                                         },
                                     },
                                     right: {
-                                        type: "type",
+                                        type: "identifier",
                                         value: "int64",
                                         parent: {
-                                            type: "type",
+                                            type: "identifier",
                                             value: "MyArr",
                                         },
                                     },
                                 },
                                 {
-                                    type: "addition",
+                                    type: "+=",
                                     left: {
-                                        type: "type",
+                                        type: "identifier",
                                         value: "Field1",
                                         parent: {
-                                            type: "type",
+                                            type: "identifier",
                                             value: "Obj",
                                             parent: {
-                                                type: "type",
+                                                type: "identifier",
                                                 value: "MyVar",
                                             },
                                         },
@@ -76,7 +73,7 @@ describe("parse", () => {
                         },
                     };
 
-                    expect(parser.parse(data)).toEqual(ast);
+                    expect(parser.parse(data)).toMatchObject(ast);
                 });
             });
 
@@ -119,7 +116,35 @@ describe("parse", () => {
                     };
 
                     expect(parse).toThrow(
-                        "Parser: unknown expression 'SomeType * 2' in 'foo'."
+                        "Tokenizer: Cannot handle character '*'."
+                    );
+                });
+
+                test("unexpected token", () => {
+                    const data = {
+                        foo: { body: ["obj{"] },
+                    };
+
+                    const parse = () => {
+                        parser.parse(data);
+                    };
+
+                    expect(parse).toThrow(
+                        "Parser: expected '(' or '.', got '{' in function 'foo' when parsing expression 'obj{'."
+                    );
+                });
+
+                test("unknown keyword", () => {
+                    const data = {
+                        foo: { body: ["true"] },
+                    };
+
+                    const parse = () => {
+                        parser.parse(data);
+                    };
+
+                    expect(parse).toThrow(
+                        "Parser: unknown keyword 'true' in function 'foo' when parsing expression 'true'."
                     );
                 });
             });

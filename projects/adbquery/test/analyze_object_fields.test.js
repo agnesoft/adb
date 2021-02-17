@@ -29,20 +29,7 @@ describe("analyze", () => {
                     };
 
                     const ast = {
-                        Id: {
-                            type: "alias",
-                            name: "Id",
-                            aliasedType: "int64",
-                        },
-                        Ids: {
-                            type: "array",
-                            name: "Ids",
-                            arrayType: "Id",
-                        },
                         MyObj: {
-                            type: "object",
-                            name: "MyObj",
-                            functions: {},
                             fields: ["Id", "Ids"],
                         },
                     };
@@ -51,7 +38,7 @@ describe("analyze", () => {
                         return analyzer.analyze(parser.parse(data));
                     };
 
-                    expect(analyze()).toEqual(ast);
+                    expect(analyze()).toMatchObject(ast);
                 });
             });
 

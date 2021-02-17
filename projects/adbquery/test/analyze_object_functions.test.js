@@ -30,9 +30,6 @@ describe("analyze", () => {
 
                     const ast = {
                         MyObj: {
-                            type: "object",
-                            name: "MyObj",
-                            fields: [],
                             functions: {
                                 foo: {
                                     type: "function",
@@ -49,7 +46,7 @@ describe("analyze", () => {
                         return analyzer.analyze(parser.parse(data));
                     };
 
-                    expect(analyze()).toEqual(ast);
+                    expect(analyze()).toMatchObject(ast);
                 });
 
                 test("multiple with argument", () => {
@@ -61,7 +58,7 @@ describe("analyze", () => {
                             functions: {
                                 foo: {
                                     arguments: ["IdAlias"],
-                                    body: ["Id = IdAlias"],
+                                    body: [],
                                 },
                                 bar: {
                                     body: ["return Id"],
@@ -72,42 +69,13 @@ describe("analyze", () => {
                     };
 
                     const ast = {
-                        Id: {
-                            type: "alias",
-                            name: "Id",
-                            aliasedType: "int64",
-                        },
-                        IdAlias: {
-                            type: "alias",
-                            name: "IdAlias",
-                            aliasedType: "Id",
-                        },
                         MyObj: {
-                            type: "object",
-                            name: "MyObj",
-                            fields: ["Id"],
                             functions: {
                                 foo: {
                                     type: "function",
                                     name: "foo",
                                     arguments: ["IdAlias"],
-                                    body: [
-                                        {
-                                            type: "assignment",
-                                            left: {
-                                                type: "field",
-                                                realType: "int64",
-                                                astType: "native",
-                                                value: "Id",
-                                            },
-                                            right: {
-                                                type: "argument",
-                                                realType: "int64",
-                                                astType: "native",
-                                                value: "IdAlias",
-                                            },
-                                        },
-                                    ],
+                                    body: [],
                                     returnValue: undefined,
                                 },
                                 bar: {
@@ -133,7 +101,7 @@ describe("analyze", () => {
                         return analyzer.analyze(parser.parse(data));
                     };
 
-                    expect(analyze()).toEqual(ast);
+                    expect(analyze()).toMatchObject(ast);
                 });
             });
         });

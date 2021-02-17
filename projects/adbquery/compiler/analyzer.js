@@ -44,6 +44,4 @@ export function analyze(ast) {
     for (const type in ast) {
         analyzeType(ast[type], ast);
     }
-
-    return ast;
 }

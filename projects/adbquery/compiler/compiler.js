@@ -76,6 +76,5 @@ export function compile(data) {
         ...JSON.parse(data),
     });
     let ast = parser.parse(fullData);
-    analyzer.analyze(ast);
-    return ast;
+    return analyzer.analyze(ast);
 }

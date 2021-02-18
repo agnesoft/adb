@@ -151,7 +151,7 @@ describe("analyze", () => {
                         };
 
                         expect(analyze).toThrow(
-                            `Analyzer: invalid expression in function 'foo'. The 'for' iterations' type must be an 'int64', got 'Obj'.`
+                            `Analyzer: invalid expression in function 'foo'. The 'for' iterations' type must be a numeric type, got 'Obj'.`
                         );
                     });
                 });

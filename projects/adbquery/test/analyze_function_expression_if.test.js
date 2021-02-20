@@ -236,9 +236,9 @@ describe("analyze", () => {
                             Float: "double",
                             Id: "int64",
                             foo: {
-                                arguments: ["Float", "Id"],
+                                arguments: ["Float", "string"],
                                 body: [
-                                    "if (Float < Id) { return 1 }",
+                                    "if (Float < string) { return 1 }",
                                     "return 0",
                                 ],
                                 return: "int64",
@@ -250,7 +250,7 @@ describe("analyze", () => {
                         };
 
                         expect(analyze).toThrow(
-                            `Analyzer: invalid expression in function 'foo'. Cannot compare 'Float' (aka double [native]) and 'Id' (aka int64 [native]).`
+                            `Analyzer: invalid expression in function 'foo'. Cannot compare 'Float' (aka double [native]) and 'string' (aka string [native]).`
                         );
                     });
 

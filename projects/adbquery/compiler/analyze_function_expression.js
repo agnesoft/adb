@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { realType, typeExists, astType } from "./analyzer_common.js";
+import { realType, astType } from "./analyzer_common.js";
 
 function addCallTypes(expression, func, ast) {
     expression["realType"] = realType(func["returnValue"], ast);
@@ -136,7 +136,7 @@ function analyzeIf(expression, context, ast) {
 
 function analyzeIterations(iterations, context, ast) {
     analyzeSide(iterations, context, ast);
-    validateIterations(iterations, ast);
+    validateIterations(iterations);
 }
 
 function analyzeMethodCall(expression, context, ast) {
@@ -227,7 +227,8 @@ function isArray(type, ast) {
 
 function isArrayType(arrayType, type, ast) {
     return (
-        isArray(arrayType, ast) && realType(ast[arrayType]["arrayType"]) == type
+        isArray(arrayType, ast) &&
+        realType(ast[arrayType]["arrayType"], ast) == type
     );
 }
 
@@ -314,7 +315,19 @@ function isParentVariant(expression, ast) {
 function isVariantType(variantType, type, ast) {
     if (isVariant(variantType, ast)) {
         for (const variant of ast[variantType]["variants"]) {
-            if (realType(variant, ast) == type) {
+            if (variant == type) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+function isVariantCompatible(variantType, type, ast) {
+    if (isVariant(variantType, ast)) {
+        for (const variant of ast[variantType]["variants"]) {
+            if (realType(variant, ast) == realType(type, ast)) {
                 return true;
             }
         }
@@ -331,11 +344,16 @@ function expressionAsString(expression) {
     return `'${expression["value"]}' (aka ${expression["realType"]} [${expression["astType"]}])`;
 }
 
-function isNumeric(left, right) {
+function isNumericType(type) {
     return (
-        (left["realType"] == "int64" || left["realType"] == "double") &&
-        (right["realType"] == "int64" || right["realType"] == "double")
+        type["realType"] == "int64" ||
+        type["realType"] == "double" ||
+        type["realType"] == "byte"
     );
+}
+
+function isNumeric(left, right) {
+    return isNumericType(left) && isNumericType(right);
 }
 
 function validateAddition(left, right, ast) {
@@ -360,7 +378,7 @@ function validateAssignment(left, right, ast) {
     if (
         left["realType"] != right["realType"] &&
         !isNumeric(left, right) &&
-        !isVariantType(left["realType"], right["realType"], ast)
+        !isVariantCompatible(left["realType"], right["realType"], ast)
     ) {
         throw `Cannot assign ${expressionAsString(
             right
@@ -369,16 +387,16 @@ function validateAssignment(left, right, ast) {
 }
 
 function validateComparison(left, right) {
-    if (left["realType"] != right["realType"]) {
+    if (!isNumeric(left, right)) {
         throw `Cannot compare ${expressionAsString(
             left
         )} and ${expressionAsString(right)}.`;
     }
 }
 
-function validateIterations(iterations, ast) {
-    if (iterations["realType"] != "int64") {
-        throw `The 'for' iterations' type must be an 'int64', got '${iterations["realType"]}'.`;
+function validateIterations(iterations) {
+    if (!isNumericType(iterations)) {
+        throw `The 'for' iterations' type must be a numeric type, got '${iterations["realType"]}'.`;
     }
 }
 

@@ -14,6 +14,52 @@
 
 import * as compiler from "../compiler/compiler.js";
 
-test("", () => {
-    const ast = compiler.compile("{}");
+describe("serializer", () => {
+    describe("valid", () => {
+        test("sample scheme", () => {
+            const data = JSON.stringify({
+                FizzBuzz: "string",
+                Id: "int64",
+                MyArr: ["Id"],
+                MyVariant: ["Id", "MyArr"],
+                print: {
+                    arguments: ["string"],
+                    body: [],
+                },
+                MyObj: {
+                    fields: ["Id"],
+                    functions: {
+                        doFizzBuzz: {
+                            arguments: ["int64"],
+                            body: ["if (int64 == 15) { print(FizzBuzz) }"],
+                        },
+                        fizzBuzz: {
+                            body: ["for(Id) { doFizzBuzz(i) }"],
+                        },
+                    },
+                },
+                main: {
+                    body: ["MyObj(20)", "MyObj.fizzBuzz()"],
+                },
+            });
+
+            const compile = () => {
+                return compiler.compile(data);
+            };
+
+            expect(compile).not.toThrow();
+        });
+    });
+
+    describe("invalid", () => {
+        test("invalid json", () => {
+            const data = "{";
+
+            const compile = () => {
+                return compiler.compile(data);
+            };
+
+            expect(compile).toThrow("Unexpected end of JSON input");
+        });
+    });
 });

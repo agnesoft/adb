@@ -174,6 +174,26 @@ describe("analyze", () => {
                             "Analyzer: invalid expression in function 'foo'. Cannot assign 'SomeType' (aka SomeType [object]) to 'Id' (aka int64 [native])."
                         );
                     });
+
+                    test("type = incorrect variant", () => {
+                        const data = {
+                            Id: "int64",
+                            MyVar: ["int64", "double"],
+                            OtherVar: "MyVar",
+                            foo: {
+                                arguments: ["MyVar"],
+                                body: ["MyVar = int64.string"],
+                            },
+                        };
+
+                        const analyze = () => {
+                            return analyzer.analyze(parser.parse(data));
+                        };
+
+                        expect(analyze).toThrow(
+                            "Analyzer: invalid expression in function 'foo'. Invalid parent 'int64' (aka int64 [native]) of 'string' (aka string [native])."
+                        );
+                    });
                 });
             });
         });

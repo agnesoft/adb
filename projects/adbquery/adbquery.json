@@ -1,0 +1,161 @@
+{
+    "Count": "int64",
+    "Distance": "int64",
+    "Id": "int64",
+    "Ids": ["Id"],
+    "FromId": "Id",
+    "FromIds": "Ids",
+    "ToId": "Id",
+    "ToIds": "Ids",
+    "Value": ["int64", "double", "string"],
+    "Key": "Value",
+    "Keys": ["Key"],
+    "KeyValue": { "fields": ["Key", "Value"] },
+    "KeyValues": ["KeyValue"],
+    "Placeholder": "string",
+
+    "IdField": ["Id", "Placeholder", "Query"],
+    "IdsField": ["Ids", "Placeholder", "Query"],
+    "FromIdField": ["FromId", "Placeholder", "Query"],
+    "FromIdsField": ["FromIds", "Placeholder", "Query"],
+    "ToIdField": ["ToId", "Placeholder", "Query"],
+    "ToIdsField": ["ToIds", "Placeholder", "Query"],
+    "KeyField": ["Key", "Placeholder", "Query"],
+    "KeysField": ["Keys", "Placeholder", "Query"],
+    "CountField": ["Count", "Placeholder", "Query"],
+    "ValueField": ["Key", "Placeholder", "Query"],
+    "ElementsDataField": ["KeyValues", "Placeholder", "Query"],
+
+    "EqualsCount": { "fields": ["CountField"] },
+    "NotEqualsCount": { "fields": ["CountField"] },
+    "LessThanCount": { "fields": ["CountField"] },
+    "LessThanOrEqualCount": { "fields": ["CountField"] },
+    "GreaterThanCount": { "fields": ["CountField"] },
+    "GreaterThanOrEqualCount": { "fields": ["CountField"] },
+    "CountCompare": [
+        "EqualsCount",
+        "NotEqualsCount",
+        "LessThanCount",
+        "LessThanOrEqualCount",
+        "GreaterThanCount",
+        "GreaterThanOrEqualCount"
+    ],
+    "EqualsValue": { "fields": ["ValueField"] },
+    "NotEqualsValue": { "fields": ["ValueField"] },
+    "LessThanValue": { "fields": ["ValueField"] },
+    "LessThanOrEqualValue": { "fields": ["ValueField"] },
+    "GreaterThanValue": { "fields": ["ValueField"] },
+    "GreaterThanOrEqualValue": { "fields": ["ValueField"] },
+    "ValueCompare": [
+        "EqualsValue",
+        "NotEqualsValue",
+        "LessThanValue",
+        "LessThanOrEqualValue",
+        "GreaterThanValue",
+        "GreaterThanOrEqualValue"
+    ],
+
+    "WhereCondition": {},
+    "AndCondition": {},
+    "OrCondition": {},
+    "EndWhereCondition": {},
+    "CountCondition": { "fields": ["CountCompare"] },
+    "EdgeCountCondition": { "fields": ["CountCompare"] },
+    "FromCountCondition": { "fields": ["CountCompare"] },
+    "ToCountCondition": { "fields": ["CountCompare"] },
+    "DistanceCondition": { "fields": ["CountCompare"] },
+    "NotBeyondIdsCondition": { "fields": ["IdsField"] },
+    "NotIdsCondition": { "fields": ["IdsField"] },
+    "EdgeCondition": {},
+    "NodeCondition": {},
+    "KeysCondition": { "fields": ["KeysField"] },
+    "NotKeysCondition": { "fields": ["KeysField"] },
+    "ValueCondition": { "fields": ["KeyField", "ValueCompare"] },
+    "Condition": [
+        "WhereCondition",
+        "AndCondition",
+        "OrCondition",
+        "EndWhereCondition",
+        "CountCondition",
+        "EdgeCountCondition",
+        "FromCountCondition",
+        "ToCountCondition",
+        "DistanceCondition",
+        "NotBeyondIdsCondition",
+        "NotIdsCondition",
+        "EdgeCondition",
+        "NodeCondition",
+        "KeysCondition",
+        "NotKeysCondition",
+        "ValueCondition"
+    ],
+    "Conditions": ["Condition"],
+
+    "InsertNodesQueryData": {
+        "fields": ["CountField", "ElementsDataField"]
+    },
+    "InsertEdgesQueryData": {
+        "fields": [
+            "CountField",
+            "FromIdsField",
+            "ToIdsField",
+            "ElementsDataField"
+        ]
+    },
+    "InsertEdgesEachQueryData": {
+        "fields": [
+            "CountField",
+            "FromIdsField",
+            "ToIdsField",
+            "ElementsDataField"
+        ]
+    },
+    "InsertDataQueryData": {
+        "fields": ["IdsField", "ElementsDataField"]
+    },
+    "RemoveQueryData": {
+        "fields": ["IdsField", "KeysField"]
+    },
+
+    "SelectElementsQueryData": {
+        "fields": [
+            "IdsField",
+            "FromIdField",
+            "ToIdField",
+            "KeysField",
+            "Conditions"
+        ]
+    },
+    "SelectIdsQueryData": {
+        "fields": ["FromIdField", "ToIdField", "Conditions"]
+    },
+    "SelectCountQueryData": {
+        "fields": ["FromIdField", "ToIdField", "Conditions"]
+    },
+    "SelectKeyCountQueryData": {
+        "fields": ["IdField", "Conditions"]
+    },
+    "SelectPathElementsQuery": {
+        "fields": ["FromIdField", "ToIdField", "KeysField", "Conditions"]
+    },
+    "SelectPathIdsQuery": {
+        "fields": ["FromIdField", "ToIdField", "Conditions"]
+    },
+
+    "QueryData": [
+        "InsertNodesQueryData",
+        "InsertEdgesQueryData",
+        "InsertEdgesEachQueryData",
+        "InsertDataQueryData",
+        "RemoveQueryData",
+        "SelectElementsQueryData",
+        "SelectIdsQueryData",
+        "SelectCountQueryData",
+        "SelectKeyCountQueryData",
+        "SelectPathElementsQuery",
+        "SelectPathIdsQuery"
+    ],
+    "Query": {
+        "fields": ["QueryData"]
+    }
+}

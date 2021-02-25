@@ -16,7 +16,7 @@ function realType(type, data) {
     let real = type;
 
     while (typeof data[real] == "string") {
-        real = data[type];
+        real = data[real];
     }
 
     return real;
@@ -72,7 +72,7 @@ function addStringSerialization(data) {
         ],
     };
     data["deserialize_string"] = {
-        arguments: ["ByteArray", "offset", "string"],
+        arguments: ["ByteArray", "offset"],
         body: [
             "return stringFromByteArray(deserialize_ByteArray(ByteArray, offset))",
         ],
@@ -85,7 +85,11 @@ function isArray(type, data) {
 }
 
 function isObject(type, data) {
-    return Object.keys(data[type]).includes("fields");
+    return (
+        !isArray(type, data) &&
+        typeof data[type] == "object" &&
+        ("fields" in data[type] || !("body" in data[type]))
+    );
 }
 
 function isVariant(type, data) {
@@ -119,24 +123,32 @@ function addArraySerialization(array, arrayType, data, serialization) {
 
 function fieldsSerializationExpressions(object, fields, data) {
     let expressions = [];
-    for (const field of fields) {
-        expressions.push(
-            `serialize_${realType(
-                field,
-                data
-            )}(ByteArray, offset, ${object}.${field})`
-        );
+
+    if (fields) {
+        for (const field of fields) {
+            expressions.push(
+                `serialize_${realType(
+                    field,
+                    data
+                )}(ByteArray, offset, ${object}.${field})`
+            );
+        }
     }
+
     return expressions;
 }
 
-function fieldsDeserializationExpression(object, fields, data) {
+function fieldsDeserializationExpression(fields, data) {
     let expressions = [];
-    for (const field of fields) {
-        expressions.push(
-            `deserialize_${realType(field, data)}(ByteArray, offset)`
-        );
+
+    if (fields) {
+        for (const field of fields) {
+            expressions.push(
+                `deserialize_${realType(field, data)}(ByteArray, offset)`
+            );
+        }
     }
+
     return expressions.join(", ");
 }
 
@@ -153,7 +165,6 @@ function addObjectSerialization(object, definition, data, serialization) {
         arguments: ["ByteArray", "offset"],
         body: [
             `return ${object}(${fieldsDeserializationExpression(
-                object,
                 definition["fields"],
                 data
             )})`,

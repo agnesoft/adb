@@ -13,13 +13,12 @@
 // limitations under the License.
 
 import * as compiler from "./compiler/compiler.js";
-
-function analyze(sub) {
-    sub["type"] = "type";
-}
+import fs from "fs";
 
 function main() {
-    const ast = compiler.compile("");
+    const data = fs.readFileSync(process.argv[2]);
+    const ast = compiler.compile(data);
+    fs.writeFileSync("./ast", JSON.stringify(ast, null, 2));
 }
 
 main();

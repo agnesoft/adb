@@ -13,12 +13,14 @@
 // limitations under the License.
 
 import * as compiler from "./compiler/compiler.js";
+import * as cpp from "./generators/cpp/cpp.js";
 import fs from "fs";
 
 function main() {
     const data = fs.readFileSync(process.argv[2]);
     const ast = compiler.compile(data);
-    fs.writeFileSync("./ast", JSON.stringify(ast, null, 2));
+
+    cpp.generate(ast, "./adbquery.cpp");
 }
 
 main();

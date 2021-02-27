@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { realType } from "./analyzer_common.js";
 import { analyzeAlias } from "./analyze_alias.js";
 import { analyzeArray } from "./analyze_array.js";
 import { analyzeFunction } from "./analyze_function.js";
@@ -40,9 +41,44 @@ function analyzeType(node, ast) {
     }
 }
 
+function detectUseBeforeDefined(node, ast) {
+    for (const type in ast) {
+        if (type == node["name"]) {
+            return;
+        }
+
+        if (ast[type]["type"] == "alias") {
+            if (realType(ast[type]["aliasedType"] == node["name"])) {
+                node["usedBeforeDefined"] = true;
+                return;
+            }
+        } else if (ast[type]["type"] == "array") {
+            if (realType(ast[type]["arrayType"], ast) == node["name"]) {
+                node["usedBeforeDefined"] = true;
+                return;
+            }
+        } else if (ast[type]["type"] == "variant") {
+            for (const variant of ast[type]["variants"]) {
+                if (realType(variant, ast) == node["name"]) {
+                    node["usedBeforeDefined"] = true;
+                    return;
+                }
+            }
+        } else if (ast[type]["type"] == "object") {
+            for (const field of ast[type]["fields"]) {
+                if (realType(field, ast) == node["name"]) {
+                    node["usedBeforeDefined"] = true;
+                    return;
+                }
+            }
+        }
+    }
+}
+
 export function analyze(ast) {
     for (const type in ast) {
         analyzeType(ast[type], ast);
+        detectUseBeforeDefined(ast[type], ast);
     }
 
     return ast;

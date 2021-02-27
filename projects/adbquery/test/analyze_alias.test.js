@@ -79,6 +79,51 @@ describe("analyze", () => {
 
                 expect(analyze()).toMatchObject(ast);
             });
+
+            test("used before defined", () => {
+                const data = {
+                    From: "Id",
+                    Id: "int64",
+                };
+
+                const ast = {
+                    Id: {
+                        type: "alias",
+                        name: "Id",
+                        aliasedType: "int64",
+                        usedBeforeDefined: true,
+                    },
+                };
+
+                const analyze = () => {
+                    return analyzer.analyze(parser.parse(data));
+                };
+
+                expect(analyze()).toMatchObject(ast);
+            });
+
+            test("used before defined (transitive)", () => {
+                const data = {
+                    To: "From",
+                    From: "Id",
+                    Id: "int64",
+                };
+
+                const ast = {
+                    From: {
+                        type: "alias",
+                        name: "From",
+                        aliasedType: "Id",
+                        usedBeforeDefined: true,
+                    },
+                };
+
+                const analyze = () => {
+                    return analyzer.analyze(parser.parse(data));
+                };
+
+                expect(analyze()).toMatchObject(ast);
+            });
         });
 
         describe("invalid", () => {

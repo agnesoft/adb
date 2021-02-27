@@ -90,6 +90,44 @@ describe("analyze", () => {
 
                 expect(analyze()).toMatchObject(ast);
             });
+
+            test("used before defined", () => {
+                const data = {
+                    SomeObj: { fields: ["MyArr"] },
+                    MyArr: ["int64"],
+                };
+
+                const ast = {
+                    MyArr: {
+                        type: "array",
+                        name: "MyArr",
+                        arrayType: "int64",
+                        functions: {
+                            at: {
+                                type: "function",
+                                name: "at",
+                                arguments: ["int64"],
+                                body: [],
+                                returnValue: "int64",
+                            },
+                            size: {
+                                type: "function",
+                                name: "size",
+                                arguments: [],
+                                body: [],
+                                returnValue: "int64",
+                            },
+                        },
+                        usedBeforeDefined: true,
+                    },
+                };
+
+                const analyze = () => {
+                    return analyzer.analyze(parser.parse(data));
+                };
+
+                expect(analyze()).toMatchObject(ast);
+            });
         });
 
         describe("invalid", () => {

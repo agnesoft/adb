@@ -47,6 +47,37 @@ describe("analyze", () => {
 
                 expect(analyze()).toMatchObject(ast);
             });
+
+            test("used before defined", () => {
+                const data = {
+                    SomeType: { fields: ["MyVariant"] },
+                    MyVariant: ["byte", "int64"],
+                };
+
+                const ast = {
+                    MyVariant: {
+                        type: "variant",
+                        name: "MyVariant",
+                        variants: ["byte", "int64"],
+                        functions: {
+                            index: {
+                                type: "function",
+                                name: "index",
+                                arguments: [],
+                                body: [],
+                                returnValue: "byte",
+                            },
+                        },
+                        usedBeforeDefined: true,
+                    },
+                };
+
+                const analyze = () => {
+                    return analyzer.analyze(parser.parse(data));
+                };
+
+                expect(analyze()).toMatchObject(ast);
+            });
         });
 
         describe("invalid", () => {

@@ -43,12 +43,12 @@ function analyzeType(node, ast) {
 
 function detectUseBeforeDefined(node, ast) {
     for (const type in ast) {
-        if (type == node["name"]) {
+        if (type == node["name"] || (type == ast[type]["type"]) == "function") {
             return;
         }
 
         if (ast[type]["type"] == "alias") {
-            if (realType(ast[type]["aliasedType"] == node["name"])) {
+            if (ast[type]["aliasedType"] == node["name"]) {
                 node["usedBeforeDefined"] = true;
                 return;
             }

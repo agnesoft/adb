@@ -14,33 +14,24 @@
 
 import fs from "fs";
 
-function declarations(ast) {
-    let buffer = "";
-
-    for (const type in ast) {
-        if (ast[type]["type"] == "object") {
-            buffer += `class ${type};
-`;
-        }
-    }
-
-    return buffer;
-}
-
 function aliases(ast) {
     let buffer = "";
 
     for (const type in ast) {
         if (ast[type]["type"] == "array") {
-            buffer += `using ${type} = std::vector<${ast[type]["arrayType"]}>;
+            buffer += `using ${type} = std::vector<${realType(
+                ast[type]["arrayType"],
+                ast
+            )}>;
 `;
         } else if (ast[type]["type"] == "variant") {
-            buffer += `using ${type} = std::variant<${ast[type][
-                "variants"
-            ].join(", ")}>;
+            buffer += `using ${type} = std::variant<${variants(type, ast)}>;
 `;
         } else if (ast[type]["type"] == "alias") {
-            buffer += `using ${type} = ${ast[type]["aliasedType"]};
+            buffer += `using ${type} = ${realType(
+                ast[type]["aliasedType"],
+                ast
+            )};
 `;
         }
     }
@@ -56,6 +47,34 @@ function fieldName(type) {
     return `m${type}`;
 }
 
+function functions(ast) {
+    //TODO
+    return "";
+}
+
+function declarations(ast) {
+    let buffer = "";
+
+    for (const type in ast) {
+        if (ast[type]["type"] == "object") {
+            buffer += `class ${type};
+`;
+        }
+    }
+
+    return buffer;
+}
+
+function generateSource(template, ast) {
+    let buffer = template;
+    buffer = buffer.replace("//!year", new Date().getUTCFullYear());
+    buffer = buffer.replace("//!declarations", declarations(ast));
+    buffer = buffer.replace("//!aliases", aliases(ast));
+    buffer = buffer.replace("//!objects", objects(ast));
+    buffer = buffer.replace("//!functions", functions(ast));
+    return buffer;
+}
+
 function objectConstructorArgs(fields) {
     let args = [];
 
@@ -66,7 +85,7 @@ function objectConstructorArgs(fields) {
     return args.join(", ");
 }
 
-function objectConstructorInitializers(fields) {
+function objectConstructorInitializers(fields, ast) {
     if (fields.length == 0) {
         return "";
     }
@@ -74,26 +93,26 @@ function objectConstructorInitializers(fields) {
     let args = [];
 
     for (const field of fields) {
-        args.push(`        ${fieldName(field)}{${argName(field)}}`);
+        args.push(`        ${fieldName(field)}{${typeInitializer(field)}}`);
     }
 
     return ` :
 ${args.join(",\n")}`;
 }
 
-function objectConstructor(def) {
+function objectConstructor(def, ast) {
     return `    explicit ${def["name"]}(${objectConstructorArgs(
         def["fields"]
-    )})${objectConstructorInitializers(def["fields"])}
+    )})${objectConstructorInitializers(def["fields"], ast)}
     {
     }`;
 }
 
-function objectFields(def) {
+function objectFields(def, ast) {
     let fields = [];
 
     for (const field of def["fields"]) {
-        fields.push(`    ${field} ${fieldName(field)};`);
+        fields.push(`    ${realType(field, ast)} ${fieldName(field)};`);
     }
 
     return fields.join("\n");
@@ -108,10 +127,10 @@ function objects(ast) {
 class ${type}
 {
 public:
-${objectConstructor(ast[type])}
+${objectConstructor(ast[type], ast)}
 
 private:
-${objectFields(ast[type])}
+${objectFields(ast[type], ast)}
 };
 `;
         }
@@ -120,22 +139,30 @@ ${objectFields(ast[type])}
     return buffer;
 }
 
-function functions(ast) {
-    return "";
-}
-
-function generateSource(template, ast) {
-    let buffer = template;
-    buffer = buffer.replace("//!year", new Date().getUTCFullYear());
-    buffer = buffer.replace("//!declarations", declarations(ast));
-    buffer = buffer.replace("//!aliases", aliases(ast));
-    buffer = buffer.replace("//!objects", objects(ast));
-    buffer = buffer.replace("//!functions", functions(ast));
-    return buffer;
-}
-
 function readTemplate() {
     return fs.readFileSync("generators/cpp/cpp.template").toString();
+}
+
+function realType(type, ast) {
+    if (type in ast && ast[type]["usedBeforeDefined"]) {
+        return `std::unique_ptr<${type}>`;
+    } else {
+        return type;
+    }
+}
+
+function typeInitializer(type) {
+    return `std::move(${argName(type)})`;
+}
+
+function variants(type, ast) {
+    let types = [];
+
+    for (const variant of ast[type]["variants"]) {
+        types.push(realType(variant, ast));
+    }
+
+    return types.join(", ");
 }
 
 export function generate(ast, file) {

@@ -43,36 +43,38 @@ function analyzeType(node, ast) {
 
 function detectUseBeforeDefined(node, ast) {
     for (const type in ast) {
-        if (type == node["name"] || (type == ast[type]["type"]) == "function") {
+        if (type == node["name"]) {
             return;
         }
 
-        if (ast[type]["type"] == "alias") {
-            if (ast[type]["aliasedType"] == node["name"]) {
-                node["usedBeforeDefined"] = true;
-                return;
-            }
-        } else if (ast[type]["type"] == "array") {
-            if (realType(ast[type]["arrayType"], ast) == node["name"]) {
-                node["usedBeforeDefined"] = true;
-                return;
-            }
-        } else if (ast[type]["type"] == "variant") {
-            for (const variant of ast[type]["variants"]) {
-                if (realType(variant, ast) == node["name"]) {
-                    node["usedBeforeDefined"] = true;
-                    return;
-                }
-            }
-        } else if (ast[type]["type"] == "object") {
-            for (const field of ast[type]["fields"]) {
-                if (realType(field, ast) == node["name"]) {
-                    node["usedBeforeDefined"] = true;
-                    return;
-                }
-            }
+        if (isUsedBeforeDefined(node["name"], type, ast)) {
+            node["usedBeforeDefined"] = true;
+            return;
         }
     }
+}
+
+function isUsedBeforeDefined(type, other, ast) {
+    switch (ast[other]["type"]) {
+        case "alias":
+            return ast[other]["aliasedType"] == type;
+        case "array":
+            return realType(ast[other]["arrayType"], ast) == type;
+        case "variant":
+            return hasUsedBeforeDefined(ast[other]["variants"], type, ast);
+        case "object":
+            return hasUsedBeforeDefined(ast[other]["fields"], type, ast);
+    }
+}
+
+function hasUsedBeforeDefined(types, type, ast) {
+    for (const other of types) {
+        if (realType(other, ast) == type) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 export function analyze(ast) {

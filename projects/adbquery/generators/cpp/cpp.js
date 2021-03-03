@@ -18,25 +18,32 @@ function aliases(ast) {
     let buffer = "";
 
     for (const type in ast) {
-        if (ast[type]["type"] == "array") {
-            buffer += `using ${type} = std::vector<${realType(
-                ast[type]["arrayType"],
-                ast
-            )}>;
-`;
-        } else if (ast[type]["type"] == "variant") {
-            buffer += `using ${type} = std::variant<${variants(type, ast)}>;
-`;
-        } else if (ast[type]["type"] == "alias") {
-            buffer += `using ${type} = ${realType(
-                ast[type]["aliasedType"],
-                ast
-            )};
-`;
-        }
+        buffer += typeAlias(type, ast);
     }
 
     return buffer;
+}
+
+function typeAlias(type, ast) {
+    switch (ast[type]["type"]) {
+        case "array":
+            return `using ${type} = std::vector<${realType(
+                ast[type]["arrayType"],
+                ast
+            )}>;\n`;
+
+        case "variant":
+            return `using ${type} = std::variant<${variants(type, ast)}>;\n`;
+
+        case "alias":
+            return `using ${type} = ${realType(
+                ast[type]["aliasedType"],
+                ast
+            )};\n`;
+
+        default:
+            return "";
+    }
 }
 
 function argName(type) {
@@ -48,18 +55,40 @@ function fieldName(type) {
 }
 
 function functions(ast) {
-    //TODO
-    return "";
+    let buffer = "";
+
+    for (const type in ast) {
+        if (ast[type] == "function") {
+            //TODO
+        }
+    }
+
+    return buffer;
+}
+
+function functionArguments(type, ast) {
+    let args = [];
+
+    for (const arg of ast[type]["arguments"]) {
+        args.push(realType(arg, ast));
+    }
+
+    return args.join(", ");
 }
 
 function declarations(ast) {
     let buffer = "";
 
     for (const type in ast) {
-        if (ast[type]["type"] == "object") {
-            buffer += `class ${type};
-`;
-        }
+        if (ast[type]["usedBeforeDefined"])
+            if (ast[type]["type"] == "object") {
+                buffer += `class ${type};\n`;
+            } else if (ast[type]["type"] == "function") {
+                buffer += `auto ${type}(${functionArguments(
+                    type,
+                    ast
+                )}) -> ${realType(ast[type]["returnValue"])};\n`;
+            }
     }
 
     return buffer;
@@ -96,8 +125,7 @@ function objectConstructorInitializers(fields, ast) {
         args.push(`        ${fieldName(field)}{${typeInitializer(field)}}`);
     }
 
-    return ` :
-${args.join(",\n")}`;
+    return ` :\n${args.join(",\n")}`;
 }
 
 function objectConstructor(def, ast) {
@@ -131,8 +159,7 @@ ${objectConstructor(ast[type], ast)}
 
 private:
 ${objectFields(ast[type], ast)}
-};
-`;
+};\n`;
         }
     }
 

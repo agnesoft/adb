@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { realType } from "./analyzer_common.js";
 import { analyzeAlias } from "./analyze_alias.js";
 import { analyzeArray } from "./analyze_array.js";
 import { analyzeFunction } from "./analyze_function.js";
@@ -59,7 +58,7 @@ function isUsedBeforeDefined(type, other, ast) {
         case "alias":
             return ast[other]["aliasedType"] == type;
         case "array":
-            return realType(ast[other]["arrayType"], ast) == type;
+            return ast[other]["arrayType"] == type;
         case "variant":
             return hasUsedBeforeDefined(ast[other]["variants"], type, ast);
         case "object":
@@ -69,7 +68,7 @@ function isUsedBeforeDefined(type, other, ast) {
 
 function hasUsedBeforeDefined(types, type, ast) {
     for (const other of types) {
-        if (realType(other, ast) == type) {
+        if (other == type) {
             return true;
         }
     }

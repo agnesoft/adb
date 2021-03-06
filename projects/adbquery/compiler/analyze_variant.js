@@ -24,10 +24,10 @@ export function analyzeVariant(node, ast) {
     node["functions"] = {
         index: {
             type: "function",
-            name: "index",
+            name: "Index",
             arguments: [],
             body: [],
-            returnValue: "byte",
+            returnValue: "Byte",
         },
     };
 

@@ -12,6 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+function outArgument(type) {
+    if (type["out"]) {
+        return "&";
+    }
+
+    return "";
+}
+
 export function cppType(type, ast) {
     if (type in ast && ast[type]["usedBeforeDefined"]) {
         return `std::unique_ptr<${type}>`;
@@ -36,7 +44,15 @@ export function functionArguments(types, ast) {
     let vars = [];
 
     for (const type of types) {
-        vars.push(`${cppType(type, ast)} ${variableName(type)}`);
+        if (typeof type == "object") {
+            vars.push(
+                `${cppType(type["name"], ast)} ${outArgument(
+                    type
+                )}${variableName(type["name"])}`
+            );
+        } else {
+            vars.push(`${cppType(type, ast)} ${variableName(type)}`);
+        }
     }
 
     return vars.join(", ");
@@ -47,9 +63,5 @@ export function variableDeclaration(type, ast) {
 }
 
 export function variableName(type) {
-    if (/^[a-z]/.test(type)) {
-        return `${type}_`;
-    } else {
-        return `${type.charAt(0).toLowerCase()}${type.substr(1)}`;
-    }
+    return `${type.charAt(0).toLowerCase()}${type.substr(1)}_`;
 }

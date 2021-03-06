@@ -400,9 +400,9 @@ function expressionAsString(expression) {
 
 function isNumericType(type) {
     return (
-        type["realType"] == "int64" ||
-        type["realType"] == "double" ||
-        type["realType"] == "byte"
+        type["realType"] == "Int64" ||
+        type["realType"] == "Double" ||
+        type["realType"] == "Byte"
     );
 }
 

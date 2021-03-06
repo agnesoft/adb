@@ -29,51 +29,53 @@ namespace adb
 //--------//
 //In built//
 //--------//
-using byte = std::uint8_t;
-using ByteArray = std::vector<byte>;
-using int64 = std::int64_t;
-using i = int64;
-using index = int64;
-using string = std::string;
-using offset = int64;
+using Byte = std::uint8_t;
+using ByteArray = std::vector<Byte>;
+using Buffer = ByteArray;
+using Double = double;
+using Int64 = std::int64_t;
+using i = Int64;
+using Index = Int64;
+using Offset = Int64;
+using String = std::string;
 
-auto deserializeDouble(ByteArray &buffer, offset off) -> double {
+auto deserializeDouble(Buffer &buffer, Offset off) -> Double {
     return {};
 }
 
-auto deserializeInt64(ByteArray &buffer, offset off) -> int64 {
+auto deserializeInt64(Buffer &buffer, Offset off) -> Int64 {
     return {};
 }
 
-auto serializeDouble(ByteArray &buffer, offset off, double value) -> void {
+auto serializeDouble(Buffer &buffer, Offset off, Double value) -> void {
 
 }
 
-auto serializeInt64(ByteArray &buffer, offset off, int64 value) -> void {
+auto serializeInt64(Buffer &buffer, Offset off, Int64 value) -> void {
 
 }
 
-auto stringFromByteArray(ByteArray &buffer) -> string {
+auto stringFromBuffer(Buffer &buffer) -> String {
     return {};
 }
 
-auto stringToByteArray(string &buffer) -> ByteArray {
+auto stringToBuffer(String &buffer) -> Buffer {
     return {};
 }
 
-auto int64ToLittleEndian(int64 value) -> int64 {
+auto int64ToLittleEndian(Int64 value) -> Int64 {
     return {};
 }
 
-auto doubleToLittleEndian(double value) -> double {
+auto doubleToLittleEndian(Double value) -> Double {
     return {};
 }
 
-auto int64ToNativeEndian(int64 value) -> int64 {
+auto int64ToNativeEndian(Int64 value) -> Int64 {
     return {};
 }
 
-auto doubleToNativeEndian(double value) -> double {
+auto doubleToNativeEndian(Double value) -> Double {
     return {};
 }
 

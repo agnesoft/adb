@@ -23,60 +23,54 @@ function realType(type, data) {
 }
 
 function addByteSerialization(data) {
-    data["serialize_byte"] = {
-        arguments: ["ByteArray", "offset", "byte"],
-        body: ["ByteArray.at(offset) = byte", "offset += 1"],
+    data["serialize_Byte"] = {
+        arguments: ["Buffer", "Offset", "Byte"],
+        body: ["Buffer.at(Offset) = Byte", "Offset += 1"],
     };
-    data["deserialize_byte"] = {
-        arguments: ["ByteArray", "offset"],
-        body: ["byte = ByteArray.at(offset)", "offset += 1", "return byte"],
-        return: "byte",
+    data["deserialize_Byte"] = {
+        arguments: ["Buffer", "Offset"],
+        body: ["Byte = Buffer.at(Offset)", "Offset += 1", "return Byte"],
+        return: "Byte",
     };
 }
 
 function addInt64Serialization(data) {
-    data["serialize_int64"] = {
-        arguments: ["ByteArray", "offset", "int64"],
-        body: ["serializeInt64(ByteArray, offset, int64ToLittleEndian(int64))"],
+    data["serialize_Int64"] = {
+        arguments: ["Buffer", "Offset", "Int64"],
+        body: ["serializeInt64(Buffer, Offset, int64ToLittleEndian(Int64))"],
     };
-    data["deserialize_int64"] = {
-        arguments: ["ByteArray", "offset"],
-        body: [
-            "return int64ToNativeEndian(deserializeInt64(ByteArray, offset))",
-        ],
-        return: "int64",
+    data["deserialize_Int64"] = {
+        arguments: ["Buffer", "Offset"],
+        body: ["return int64ToNativeEndian(deserializeInt64(Buffer, Offset))"],
+        return: "Int64",
     };
 }
 
 function addDoubleSerialization(data) {
-    data["serialize_double"] = {
-        arguments: ["ByteArray", "offset", "double"],
-        body: [
-            "serializeDouble(ByteArray, offset, doubleToLittleEndian(int64))",
-        ],
+    data["serialize_Double"] = {
+        arguments: ["Buffer", "Offset", "Double"],
+        body: ["serializeDouble(Buffer, Offset, doubleToLittleEndian(Double))"],
     };
-    data["deserialize_double"] = {
-        arguments: ["ByteArray", "offset"],
+    data["deserialize_Double"] = {
+        arguments: ["Buffer", "Offset"],
         body: [
-            "return doubleToNativeEndian(deserializeDouble(ByteArray, offset))",
+            "return doubleToNativeEndian(deserializeDouble(Buffer, Offset))",
         ],
-        return: "double",
+        return: "Double",
     };
 }
 
 function addStringSerialization(data) {
-    data["serialize_string"] = {
-        arguments: ["ByteArray", "offset", "string"],
-        body: [
-            "serialize_ByteArray(ByteArray, offset, stringToByteArray(string))",
-        ],
+    data["serialize_String"] = {
+        arguments: ["Buffer", "Offset", "String"],
+        body: ["serialize_ByteArray(Buffer, Offset, stringToBuffer(String))"],
     };
-    data["deserialize_string"] = {
-        arguments: ["ByteArray", "offset"],
+    data["deserialize_String"] = {
+        arguments: ["Buffer", "Offset"],
         body: [
-            "return stringFromByteArray(deserialize_ByteArray(ByteArray, offset))",
+            "return stringFromBuffer(deserialize_ByteArray(Buffer, Offset))",
         ],
-        return: "string",
+        return: "String",
     };
 }
 
@@ -98,23 +92,23 @@ function isVariant(type, data) {
 
 function addArraySerialization(array, arrayType, data, serialization) {
     serialization[`serialize_${array}`] = {
-        arguments: ["ByteArray", "offset", array],
+        arguments: ["Buffer", "Offset", array],
         body: [
-            `serialize_int64(ByteArray, offset, ${array}.size())`,
+            `serialize_Int64(Buffer, Offset, ${array}.size())`,
             `for (${array}.size()) { serialize_${realType(
                 arrayType,
                 data
-            )}(ByteArray, offset, ${array}.at(i)) }`,
+            )}(Buffer, Offset, ${array}.at(i)) }`,
         ],
     };
     serialization[`deserialize_${array}`] = {
-        arguments: ["ByteArray", "offset"],
+        arguments: ["Buffer", "Offset"],
         body: [
             `${array} = ${array}`,
-            `for (deserialize_int64(ByteArray, offset)) { ${array} += deserialize_${realType(
+            `for (deserialize_Int64(Buffer, Offset)) { ${array} += deserialize_${realType(
                 arrayType,
                 data
-            )}(ByteArray, offset) }`,
+            )}(Buffer, Offset) }`,
             `return ${array}`,
         ],
         return: array,
@@ -130,7 +124,7 @@ function fieldsSerializationExpressions(object, fields, data) {
                 `serialize_${realType(
                     field,
                     data
-                )}(ByteArray, offset, ${object}.${field})`
+                )}(Buffer, Offset, ${object}.${field})`
             );
         }
     }
@@ -144,7 +138,7 @@ function fieldsDeserializationExpression(fields, data) {
     if (fields) {
         for (const field of fields) {
             expressions.push(
-                `deserialize_${realType(field, data)}(ByteArray, offset)`
+                `deserialize_${realType(field, data)}(Buffer, Offset)`
             );
         }
     }
@@ -154,7 +148,7 @@ function fieldsDeserializationExpression(fields, data) {
 
 function addObjectSerialization(object, definition, data, serialization) {
     serialization[`serialize_${object}`] = {
-        arguments: ["ByteArray", "offset", object],
+        arguments: ["Buffer", "Offset", object],
         body: fieldsSerializationExpressions(
             object,
             definition["fields"],
@@ -162,7 +156,7 @@ function addObjectSerialization(object, definition, data, serialization) {
         ),
     };
     serialization[`deserialize_${object}`] = {
-        arguments: ["ByteArray", "offset"],
+        arguments: ["Buffer", "Offset"],
         body: [
             `return ${object}(${fieldsDeserializationExpression(
                 definition["fields"],
@@ -175,28 +169,28 @@ function addObjectSerialization(object, definition, data, serialization) {
 
 function variantsSerializationExpressions(variant, variants, data) {
     let expressions = [
-        `byte = ${variant}.index()`,
-        `serialize_byte(ByteArray, offset, byte)`,
+        `Byte = ${variant}.index()`,
+        `serialize_Byte(Buffer, Offset, Byte)`,
     ];
     for (let i = 0; i < variants.length; i++) {
         expressions.push(
-            `${i != 0 ? "else " : ""}if (byte == ${i}) { serialize_${realType(
+            `${i != 0 ? "else " : ""}if (Byte == ${i}) { serialize_${realType(
                 variants[i],
                 data
-            )}(ByteArray, offset, ${variant}.${variants[i]}) }`
+            )}(Buffer, Offset, ${variant}.${variants[i]}) }`
         );
     }
     return expressions;
 }
 
 function variantsDeserializationExpressions(variant, variants, data) {
-    let expressions = [`byte = deserialize_byte(ByteArray, offset)`];
+    let expressions = [`Byte = deserialize_Byte(Buffer, Offset)`];
     for (let i = 0; i < variants.length; i++) {
         expressions.push(
-            `if (byte == ${i}) { return deserialize_${realType(
+            `if (Byte == ${i}) { return deserialize_${realType(
                 variants[i],
                 data
-            )}(ByteArray, offset) }`
+            )}(Buffer, Offset) }`
         );
     }
     expressions.push(`return ${variant}`);
@@ -205,11 +199,11 @@ function variantsDeserializationExpressions(variant, variants, data) {
 
 function addVariantSerialization(variant, variants, data, serialization) {
     serialization[`serialize_${variant}`] = {
-        arguments: ["ByteArray", "offset", variant],
+        arguments: ["Buffer", "Offset", variant],
         body: variantsSerializationExpressions(variant, variants, data),
     };
     serialization[`deserialize_${variant}`] = {
-        arguments: ["ByteArray", "offset"],
+        arguments: ["Buffer", "Offset"],
         body: variantsDeserializationExpressions(variant, variants, data),
         return: variant,
     };

@@ -17,56 +17,57 @@ import * as analyzer from "./analyzer.js";
 import * as serializer from "./serializer.js";
 
 const inBuilt = {
-    i: "int64",
-    offset: "int64",
-    ByteArray: ["byte"],
+    i: "Int64",
+    Offset: "Int64",
+    ByteArray: ["Byte"],
+    Buffer: "ByteArray",
     deserializeDouble: {
-        arguments: ["ByteArray", "offset"],
-        body: ["offset = 1", "return 0"],
-        return: "double",
+        arguments: ["Buffer", "Offset"],
+        body: ["Offset = 1", "return 0"],
+        return: "Double",
     },
     deserializeInt64: {
-        arguments: ["ByteArray", "offset"],
-        body: ["offset = 1", "return 0"],
-        return: "int64",
+        arguments: ["Buffer", "Offset"],
+        body: ["Offset = 1", "return 0"],
+        return: "Int64",
     },
     serializeDouble: {
-        arguments: ["ByteArray", "offset", "double"],
-        body: ["ByteArray = ByteArray", "offset = 1"],
+        arguments: ["Buffer", "Offset", "Double"],
+        body: ["Buffer = Buffer", "Offset = 1"],
     },
     serializeInt64: {
-        arguments: ["ByteArray", "offset", "int64"],
-        body: ["ByteArray = ByteArray", "offset = 1"],
+        arguments: ["Buffer", "Offset", "Int64"],
+        body: ["Buffer = Buffer", "Offset = 1"],
     },
-    stringFromByteArray: {
-        arguments: ["ByteArray"],
-        body: ["return string"],
-        return: "string",
+    stringFromBuffer: {
+        arguments: ["Buffer"],
+        body: ["return String"],
+        return: "String",
     },
-    stringToByteArray: {
-        arguments: ["string"],
-        body: ["return ByteArray"],
-        return: "ByteArray",
+    stringToBuffer: {
+        arguments: ["String"],
+        body: ["return Buffer"],
+        return: "Buffer",
     },
     int64ToLittleEndian: {
-        arguments: ["int64"],
+        arguments: ["Int64"],
         body: ["return 0"],
-        return: "int64",
+        return: "Int64",
     },
     doubleToLittleEndian: {
-        arguments: ["double"],
+        arguments: ["Double"],
         body: ["return 0"],
-        return: "double",
+        return: "Double",
     },
     int64ToNativeEndian: {
-        arguments: ["int64"],
+        arguments: ["Int64"],
         body: ["return 0"],
-        return: "int64",
+        return: "Int64",
     },
     doubleToNativeEndian: {
-        arguments: ["double"],
+        arguments: ["Double"],
         body: ["return 0"],
-        return: "double",
+        return: "Double",
     },
 };
 

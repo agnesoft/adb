@@ -13,7 +13,7 @@
 // limitations under the License.
 
 export function isNative(type) {
-    return ["byte", "double", "int64", "string"].includes(type);
+    return ["Byte", "Double", "Int64", "String"].includes(type);
 }
 
 export function typeExists(type, ast) {
@@ -22,7 +22,7 @@ export function typeExists(type, ast) {
 
 export function realType(type, ast) {
     if (!isNaN(type)) {
-        return "int64";
+        return "Int64";
     }
 
     if (isNative(type)) {

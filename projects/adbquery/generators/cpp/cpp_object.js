@@ -21,7 +21,7 @@ function constructor(type, ast) {
         ast
     )})${initializers(ast[type]["fields"])}
     {
-    }\n`;
+    }`;
 }
 
 function explicit(type, ast) {
@@ -61,13 +61,13 @@ function initializers(fields) {
 
     for (const field of fields) {
         inits.push(
-            `${cpptypes.fieldName(field)}{std::move(${cpptypes.variableName(
+            `        ${cpptypes.fieldName(
                 field
-            )})}`
+            )}{std::move(${cpptypes.variableName(field)})}`
         );
     }
 
-    return ` : ${inits.join(", ")}`;
+    return ` :\n${inits.join(",\n")}`;
 }
 
 export function generate(type, ast) {
@@ -75,9 +75,7 @@ export function generate(type, ast) {
 {
 public:
 ${constructor(type, ast)}
-
 ${functions(type, ast)}
-
 private:
 ${fields(ast[type]["fields"], ast)}
 };\n`;

@@ -74,7 +74,7 @@ describe("analyze", () => {
                                 foo: {
                                     type: "function",
                                     name: "foo",
-                                    arguments: ["IdAlias"],
+                                    arguments: [{ name: "IdAlias" }],
                                     body: [],
                                     returnValue: undefined,
                                 },

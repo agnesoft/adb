@@ -44,7 +44,14 @@ function validateArguments(args) {
 function functionArguments(func) {
     if ("arguments" in func) {
         validateArguments(func["arguments"]);
-        return func["arguments"];
+
+        let args = [];
+
+        for (const arg of func["arguments"]) {
+            args.push({ name: arg });
+        }
+
+        return args;
     }
 
     return [];

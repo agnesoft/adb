@@ -22,21 +22,21 @@ const inBuilt = {
     ByteArray: ["byte"],
     deserializeDouble: {
         arguments: ["ByteArray", "offset"],
-        body: ["return 0"],
+        body: ["offset = 1", "return 0"],
         return: "double",
     },
     deserializeInt64: {
         arguments: ["ByteArray", "offset"],
-        body: ["return 0"],
+        body: ["offset = 1", "return 0"],
         return: "int64",
     },
     serializeDouble: {
         arguments: ["ByteArray", "offset", "double"],
-        body: [],
+        body: ["ByteArray = ByteArray", "offset = 1"],
     },
     serializeInt64: {
         arguments: ["ByteArray", "offset", "int64"],
-        body: [],
+        body: ["ByteArray = ByteArray", "offset = 1"],
     },
     stringFromByteArray: {
         arguments: ["ByteArray"],

@@ -13,82 +13,19 @@
 // limitations under the License.
 
 import fs from "fs";
+import * as cppalias from "./cpp_alias.js";
+import * as cpparray from "./cpp_array.js";
+import * as cppfunction from "./cpp_function.js";
+import * as cppobject from "./cpp_object.js";
+import * as cppvariant from "./cpp_variant.js";
 
-function aliases(ast) {
-    let buffer = "";
-
-    for (const type in ast) {
-        buffer += typeAlias(type, ast);
-    }
-
-    return buffer;
-}
-
-function typeAlias(type, ast) {
-    switch (ast[type]["type"]) {
-        case "array":
-            return `using ${type} = std::vector<${realType(
-                ast[type]["arrayType"],
-                ast
-            )}>;\n`;
-
-        case "variant":
-            return `using ${type} = std::variant<${variants(type, ast)}>;\n`;
-
-        case "alias":
-            return `using ${type} = ${realType(
-                ast[type]["aliasedType"],
-                ast
-            )};\n`;
-
-        default:
-            return "";
-    }
-}
-
-function argName(type) {
-    return `${type.charAt(0).toLowerCase()}${type.substr(1)}`;
-}
-
-function fieldName(type) {
-    return `m${type}`;
-}
-
-function functions(ast) {
-    let buffer = "";
+function data(ast) {
+    let buffer = forwardDeclarations(ast) + "\n\n";
 
     for (const type in ast) {
-        if (ast[type] == "function") {
-            //TODO
+        if (isUserDefined(type)) {
+            buffer += generateType(type, ast);
         }
-    }
-
-    return buffer;
-}
-
-function functionArguments(type, ast) {
-    let args = [];
-
-    for (const arg of ast[type]["arguments"]) {
-        args.push(realType(arg, ast));
-    }
-
-    return args.join(", ");
-}
-
-function declarations(ast) {
-    let buffer = "";
-
-    for (const type in ast) {
-        if (ast[type]["usedBeforeDefined"])
-            if (ast[type]["type"] == "object") {
-                buffer += `class ${type};\n`;
-            } else if (ast[type]["type"] == "function") {
-                buffer += `auto ${type}(${functionArguments(
-                    type,
-                    ast
-                )}) -> ${realType(ast[type]["returnValue"])};\n`;
-            }
     }
 
     return buffer;
@@ -97,103 +34,61 @@ function declarations(ast) {
 function generateSource(template, ast) {
     let buffer = template;
     buffer = buffer.replace("//!year", new Date().getUTCFullYear());
-    buffer = buffer.replace("//!declarations", declarations(ast));
-    buffer = buffer.replace("//!aliases", aliases(ast));
-    buffer = buffer.replace("//!objects", objects(ast));
-    buffer = buffer.replace("//!functions", functions(ast));
+    buffer = buffer.replace("//!data", data(ast));
     return buffer;
 }
 
-function objectConstructorArgs(fields) {
-    let args = [];
-
-    for (const field of fields) {
-        args.push(`${field} ${argName(field)}`);
+function generateType(type, ast) {
+    switch (ast[type]["type"]) {
+        case "alias":
+            return cppalias.generate(type, ast);
+        case "array":
+            return cpparray.generate(type, ast);
+        case "function":
+            return cppfunction.generate(ast[type], ast);
+        case "object":
+            return cppobject.generate(type, ast);
+        case "variant":
+            return cppvariant.generate(type, ast);
     }
-
-    return args.join(", ");
 }
 
-function objectConstructorInitializers(fields, ast) {
-    if (fields.length == 0) {
-        return "";
-    }
-
-    let args = [];
-
-    for (const field of fields) {
-        args.push(`        ${fieldName(field)}{${typeInitializer(field)}}`);
-    }
-
-    return ` :\n${args.join(",\n")}`;
-}
-
-function objectConstructor(def, ast) {
-    return `    explicit ${def["name"]}(${objectConstructorArgs(
-        def["fields"]
-    )})${objectConstructorInitializers(def["fields"], ast)}
-    {
-    }`;
-}
-
-function objectFields(def, ast) {
-    let fields = [];
-
-    for (const field of def["fields"]) {
-        fields.push(`    ${realType(field, ast)} ${fieldName(field)};`);
-    }
-
-    return fields.join("\n");
-}
-
-function objects(ast) {
+function forwardDeclarations(ast) {
     let buffer = "";
 
     for (const type in ast) {
-        if (ast[type]["type"] == "object") {
-            buffer += `
-class ${type}
-{
-public:
-${objectConstructor(ast[type], ast)}
-
-private:
-${objectFields(ast[type], ast)}
-};\n`;
+        if (ast[type]["usedBeforeDefined"]) {
+            buffer += `class ${type};`;
         }
     }
 
     return buffer;
 }
 
-function readTemplate() {
-    return fs.readFileSync("generators/cpp/cpp.template").toString();
-}
-
-function realType(type, ast) {
-    if (type in ast && ast[type]["usedBeforeDefined"]) {
-        return `std::unique_ptr<${type}>`;
-    } else {
-        return type;
-    }
-}
-
-function typeInitializer(type) {
-    return `std::move(${argName(type)})`;
-}
-
-function variants(type, ast) {
-    let types = [];
-
-    for (const variant of ast[type]["variants"]) {
-        types.push(realType(variant, ast));
-    }
-
-    return types.join(", ");
+function isUserDefined(type) {
+    return ![
+        "byte",
+        "ByteArray",
+        "int64",
+        "i",
+        "index",
+        "offset",
+        "string",
+        "deserializeDouble",
+        "deserializeInt64",
+        "serializeDouble",
+        "serializeInt64",
+        "stringFromByteArray",
+        "stringToByteArray",
+        "int64ToLittleEndian",
+        "doubleToLittleEndian",
+        "int64ToNativeEndian",
+        "doubleToNativeEndian",
+    ].includes(type);
 }
 
 export function generate(ast, file) {
-    const template = readTemplate();
+    const template = fs.readFileSync("generators/cpp/cpp.template").toString();
     const data = generateSource(template, ast);
     fs.writeFileSync(file, data);
 }

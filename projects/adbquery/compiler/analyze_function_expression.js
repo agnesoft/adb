@@ -21,6 +21,7 @@ function addCallTypes(expression, func, ast) {
 
 function analyzeAddition(expression, context, ast) {
     analyzeSide(expression["left"], context, ast);
+    detectOutArgument(expression["left"], context, ast);
     analyzeSide(expression["right"], context, ast);
     validateAddition(expression["left"], expression["right"], ast);
 }
@@ -46,6 +47,7 @@ function analyzeArguments(expression, expected, context, ast) {
 
 function analyzeAssignment(expression, context, ast) {
     analyzeSide(expression["left"], context, ast);
+    detectOutArgument(expression["left"], context, ast);
     analyzeSide(expression["right"], context, ast);
     validateAssignment(expression["left"], expression["right"], ast);
 }
@@ -115,7 +117,13 @@ function analyzeFor(expression, context, ast) {
 
 function analyzeFunctionArguments(expression, func, context, ast) {
     validateArgumentsLength(expression, func["arguments"]);
-    analyzeArguments(expression, func["arguments"], context, ast);
+    analyzeArguments(
+        expression,
+        functionArgumentsNames(func["arguments"]),
+        context,
+        ast
+    );
+    detectOutArguments(expression, func["arguments"], context);
 }
 
 function analyzeFunctionCall(expression, context, ast) {
@@ -188,6 +196,26 @@ function analyzeTypeExpression(expression, context, ast) {
     expression["type"] = expressionType(expression, context, ast);
 }
 
+function detectOutArgument(side, context, ast) {
+    if (side["parent"]) {
+        detectOutArgument(side["parent"], context, ast);
+    } else {
+        let arg = findArgument(side["value"], context);
+
+        if (arg) {
+            arg["out"] = true;
+        }
+    }
+}
+
+function detectOutArguments(expression, args, context) {
+    for (let i = 0; i < args.length; i++) {
+        if (args[i]["out"] && isArgument(expression["arguments"][i], context)) {
+            context["func"]["arguments"][i]["out"] = true;
+        }
+    }
+}
+
 function expressionType(expression, context, ast) {
     if (isLiteralNumber(expression)) {
         return "number";
@@ -217,8 +245,34 @@ function expressionType(expression, context, ast) {
     }
 }
 
+function findArgument(name, context) {
+    for (const arg of context["func"]["arguments"]) {
+        if (arg["name"] == name) {
+            return arg;
+        }
+    }
+
+    return undefined;
+}
+
+function functionArgumentsNames(args) {
+    let names = [];
+
+    for (const arg of args) {
+        names.push(arg["name"]);
+    }
+
+    return names;
+}
+
 function isArgument(expression, context) {
-    return context["func"]["arguments"].includes(expression["value"]);
+    for (const arg of context["func"]["arguments"]) {
+        if (expression["value"] == arg["name"]) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 function isArray(type, ast) {

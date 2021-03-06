@@ -65,7 +65,11 @@ describe("parse", () => {
                                 foo: {
                                     type: "function",
                                     name: "foo",
-                                    arguments: ["arg1"],
+                                    arguments: [
+                                        {
+                                            name: "arg1",
+                                        },
+                                    ],
                                     body: [
                                         {
                                             type: "=",

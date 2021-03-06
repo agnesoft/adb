@@ -26,16 +26,17 @@ export module adbquery;
 
 namespace adb
 {
-//!declarations
+//--------//
+//In built//
+//--------//
 using byte = std::uint8_t;
-using int64 = std::int64_t;
-using string = std::string;
 using ByteArray = std::vector<byte>;
+using int64 = std::int64_t;
 using i = int64;
-using offset = int64;
 using index = int64;
-//!aliases
-//!objects
+using string = std::string;
+using offset = int64;
+
 auto deserializeDouble(ByteArray &buffer, offset off) -> double {
     return {};
 }
@@ -76,5 +77,8 @@ auto doubleToNativeEndian(double value) -> double {
     return {};
 }
 
-//!functions
+//------------//
+//User Defined//
+//------------//
+//!data
 }

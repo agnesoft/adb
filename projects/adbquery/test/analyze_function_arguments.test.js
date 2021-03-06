@@ -30,7 +30,120 @@ describe("analyze", () => {
 
                     const ast = {
                         foo: {
-                            arguments: ["Id", "From"],
+                            arguments: [{ name: "Id" }, { name: "From" }],
+                        },
+                    };
+
+                    const analyze = () => {
+                        return analyzer.analyze(parser.parse(data));
+                    };
+
+                    expect(analyze()).toMatchObject(ast);
+                });
+
+                test("out (addition)", () => {
+                    const data = {
+                        Id: "int64",
+                        foo: {
+                            arguments: ["Id"],
+                            body: ["Id += 1"],
+                        },
+                    };
+
+                    const ast = {
+                        foo: {
+                            arguments: [
+                                {
+                                    name: "Id",
+                                    out: true,
+                                },
+                            ],
+                        },
+                    };
+
+                    const analyze = () => {
+                        return analyzer.analyze(parser.parse(data));
+                    };
+
+                    expect(analyze()).toMatchObject(ast);
+                });
+
+                test("out (assignment)", () => {
+                    const data = {
+                        Id: "int64",
+                        foo: {
+                            arguments: ["Id"],
+                            body: ["Id = 1"],
+                        },
+                    };
+
+                    const ast = {
+                        foo: {
+                            arguments: [
+                                {
+                                    name: "Id",
+                                    out: true,
+                                },
+                            ],
+                        },
+                    };
+
+                    const analyze = () => {
+                        return analyzer.analyze(parser.parse(data));
+                    };
+
+                    expect(analyze()).toMatchObject(ast);
+                });
+
+                test("out (transitive)", () => {
+                    const data = {
+                        Id: "int64",
+                        foo: {
+                            arguments: ["Id"],
+                            body: ["Id = 1"],
+                        },
+                        bar: {
+                            arguments: ["Id"],
+                            body: ["foo(Id)"],
+                        },
+                    };
+
+                    const ast = {
+                        bar: {
+                            arguments: [
+                                {
+                                    name: "Id",
+                                    out: true,
+                                },
+                            ],
+                        },
+                    };
+
+                    const analyze = () => {
+                        return analyzer.analyze(parser.parse(data));
+                    };
+
+                    expect(analyze()).toMatchObject(ast);
+                });
+
+                test("out (subtype)", () => {
+                    const data = {
+                        Id: "int64",
+                        MyObj: { fields: ["Id"] },
+                        foo: {
+                            arguments: ["MyObj"],
+                            body: ["MyObj.Id = 1"],
+                        },
+                    };
+
+                    const ast = {
+                        foo: {
+                            arguments: [
+                                {
+                                    name: "MyObj",
+                                    out: true,
+                                },
+                            ],
                         },
                     };
 

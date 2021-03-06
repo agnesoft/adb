@@ -55,8 +55,10 @@ function hasReturnStatement(node) {
 
 function validateArguments(node, object, ast) {
     for (const arg of node["arguments"]) {
-        if (!typeExists(arg, ast)) {
-            throw `Analyzer: the argument '${arg}' in function '${functionName(
+        if (!typeExists(arg["name"], ast)) {
+            throw `Analyzer: the argument '${
+                arg["name"]
+            }' in function '${functionName(
                 node,
                 object
             )}' is not an existing type.`;

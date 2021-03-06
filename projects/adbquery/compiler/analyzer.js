@@ -40,6 +40,12 @@ function analyzeType(node, ast) {
     }
 }
 
+function analyzeWholeAST(ast) {
+    for (const type in ast) {
+        detectUseBeforeDefined(ast[type], ast);
+    }
+}
+
 function detectUseBeforeDefined(node, ast) {
     for (const type in ast) {
         if (type == node["name"]) {
@@ -60,13 +66,13 @@ function isUsedBeforeDefined(type, other, ast) {
         case "array":
             return ast[other]["arrayType"] == type;
         case "variant":
-            return hasUsedBeforeDefined(ast[other]["variants"], type, ast);
+            return isUsedBeforeDefinedMulti(ast[other]["variants"], type);
         case "object":
-            return hasUsedBeforeDefined(ast[other]["fields"], type, ast);
+            return isUsedBeforeDefinedMulti(ast[other]["fields"], type);
     }
 }
 
-function hasUsedBeforeDefined(types, type, ast) {
+function isUsedBeforeDefinedMulti(types, type) {
     for (const other of types) {
         if (other == type) {
             return true;
@@ -79,8 +85,9 @@ function hasUsedBeforeDefined(types, type, ast) {
 export function analyze(ast) {
     for (const type in ast) {
         analyzeType(ast[type], ast);
-        detectUseBeforeDefined(ast[type], ast);
     }
+
+    analyzeWholeAST(ast);
 
     return ast;
 }

@@ -51,9 +51,9 @@ describe("analyze", () => {
 
                     test("free function with argument", () => {
                         const data = {
-                            Id: "int64",
+                            Id: "Int64",
                             foo: {
-                                arguments: ["int64"],
+                                arguments: ["Int64"],
                                 body: [],
                             },
                             bar: {
@@ -73,7 +73,7 @@ describe("analyze", () => {
                                             {
                                                 type: "number",
                                                 value: 1,
-                                                realType: "int64",
+                                                realType: "Int64",
                                                 astType: "native",
                                             },
                                         ],
@@ -172,7 +172,7 @@ describe("analyze", () => {
 
                     test("constructor", () => {
                         const data = {
-                            Id: "int64",
+                            Id: "Int64",
                             Obj: { fields: ["Id"] },
                             foo: {
                                 arguments: ["Id"],
@@ -191,7 +191,7 @@ describe("analyze", () => {
                                             {
                                                 type: "argument",
                                                 value: "Id",
-                                                realType: "int64",
+                                                realType: "Int64",
                                                 astType: "native",
                                             },
                                         ],
@@ -210,11 +210,11 @@ describe("analyze", () => {
 
                     test("<array>.size()", () => {
                         const data = {
-                            IntAr: ["int64"],
+                            IntAr: ["Int64"],
                             foo: {
                                 arguments: ["IntAr"],
                                 body: ["return IntAr.size()"],
-                                return: "int64",
+                                return: "Int64",
                             },
                         };
 
@@ -223,7 +223,7 @@ describe("analyze", () => {
                                 body: [
                                     {
                                         type: "return",
-                                        realType: "int64",
+                                        realType: "Int64",
                                         astType: "native",
                                         arguments: [],
                                         value: "size",
@@ -248,11 +248,11 @@ describe("analyze", () => {
 
                     test("<array>.at(index)", () => {
                         const data = {
-                            IntAr: ["int64"],
+                            IntAr: ["Int64"],
                             foo: {
                                 arguments: ["IntAr"],
                                 body: ["return IntAr.at(3)"],
-                                return: "int64",
+                                return: "Int64",
                             },
                         };
 
@@ -261,13 +261,13 @@ describe("analyze", () => {
                                 body: [
                                     {
                                         type: "return",
-                                        realType: "int64",
+                                        realType: "Int64",
                                         astType: "native",
                                         arguments: [
                                             {
                                                 type: "number",
                                                 value: 3,
-                                                realType: "int64",
+                                                realType: "Int64",
                                                 astType: "native",
                                             },
                                         ],
@@ -293,11 +293,11 @@ describe("analyze", () => {
 
                     test("<variant>.index()", () => {
                         const data = {
-                            MyVar: ["byte", "int64"],
+                            MyVar: ["Byte", "Int64"],
                             foo: {
                                 arguments: ["MyVar"],
                                 body: ["return MyVar.index()"],
-                                return: "byte",
+                                return: "Byte",
                             },
                         };
 
@@ -308,7 +308,7 @@ describe("analyze", () => {
                                         type: "return",
                                         returnType: "method",
                                         value: "index",
-                                        realType: "byte",
+                                        realType: "Byte",
                                         astType: "native",
                                         arguments: [],
                                         parent: {
@@ -331,8 +331,8 @@ describe("analyze", () => {
 
                     test("nested call", () => {
                         const data = {
-                            bar: { body: ["return 1"], return: "int64" },
-                            foo: { arguments: ["int64"], body: ["foo(bar())"] },
+                            bar: { body: ["return 1"], return: "Int64" },
+                            foo: { arguments: ["Int64"], body: ["foo(bar())"] },
                         };
 
                         const ast = {
@@ -344,7 +344,7 @@ describe("analyze", () => {
                                             {
                                                 type: "call",
                                                 arguments: [],
-                                                realType: "int64",
+                                                realType: "Int64",
                                                 astType: "native",
                                             },
                                         ],
@@ -366,12 +366,12 @@ describe("analyze", () => {
                     test("nested call with parameters", () => {
                         const data = {
                             bar: {
-                                arguments: ["int64", "double"],
+                                arguments: ["Int64", "Double"],
                                 body: ["return 1"],
-                                return: "int64",
+                                return: "Int64",
                             },
                             foo: {
-                                arguments: ["double", "int64"],
+                                arguments: ["Double", "Int64"],
                                 body: ["foo(1, bar(2, 3))"],
                             },
                         };
@@ -385,7 +385,7 @@ describe("analyze", () => {
                                             {
                                                 type: "number",
                                                 value: 1,
-                                                realType: "int64",
+                                                realType: "Int64",
                                                 astType: "native",
                                             },
                                             {
@@ -394,17 +394,17 @@ describe("analyze", () => {
                                                     {
                                                         type: "number",
                                                         value: 2,
-                                                        realType: "int64",
+                                                        realType: "Int64",
                                                         astType: "native",
                                                     },
                                                     {
                                                         type: "number",
                                                         value: 3,
-                                                        realType: "int64",
+                                                        realType: "Int64",
                                                         astType: "native",
                                                     },
                                                 ],
-                                                realType: "int64",
+                                                realType: "Int64",
                                                 astType: "native",
                                             },
                                         ],
@@ -425,14 +425,14 @@ describe("analyze", () => {
 
                     test("method call", () => {
                         const data = {
-                            MyArr: ["int64"],
+                            MyArr: ["Int64"],
                             bar: {
-                                arguments: ["int64", "double"],
+                                arguments: ["Int64", "Double"],
                                 body: ["return 1"],
-                                return: "int64",
+                                return: "Int64",
                             },
                             foo: {
-                                arguments: ["double", "int64", "MyArr"],
+                                arguments: ["Double", "Int64", "MyArr"],
                                 body: ["bar(1, bar(2, MyArr.size()))"],
                             },
                         };
@@ -447,7 +447,7 @@ describe("analyze", () => {
                                             {
                                                 type: "number",
                                                 value: 1,
-                                                realType: "int64",
+                                                realType: "Int64",
                                                 astType: "native",
                                             },
                                             {
@@ -456,14 +456,14 @@ describe("analyze", () => {
                                                     {
                                                         type: "number",
                                                         value: 2,
-                                                        realType: "int64",
+                                                        realType: "Int64",
                                                         astType: "native",
                                                     },
                                                     {
                                                         type: "method",
                                                         value: "size",
                                                         arguments: [],
-                                                        realType: "int64",
+                                                        realType: "Int64",
                                                         astType: "native",
                                                         parent: {
                                                             type: "argument",
@@ -473,11 +473,11 @@ describe("analyze", () => {
                                                         },
                                                     },
                                                 ],
-                                                realType: "int64",
+                                                realType: "Int64",
                                                 astType: "native",
                                             },
                                         ],
-                                        realType: "int64",
+                                        realType: "Int64",
                                         astType: "native",
                                     },
                                 ],
@@ -495,7 +495,7 @@ describe("analyze", () => {
                 describe("invalid", () => {
                     test("incorrect argument", () => {
                         const data = {
-                            Id: "int64",
+                            Id: "Int64",
                             Obj: {},
                             foo: {
                                 arguments: ["Obj"],
@@ -511,13 +511,13 @@ describe("analyze", () => {
                         };
 
                         expect(analyze).toThrow(
-                            "Analyzer: invalid expression in function 'bar'. Cannot assign 'Id' (aka int64 [native]) to 'Obj' (aka Obj [object])."
+                            "Analyzer: invalid expression in function 'bar'. Cannot assign 'Id' (aka Int64 [native]) to 'Obj' (aka Obj [object])."
                         );
                     });
 
                     test("non-function type", () => {
                         const data = {
-                            Arr: ["int64"],
+                            Arr: ["Int64"],
                             foo: {
                                 body: ["Arr()"],
                             },
@@ -552,7 +552,7 @@ describe("analyze", () => {
 
                     test("too few arguments", () => {
                         const data = {
-                            Id: "int64",
+                            Id: "Int64",
                             FromId: "Id",
                             foo: {
                                 arguments: ["Id", "FromId"],
@@ -573,7 +573,7 @@ describe("analyze", () => {
 
                     test("too many arguments", () => {
                         const data = {
-                            Id: "int64",
+                            Id: "Int64",
                             foo: {
                                 arguments: ["Id"],
                             },

@@ -64,7 +64,7 @@ describe("analyze", () => {
 
             test("used before definition (variant)", () => {
                 const data = {
-                    MyVariant: ["int64", "byte", "MyObj"],
+                    MyVariant: ["Int64", "Byte", "MyObj"],
                     MyObj: {},
                 };
 

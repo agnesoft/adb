@@ -51,7 +51,7 @@ describe("analyze", () => {
 
                 test("multiple with argument", () => {
                     const data = {
-                        Id: "int64",
+                        Id: "Int64",
                         IdAlias: "Id",
                         MyObj: {
                             fields: ["Id"],
@@ -86,7 +86,7 @@ describe("analyze", () => {
                                         {
                                             type: "return",
                                             value: "Id",
-                                            realType: "int64",
+                                            realType: "Int64",
                                             astType: "native",
                                             returnType: "field",
                                         },

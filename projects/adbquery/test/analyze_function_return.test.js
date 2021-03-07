@@ -37,7 +37,7 @@ describe("analyze", () => {
 
                 test("missing return statement", () => {
                     const data = {
-                        Id: "int64",
+                        Id: "Int64",
                         foo: {
                             return: "Id",
                         },

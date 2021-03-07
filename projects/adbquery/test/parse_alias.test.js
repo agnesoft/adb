@@ -19,14 +19,14 @@ describe("parse", () => {
         describe("valid", () => {
             test("native type", () => {
                 const data = {
-                    Size: "int64",
+                    Size: "Int64",
                 };
 
                 const ast = {
                     Size: {
                         type: "alias",
                         name: "Size",
-                        aliasedType: "int64",
+                        aliasedType: "Int64",
                     },
                 };
 

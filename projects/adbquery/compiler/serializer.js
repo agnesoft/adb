@@ -22,58 +22,6 @@ function realType(type, data) {
     return real;
 }
 
-function addByteSerialization(data) {
-    data["serialize_Byte"] = {
-        arguments: ["Buffer", "Offset", "Byte"],
-        body: ["Buffer.at(Offset) = Byte", "Offset += 1"],
-    };
-    data["deserialize_Byte"] = {
-        arguments: ["Buffer", "Offset"],
-        body: ["Byte = Buffer.at(Offset)", "Offset += 1", "return Byte"],
-        return: "Byte",
-    };
-}
-
-function addInt64Serialization(data) {
-    data["serialize_Int64"] = {
-        arguments: ["Buffer", "Offset", "Int64"],
-        body: ["serializeInt64(Buffer, Offset, int64ToLittleEndian(Int64))"],
-    };
-    data["deserialize_Int64"] = {
-        arguments: ["Buffer", "Offset"],
-        body: ["return int64ToNativeEndian(deserializeInt64(Buffer, Offset))"],
-        return: "Int64",
-    };
-}
-
-function addDoubleSerialization(data) {
-    data["serialize_Double"] = {
-        arguments: ["Buffer", "Offset", "Double"],
-        body: ["serializeDouble(Buffer, Offset, doubleToLittleEndian(Double))"],
-    };
-    data["deserialize_Double"] = {
-        arguments: ["Buffer", "Offset"],
-        body: [
-            "return doubleToNativeEndian(deserializeDouble(Buffer, Offset))",
-        ],
-        return: "Double",
-    };
-}
-
-function addStringSerialization(data) {
-    data["serialize_String"] = {
-        arguments: ["Buffer", "Offset", "String"],
-        body: ["serialize_ByteArray(Buffer, Offset, stringToBuffer(String))"],
-    };
-    data["deserialize_String"] = {
-        arguments: ["Buffer", "Offset"],
-        body: [
-            "return stringFromBuffer(deserialize_ByteArray(Buffer, Offset))",
-        ],
-        return: "String",
-    };
-}
-
 function isArray(type, data) {
     return Array.isArray(data[type]) && data[type].length == 1;
 }
@@ -91,6 +39,10 @@ function isVariant(type, data) {
 }
 
 function addArraySerialization(array, arrayType, data, serialization) {
+    if (array == "ByteArray") {
+        return;
+    }
+
     serialization[`serialize_${array}`] = {
         arguments: ["Buffer", "Offset", array],
         body: [
@@ -221,16 +173,8 @@ function addCustomSerialization(data, serialization) {
     }
 }
 
-function addNativeSerialization(data) {
-    addByteSerialization(data);
-    addInt64Serialization(data);
-    addDoubleSerialization(data);
-    addStringSerialization(data);
-}
-
 export function addSerialization(data) {
     let serialization = {};
-    addNativeSerialization(serialization);
     addCustomSerialization(data, serialization);
     return { ...data, ...serialization };
 }

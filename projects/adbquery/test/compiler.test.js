@@ -18,20 +18,20 @@ describe("serializer", () => {
     describe("valid", () => {
         test("sample scheme", () => {
             const data = JSON.stringify({
-                FizzBuzz: "string",
-                Id: "int64",
+                FizzBuzz: "String",
+                Id: "Int64",
                 MyArr: ["Id"],
                 MyVariant: ["Id", "MyArr"],
                 print: {
-                    arguments: ["string"],
+                    arguments: ["String"],
                     body: [],
                 },
                 MyObj: {
                     fields: ["Id"],
                     functions: {
                         doFizzBuzz: {
-                            arguments: ["int64"],
-                            body: ["if (int64 == 15) { print(FizzBuzz) }"],
+                            arguments: ["Int64"],
+                            body: ["if (Int64 == 15) { print(FizzBuzz) }"],
                         },
                         fizzBuzz: {
                             body: ["for(Id) { doFizzBuzz(i) }"],

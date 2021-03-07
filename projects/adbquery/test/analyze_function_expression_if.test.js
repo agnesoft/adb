@@ -22,12 +22,12 @@ describe("analyze", () => {
                 describe("valid", () => {
                     test("equals", () => {
                         const data = {
-                            Arg: "int64",
+                            Arg: "Int64",
                             bar: { body: [] },
                             fizz: {
                                 arguments: ["Arg"],
                                 body: ["return Arg"],
-                                return: "int64",
+                                return: "Int64",
                             },
                             foo: {
                                 arguments: ["Arg"],
@@ -44,12 +44,12 @@ describe("analyze", () => {
                                             left: {
                                                 type: "call",
                                                 astType: "native",
-                                                realType: "int64",
+                                                realType: "Int64",
                                                 arguments: [
                                                     {
                                                         type: "argument",
                                                         astType: "native",
-                                                        realType: "int64",
+                                                        realType: "Int64",
                                                         value: "Arg",
                                                     },
                                                 ],
@@ -59,7 +59,7 @@ describe("analyze", () => {
                                             right: {
                                                 type: "number",
                                                 astType: "native",
-                                                realType: "int64",
+                                                realType: "Int64",
                                                 value: 3,
                                             },
                                         },
@@ -105,13 +105,13 @@ describe("analyze", () => {
                                             type: "==",
                                             left: {
                                                 type: "number",
-                                                realType: "int64",
+                                                realType: "Int64",
                                                 astType: "native",
                                                 value: 1,
                                             },
                                             right: {
                                                 type: "number",
-                                                realType: "int64",
+                                                realType: "Int64",
                                                 astType: "native",
                                                 value: 2,
                                             },
@@ -170,13 +170,13 @@ describe("analyze", () => {
                                             type: "==",
                                             left: {
                                                 type: "number",
-                                                realType: "int64",
+                                                realType: "Int64",
                                                 astType: "native",
                                                 value: 1,
                                             },
                                             right: {
                                                 type: "number",
-                                                realType: "int64",
+                                                realType: "Int64",
                                                 astType: "native",
                                                 value: 2,
                                             },
@@ -197,13 +197,13 @@ describe("analyze", () => {
                                             type: "==",
                                             left: {
                                                 type: "number",
-                                                realType: "int64",
+                                                realType: "Int64",
                                                 astType: "native",
                                                 value: 2,
                                             },
                                             right: {
                                                 type: "number",
-                                                realType: "int64",
+                                                realType: "Int64",
                                                 astType: "native",
                                                 value: 2,
                                             },
@@ -233,15 +233,15 @@ describe("analyze", () => {
                 describe("invalid", () => {
                     test("different comparison types", () => {
                         const data = {
-                            Float: "double",
-                            Id: "int64",
+                            Float: "Double",
+                            Id: "Int64",
                             foo: {
-                                arguments: ["Float", "string"],
+                                arguments: ["Float", "String"],
                                 body: [
-                                    "if (Float < string) { return 1 }",
+                                    "if (Float < String) { return 1 }",
                                     "return 0",
                                 ],
-                                return: "int64",
+                                return: "Int64",
                             },
                         };
 
@@ -250,7 +250,7 @@ describe("analyze", () => {
                         };
 
                         expect(analyze).toThrow(
-                            `Analyzer: invalid expression in function 'foo'. Cannot compare 'Float' (aka double [native]) and 'string' (aka string [native]).`
+                            `Analyzer: invalid expression in function 'foo'. Cannot compare 'Float' (aka Double [native]) and 'String' (aka String [native]).`
                         );
                     });
 

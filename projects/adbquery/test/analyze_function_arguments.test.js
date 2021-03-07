@@ -21,7 +21,7 @@ describe("analyze", () => {
             describe("valid", () => {
                 test("multiple", () => {
                     const data = {
-                        Id: "int64",
+                        Id: "Int64",
                         From: "Id",
                         foo: {
                             arguments: ["Id", "From"],
@@ -43,7 +43,7 @@ describe("analyze", () => {
 
                 test("out (addition)", () => {
                     const data = {
-                        Id: "int64",
+                        Id: "Int64",
                         foo: {
                             arguments: ["Id"],
                             body: ["Id += 1"],
@@ -70,7 +70,7 @@ describe("analyze", () => {
 
                 test("out (assignment)", () => {
                     const data = {
-                        Id: "int64",
+                        Id: "Int64",
                         foo: {
                             arguments: ["Id"],
                             body: ["Id = 1"],
@@ -97,7 +97,7 @@ describe("analyze", () => {
 
                 test("out (transitive)", () => {
                     const data = {
-                        Id: "int64",
+                        Id: "Int64",
                         foo: {
                             arguments: ["Id"],
                             body: ["Id = 1"],
@@ -128,7 +128,7 @@ describe("analyze", () => {
 
                 test("out (subtype)", () => {
                     const data = {
-                        Id: "int64",
+                        Id: "Int64",
                         MyObj: { fields: ["Id"] },
                         foo: {
                             arguments: ["MyObj"],
@@ -158,7 +158,7 @@ describe("analyze", () => {
             describe("invalid", () => {
                 test("unknown argument type", () => {
                     const data = {
-                        Id: "int64",
+                        Id: "Int64",
                         foo: {
                             arguments: ["Id", "From"],
                         },

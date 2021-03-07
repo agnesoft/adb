@@ -45,8 +45,8 @@ describe("analyze", () => {
 
                 test("incorrect expression part", () => {
                     const data = {
-                        Id: "int64",
-                        MyVar: ["int64", "byte"],
+                        Id: "Int64",
+                        MyVar: ["Int64", "Byte"],
                         foo: {
                             arguments: ["MyVar"],
                             body: ["MyVar.Id = 1"],
@@ -58,14 +58,14 @@ describe("analyze", () => {
                     };
 
                     expect(analyze).toThrow(
-                        `Analyzer: invalid expression in function 'foo'. Invalid parent 'MyVar' (aka MyVar [variant]) of 'Id' (aka int64 [native]).`
+                        `Analyzer: invalid expression in function 'foo'. Invalid parent 'MyVar' (aka MyVar [variant]) of 'Id' (aka Int64 [native]).`
                     );
                 });
 
                 test("bad expression in method", () => {
                     const data = {
-                        Id: "int64",
-                        MyVar: ["int64", "byte"],
+                        Id: "Int64",
+                        MyVar: ["Int64", "Byte"],
                         SomeObj: {
                             functions: {
                                 foo: {
@@ -81,7 +81,7 @@ describe("analyze", () => {
                     };
 
                     expect(analyze).toThrow(
-                        `Analyzer: invalid expression in function 'SomeObj::foo'. Invalid parent 'MyVar' (aka MyVar [variant]) of 'Id' (aka int64 [native]).`
+                        `Analyzer: invalid expression in function 'SomeObj::foo'. Invalid parent 'MyVar' (aka MyVar [variant]) of 'Id' (aka Int64 [native]).`
                     );
                 });
             });

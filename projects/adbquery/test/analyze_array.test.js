@@ -20,28 +20,28 @@ describe("analyze", () => {
         describe("valid", () => {
             test("native type", () => {
                 const data = {
-                    MyArr: ["int64"],
+                    MyArr: ["Int64"],
                 };
 
                 const ast = {
                     MyArr: {
                         type: "array",
                         name: "MyArr",
-                        arrayType: "int64",
+                        arrayType: "Int64",
                         functions: {
                             at: {
                                 type: "function",
                                 name: "at",
-                                arguments: [{ name: "int64" }],
+                                arguments: [{ name: "Int64" }],
                                 body: [],
-                                returnValue: "int64",
+                                returnValue: "Int64",
                             },
                             size: {
                                 type: "function",
                                 name: "size",
                                 arguments: [],
                                 body: [],
-                                returnValue: "int64",
+                                returnValue: "Int64",
                             },
                         },
                     },
@@ -69,7 +69,7 @@ describe("analyze", () => {
                             at: {
                                 type: "function",
                                 name: "at",
-                                arguments: [{ name: "int64" }],
+                                arguments: [{ name: "Int64" }],
                                 body: [],
                                 returnValue: "SomeObj",
                             },
@@ -78,7 +78,7 @@ describe("analyze", () => {
                                 name: "size",
                                 arguments: [],
                                 body: [],
-                                returnValue: "int64",
+                                returnValue: "Int64",
                             },
                         },
                     },
@@ -94,28 +94,28 @@ describe("analyze", () => {
             test("used before defined", () => {
                 const data = {
                     SomeObj: { fields: ["MyArr"] },
-                    MyArr: ["int64"],
+                    MyArr: ["Int64"],
                 };
 
                 const ast = {
                     MyArr: {
                         type: "array",
                         name: "MyArr",
-                        arrayType: "int64",
+                        arrayType: "Int64",
                         functions: {
                             at: {
                                 type: "function",
                                 name: "at",
-                                arguments: [{ name: "int64" }],
+                                arguments: [{ name: "Int64" }],
                                 body: [],
-                                returnValue: "int64",
+                                returnValue: "Int64",
                             },
                             size: {
                                 type: "function",
                                 name: "size",
                                 arguments: [],
                                 body: [],
-                                returnValue: "int64",
+                                returnValue: "Int64",
                             },
                         },
                         usedBeforeDefined: true,

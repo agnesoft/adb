@@ -22,7 +22,7 @@ describe("parse", () => {
                     const data = {
                         foo: {
                             body: [
-                                "Obj.Id = MyArr.int64",
+                                "Obj.Id = MyArr.Int64",
                                 "MyVar.Obj.Field1 += 1",
                             ],
                         },
@@ -43,7 +43,7 @@ describe("parse", () => {
                                     },
                                     right: {
                                         type: "identifier",
-                                        value: "int64",
+                                        value: "Int64",
                                         parent: {
                                             type: "identifier",
                                             value: "MyArr",

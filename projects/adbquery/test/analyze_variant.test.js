@@ -21,21 +21,21 @@ describe("analyze", () => {
             test("two", () => {
                 const data = {
                     SomeType: {},
-                    MyVariant: ["SomeType", "int64"],
+                    MyVariant: ["SomeType", "Int64"],
                 };
 
                 const ast = {
                     MyVariant: {
                         type: "variant",
                         name: "MyVariant",
-                        variants: ["SomeType", "int64"],
+                        variants: ["SomeType", "Int64"],
                         functions: {
                             index: {
                                 type: "function",
-                                name: "index",
+                                name: "Index",
                                 arguments: [],
                                 body: [],
-                                returnValue: "byte",
+                                returnValue: "Byte",
                             },
                         },
                     },
@@ -51,21 +51,21 @@ describe("analyze", () => {
             test("used before defined", () => {
                 const data = {
                     SomeType: { fields: ["MyVariant"] },
-                    MyVariant: ["byte", "int64"],
+                    MyVariant: ["Byte", "Int64"],
                 };
 
                 const ast = {
                     MyVariant: {
                         type: "variant",
                         name: "MyVariant",
-                        variants: ["byte", "int64"],
+                        variants: ["Byte", "Int64"],
                         functions: {
                             index: {
                                 type: "function",
-                                name: "index",
+                                name: "Index",
                                 arguments: [],
                                 body: [],
-                                returnValue: "byte",
+                                returnValue: "Byte",
                             },
                         },
                         usedBeforeDefined: true,
@@ -83,7 +83,7 @@ describe("analyze", () => {
         describe("invalid", () => {
             test("unknown variant type", () => {
                 const data = {
-                    MyVariant: ["int64", "SomeType"],
+                    MyVariant: ["Int64", "SomeType"],
                 };
 
                 const analyze = () => {

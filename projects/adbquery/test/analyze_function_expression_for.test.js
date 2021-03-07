@@ -22,9 +22,9 @@ describe("analyze", () => {
                 describe("valid", () => {
                     test("literal value", () => {
                         const data = {
-                            i: "int64",
+                            i: "Int64",
                             bar: {
-                                arguments: ["int64"],
+                                arguments: ["Int64"],
                                 body: [],
                             },
                             foo: {
@@ -40,7 +40,7 @@ describe("analyze", () => {
                                         iterations: {
                                             type: "number",
                                             value: 5,
-                                            realType: "int64",
+                                            realType: "Int64",
                                             astType: "native",
                                         },
                                         body: [
@@ -51,7 +51,7 @@ describe("analyze", () => {
                                                     {
                                                         type: "local",
                                                         value: "i",
-                                                        realType: "int64",
+                                                        realType: "Int64",
                                                         astType: "native",
                                                     },
                                                 ],
@@ -73,13 +73,13 @@ describe("analyze", () => {
 
                     test("function call", () => {
                         const data = {
-                            i: "int64",
+                            i: "Int64",
                             fizz: {
                                 body: ["return 5"],
-                                return: "int64",
+                                return: "Int64",
                             },
                             bazz: {
-                                arguments: ["int64"],
+                                arguments: ["Int64"],
                                 body: [],
                             },
                             foo: {
@@ -95,7 +95,7 @@ describe("analyze", () => {
                                         iterations: {
                                             type: "call",
                                             arguments: [],
-                                            realType: "int64",
+                                            realType: "Int64",
                                             astType: "native",
                                             value: "fizz",
                                         },
@@ -107,7 +107,7 @@ describe("analyze", () => {
                                                     {
                                                         type: "local",
                                                         value: "i",
-                                                        realType: "int64",
+                                                        realType: "Int64",
                                                         astType: "native",
                                                     },
                                                 ],
@@ -131,14 +131,14 @@ describe("analyze", () => {
                 describe("invalid", () => {
                     test("wrong iterations type", () => {
                         const data = {
-                            i: "int64",
+                            i: "Int64",
                             Obj: {},
                             fizz: {
                                 body: ["return Obj()"],
                                 return: "Obj",
                             },
                             bazz: {
-                                arguments: ["int64"],
+                                arguments: ["Int64"],
                                 body: [],
                             },
                             foo: {

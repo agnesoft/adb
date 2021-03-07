@@ -19,14 +19,14 @@ describe("parse", () => {
         describe("valid", () => {
             test("native type", () => {
                 const data = {
-                    String: ["byte"],
+                    MyString: ["Byte"],
                 };
 
                 const ast = {
-                    String: {
+                    MyString: {
                         type: "array",
-                        name: "String",
-                        arrayType: "byte",
+                        name: "MyString",
+                        arrayType: "Byte",
                     },
                 };
 

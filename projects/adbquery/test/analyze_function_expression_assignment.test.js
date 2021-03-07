@@ -22,7 +22,7 @@ describe("analyze", () => {
                 describe("valid", () => {
                     test("type = 1", () => {
                         const data = {
-                            Id: "int64",
+                            Id: "Int64",
                             foo: {
                                 body: ["Id = 1"],
                             },
@@ -36,13 +36,13 @@ describe("analyze", () => {
                                         left: {
                                             type: "new",
                                             value: "Id",
-                                            realType: "int64",
+                                            realType: "Int64",
                                             astType: "native",
                                         },
                                         right: {
                                             type: "number",
                                             value: 1,
-                                            realType: "int64",
+                                            realType: "Int64",
                                             astType: "native",
                                         },
                                     },
@@ -59,8 +59,8 @@ describe("analyze", () => {
 
                     test("type = type", () => {
                         const data = {
-                            Id: "int64",
-                            From: "int64",
+                            Id: "Int64",
+                            From: "Int64",
                             foo: {
                                 arguments: ["From"],
                                 body: ["Id = From"],
@@ -74,13 +74,13 @@ describe("analyze", () => {
                                         type: "=",
                                         left: {
                                             type: "new",
-                                            realType: "int64",
+                                            realType: "Int64",
                                             astType: "native",
                                             value: "Id",
                                         },
                                         right: {
                                             type: "argument",
-                                            realType: "int64",
+                                            realType: "Int64",
                                             astType: "native",
                                             value: "From",
                                         },
@@ -98,7 +98,7 @@ describe("analyze", () => {
 
                     test("type = alias", () => {
                         const data = {
-                            Id: "int64",
+                            Id: "Int64",
                             From: "Id",
                             MyFrom: "From",
                             foo: {
@@ -114,13 +114,13 @@ describe("analyze", () => {
                                         type: "=",
                                         left: {
                                             type: "new",
-                                            realType: "int64",
+                                            realType: "Int64",
                                             astType: "native",
                                             value: "Id",
                                         },
                                         right: {
                                             type: "argument",
-                                            realType: "int64",
+                                            realType: "Int64",
                                             astType: "native",
                                             value: "MyFrom",
                                         },
@@ -140,7 +140,7 @@ describe("analyze", () => {
                 describe("invalid", () => {
                     test("<unknown type> = type", () => {
                         const data = {
-                            Id: "int64",
+                            Id: "Int64",
                             foo: {
                                 arguments: ["Id"],
                                 body: ["MyArr = Id"],
@@ -158,7 +158,7 @@ describe("analyze", () => {
 
                     test("type = <incompatible type>", () => {
                         const data = {
-                            Id: "int64",
+                            Id: "Int64",
                             SomeType: {},
                             foo: {
                                 arguments: ["SomeType"],
@@ -171,18 +171,18 @@ describe("analyze", () => {
                         };
 
                         expect(analyze).toThrow(
-                            "Analyzer: invalid expression in function 'foo'. Cannot assign 'SomeType' (aka SomeType [object]) to 'Id' (aka int64 [native])."
+                            "Analyzer: invalid expression in function 'foo'. Cannot assign 'SomeType' (aka SomeType [object]) to 'Id' (aka Int64 [native])."
                         );
                     });
 
                     test("type = incorrect variant", () => {
                         const data = {
-                            Id: "int64",
-                            MyVar: ["int64", "double"],
+                            Id: "Int64",
+                            MyVar: ["Int64", "Double"],
                             OtherVar: "MyVar",
                             foo: {
                                 arguments: ["MyVar"],
-                                body: ["MyVar = int64.string"],
+                                body: ["MyVar = Int64.String"],
                             },
                         };
 
@@ -191,7 +191,7 @@ describe("analyze", () => {
                         };
 
                         expect(analyze).toThrow(
-                            "Analyzer: invalid expression in function 'foo'. Invalid parent 'int64' (aka int64 [native]) of 'string' (aka string [native])."
+                            "Analyzer: invalid expression in function 'foo'. Invalid parent 'Int64' (aka Int64 [native]) of 'String' (aka String [native])."
                         );
                     });
                 });

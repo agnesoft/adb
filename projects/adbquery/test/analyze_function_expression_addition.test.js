@@ -22,7 +22,7 @@ describe("analyze", () => {
                 describe("valid", () => {
                     test("type += 1", () => {
                         const data = {
-                            Id: "int64",
+                            Id: "Int64",
                             foo: {
                                 body: ["Id += 1"],
                             },
@@ -36,13 +36,13 @@ describe("analyze", () => {
                                         left: {
                                             type: "new",
                                             value: "Id",
-                                            realType: "int64",
+                                            realType: "Int64",
                                             astType: "native",
                                         },
                                         right: {
                                             type: "number",
                                             value: 1,
-                                            realType: "int64",
+                                            realType: "Int64",
                                             astType: "native",
                                         },
                                     },
@@ -59,8 +59,8 @@ describe("analyze", () => {
 
                     test("array += value", () => {
                         const data = {
-                            Id: "int64",
-                            MyArr: ["int64"],
+                            Id: "Int64",
+                            MyArr: ["Int64"],
                             foo: {
                                 arguments: ["Id"],
                                 body: ["MyArr += Id"],
@@ -81,7 +81,7 @@ describe("analyze", () => {
                                         right: {
                                             type: "argument",
                                             value: "Id",
-                                            realType: "int64",
+                                            realType: "Int64",
                                             astType: "native",
                                         },
                                     },
@@ -98,8 +98,8 @@ describe("analyze", () => {
 
                     test("array += array", () => {
                         const data = {
-                            Id: "int64",
-                            MyArr: ["int64"],
+                            Id: "Int64",
+                            MyArr: ["Int64"],
                             OtherArr: "MyArr",
                             foo: {
                                 arguments: ["OtherArr"],
@@ -138,7 +138,7 @@ describe("analyze", () => {
 
                     test("local = argument, local += argument", () => {
                         const data = {
-                            Id: "int64",
+                            Id: "Int64",
                             ArgId: "Id",
                             foo: {
                                 arguments: ["ArgId"],
@@ -154,13 +154,13 @@ describe("analyze", () => {
                                         left: {
                                             type: "new",
                                             value: "Id",
-                                            realType: "int64",
+                                            realType: "Int64",
                                             astType: "native",
                                         },
                                         right: {
                                             type: "argument",
                                             value: "ArgId",
-                                            realType: "int64",
+                                            realType: "Int64",
                                             astType: "native",
                                         },
                                     },
@@ -169,13 +169,13 @@ describe("analyze", () => {
                                         left: {
                                             type: "local",
                                             value: "Id",
-                                            realType: "int64",
+                                            realType: "Int64",
                                             astType: "native",
                                         },
                                         right: {
                                             type: "number",
                                             value: 3,
-                                            realType: "int64",
+                                            realType: "Int64",
                                             astType: "native",
                                         },
                                     },
@@ -194,7 +194,7 @@ describe("analyze", () => {
                 describe("invalid", () => {
                     test("array += <unknown value>", () => {
                         const data = {
-                            MyArr: ["int64"],
+                            MyArr: ["Int64"],
                             foo: {
                                 body: ["MyArr += Id"],
                             },
@@ -211,7 +211,7 @@ describe("analyze", () => {
 
                     test("array += <incompatible type>", () => {
                         const data = {
-                            MyArr: ["int64"],
+                            MyArr: ["Int64"],
                             SomeType: {},
                             foo: {
                                 arguments: ["SomeType"],
@@ -230,8 +230,8 @@ describe("analyze", () => {
 
                     test("<non number> += number", () => {
                         const data = {
-                            Id: "int64",
-                            MyArr: ["int64"],
+                            Id: "Int64",
+                            MyArr: ["Int64"],
                             SomeType: {},
                             foo: {
                                 arguments: ["SomeType"],
@@ -244,7 +244,7 @@ describe("analyze", () => {
                         };
 
                         expect(analyze).toThrow(
-                            "Analyzer: invalid expression in function 'foo'. Cannot add '1' (aka int64 [native]) to 'SomeType' (aka SomeType [object])."
+                            "Analyzer: invalid expression in function 'foo'. Cannot add '1' (aka Int64 [native]) to 'SomeType' (aka SomeType [object])."
                         );
                     });
                 });

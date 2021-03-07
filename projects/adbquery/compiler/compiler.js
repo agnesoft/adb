@@ -69,6 +69,62 @@ const inBuilt = {
         body: ["return 0"],
         return: "Double",
     },
+    serialize_Byte: {
+        arguments: ["Buffer", "Offset", "Byte"],
+        body: ["Buffer.at(Offset) = Byte", "Offset += 1"],
+    },
+    deserialize_Byte: {
+        arguments: ["Buffer", "Offset"],
+        body: ["Byte = Buffer.at(Offset)", "Offset += 1", "return Byte"],
+        return: "Byte",
+    },
+    serialize_Int64: {
+        arguments: ["Buffer", "Offset", "Int64"],
+        body: ["serializeInt64(Buffer, Offset, int64ToLittleEndian(Int64))"],
+    },
+    deserialize_Int64: {
+        arguments: ["Buffer", "Offset"],
+        body: ["return int64ToNativeEndian(deserializeInt64(Buffer, Offset))"],
+        return: "Int64",
+    },
+    serialize_Double: {
+        arguments: ["Buffer", "Offset", "Double"],
+        body: ["serializeDouble(Buffer, Offset, doubleToLittleEndian(Double))"],
+    },
+    deserialize_Double: {
+        arguments: ["Buffer", "Offset"],
+        body: [
+            "return doubleToNativeEndian(deserializeDouble(Buffer, Offset))",
+        ],
+        return: "Double",
+    },
+    serialize_ByteArray: {
+        arguments: ["Buffer", "Offset", "ByteArray"],
+        body: [
+            "serialize_Int64(Buffer, Offset, ByteArray.size())",
+            "for (ByteArray.size()) { serialize_Byte(Buffer, Offset, ByteArray.at(i)) }",
+        ],
+    },
+    deserialize_ByteArray: {
+        arguments: ["Buffer", "Offset"],
+        body: [
+            "ByteArray = ByteArray",
+            "for (deserialize_Int64(Buffer, Offset)) { ByteArray += deserialize_Byte(Buffer, Offset) }",
+            "return ByteArray",
+        ],
+        return: "ByteArray",
+    },
+    serialize_String: {
+        arguments: ["Buffer", "Offset", "String"],
+        body: ["serialize_ByteArray(Buffer, Offset, stringToBuffer(String))"],
+    },
+    deserialize_String: {
+        arguments: ["Buffer", "Offset"],
+        body: [
+            "return stringFromBuffer(deserialize_ByteArray(Buffer, Offset))",
+        ],
+        return: "String",
+    },
 };
 
 export function compile(data) {

@@ -247,7 +247,7 @@ function expressionType(expression, context, ast) {
 
 function findArgument(name, context) {
     for (const arg of context["func"]["arguments"]) {
-        if (arg["name"] == name) {
+        if (arg["value"] == name) {
             return arg;
         }
     }
@@ -259,7 +259,7 @@ function functionArgumentsNames(args) {
     let names = [];
 
     for (const arg of args) {
-        names.push(arg["name"]);
+        names.push(arg["value"]);
     }
 
     return names;
@@ -267,7 +267,7 @@ function functionArgumentsNames(args) {
 
 function isArgument(expression, context) {
     for (const arg of context["func"]["arguments"]) {
-        if (expression["value"] == arg["name"]) {
+        if (expression["value"] == arg["value"]) {
             return true;
         }
     }

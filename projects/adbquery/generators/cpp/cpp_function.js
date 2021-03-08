@@ -16,13 +16,13 @@ import * as cpptypes from "./cpp_types.js";
 import * as cppfunctionexpression from "./cpp_function_expression.js";
 
 function expressions(body, ast) {
-    let buffer = "";
+    let exprs = [];
 
     for (const expression of body) {
-        buffer += cppfunctionexpression.generate(expression, ast);
+        exprs.push(cppfunctionexpression.generate(expression, ast));
     }
 
-    return buffer;
+    return exprs.join("\n");
 }
 
 export function generate(func, ast) {

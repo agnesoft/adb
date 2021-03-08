@@ -25,7 +25,11 @@ describe("parse", () => {
 
                     const ast = {
                         foo: {
-                            arguments: [{ name: "arg1" }],
+                            arguments: [
+                                {
+                                    value: "arg1",
+                                },
+                            ],
                         },
                     };
 
@@ -39,7 +43,14 @@ describe("parse", () => {
 
                     const ast = {
                         foo: {
-                            arguments: [{ name: "arg1" }, { name: "arg2" }],
+                            arguments: [
+                                {
+                                    value: "arg1",
+                                },
+                                {
+                                    value: "arg2",
+                                },
+                            ],
                         },
                     };
 

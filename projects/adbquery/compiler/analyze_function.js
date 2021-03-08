@@ -55,9 +55,9 @@ function hasReturnStatement(node) {
 
 function validateArguments(node, object, ast) {
     for (const arg of node["arguments"]) {
-        if (!typeExists(arg["name"], ast)) {
+        if (!typeExists(arg["value"], ast)) {
             throw `Analyzer: the argument '${
-                arg["name"]
+                arg["value"]
             }' in function '${functionName(
                 node,
                 object

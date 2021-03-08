@@ -30,7 +30,14 @@ describe("analyze", () => {
 
                     const ast = {
                         foo: {
-                            arguments: [{ name: "Id" }, { name: "From" }],
+                            arguments: [
+                                {
+                                    value: "Id",
+                                },
+                                {
+                                    value: "From",
+                                },
+                            ],
                         },
                     };
 
@@ -54,7 +61,7 @@ describe("analyze", () => {
                         foo: {
                             arguments: [
                                 {
-                                    name: "Id",
+                                    value: "Id",
                                     out: true,
                                 },
                             ],
@@ -81,7 +88,7 @@ describe("analyze", () => {
                         foo: {
                             arguments: [
                                 {
-                                    name: "Id",
+                                    value: "Id",
                                     out: true,
                                 },
                             ],
@@ -112,7 +119,7 @@ describe("analyze", () => {
                         bar: {
                             arguments: [
                                 {
-                                    name: "Id",
+                                    value: "Id",
                                     out: true,
                                 },
                             ],
@@ -140,7 +147,7 @@ describe("analyze", () => {
                         foo: {
                             arguments: [
                                 {
-                                    name: "MyObj",
+                                    value: "MyObj",
                                     out: true,
                                 },
                             ],

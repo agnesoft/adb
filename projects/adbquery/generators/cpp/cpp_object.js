@@ -74,9 +74,10 @@ export function generate(type, ast) {
     return `\nclass ${type}
 {
 public:
+    ${type}() = default;
 ${constructor(type, ast)}
 ${functions(type, ast)}
-private:
+//private:
 ${fields(ast[type]["fields"], ast)}
 };\n`;
 }

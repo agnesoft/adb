@@ -48,7 +48,7 @@ function functionArguments(func) {
         let args = [];
 
         for (const arg of func["arguments"]) {
-            args.push({ name: arg });
+            args.push({ value: arg });
         }
 
         return args;

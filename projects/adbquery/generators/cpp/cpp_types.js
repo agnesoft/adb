@@ -14,10 +14,10 @@
 
 function outArgument(type) {
     if (type["out"]) {
-        return "&";
+        return "";
     }
 
-    return "";
+    return "const ";
 }
 
 export function cppType(type, ast) {
@@ -46,9 +46,10 @@ export function functionArguments(types, ast) {
     for (const type of types) {
         if (typeof type == "object") {
             vars.push(
-                `${cppType(type["name"], ast)} ${outArgument(
-                    type
-                )}${variableName(type["name"])}`
+                `${outArgument(type)}${cppType(
+                    type["value"],
+                    ast
+                )} &${variableName(type["value"])}`
             );
         } else {
             vars.push(`${cppType(type, ast)} ${variableName(type)}`);
@@ -59,9 +60,17 @@ export function functionArguments(types, ast) {
 }
 
 export function variableDeclaration(type, ast) {
-    return `${cppType(type, ast)} ${variableName(type)};`;
+    return `${cppType(type, ast)} ${variableName(type)}`;
 }
 
 export function variableName(type) {
-    return `${type.charAt(0).toLowerCase()}${type.substr(1)}_`;
+    if (type == "i") {
+        return "i_";
+    }
+
+    if (type == "Double") {
+        return "double_";
+    }
+
+    return `${type.charAt(0).toLowerCase()}${type.substr(1)}`;
 }

@@ -32,7 +32,11 @@ describe("analyze", () => {
                             at: {
                                 type: "function",
                                 name: "at",
-                                arguments: [{ name: "Int64" }],
+                                arguments: [
+                                    {
+                                        value: "Int64",
+                                    },
+                                ],
                                 body: [],
                                 returnValue: "Int64",
                             },
@@ -69,7 +73,11 @@ describe("analyze", () => {
                             at: {
                                 type: "function",
                                 name: "at",
-                                arguments: [{ name: "Int64" }],
+                                arguments: [
+                                    {
+                                        value: "Int64",
+                                    },
+                                ],
                                 body: [],
                                 returnValue: "SomeObj",
                             },
@@ -106,7 +114,11 @@ describe("analyze", () => {
                             at: {
                                 type: "function",
                                 name: "at",
-                                arguments: [{ name: "Int64" }],
+                                arguments: [
+                                    {
+                                        value: "Int64",
+                                    },
+                                ],
                                 body: [],
                                 returnValue: "Int64",
                             },

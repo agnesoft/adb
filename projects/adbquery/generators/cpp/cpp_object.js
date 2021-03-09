@@ -76,7 +76,7 @@ function initializers(fields) {
 }
 
 export function generate(type, ast) {
-    return `\nclass ${type}
+    return `\nexport class ${type}
 {
 public:
 ${constructor(type, ast)}

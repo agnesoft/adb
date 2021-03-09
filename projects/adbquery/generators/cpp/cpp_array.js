@@ -15,7 +15,7 @@
 import * as cpptypes from "./cpp_types.js";
 
 export function generate(type, ast) {
-    return `using ${type} = std::vector<${cpptypes.cppType(
+    return `export using ${type} = std::vector<${cpptypes.cppType(
         ast[type]["arrayType"],
         ast
     )}>;\n`;

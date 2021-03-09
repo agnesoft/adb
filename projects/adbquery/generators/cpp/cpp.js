@@ -60,7 +60,7 @@ function forwardDeclarations(ast) {
         if (ast[type]["usedBeforeDefined"]) {
             switch (ast[type]["type"]) {
                 case "object":
-                    buffer += `class ${type};\n`;
+                    buffer += `export class ${type};\n`;
                     break;
                 case "function":
                     buffer += `${cppfunction.declaration(ast[type], ast)};\n`;

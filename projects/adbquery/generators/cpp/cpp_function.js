@@ -26,7 +26,7 @@ function expressions(body, ast) {
 }
 
 export function declaration(func, ast) {
-    return `auto ${func["name"]}(${cpptypes.functionArguments(
+    return `export auto ${func["name"]}(${cpptypes.functionArguments(
         func["arguments"],
         ast
     )}) -> ${cpptypes.cppType(func["returnValue"], ast)}`;

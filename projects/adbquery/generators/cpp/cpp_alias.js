@@ -15,7 +15,7 @@
 import * as cpptypes from "./cpp_types.js";
 
 export function generate(type, ast) {
-    return `using ${type} = ${cpptypes.cppType(
+    return `export using ${type} = ${cpptypes.cppType(
         ast[type]["aliasedType"],
         ast
     )};\n`;

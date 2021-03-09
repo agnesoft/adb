@@ -26,20 +26,20 @@ module;
 
 export module adbquery;
 
-namespace adb
+namespace adbquery
 {
 //--------//
 //Inbuilt//
 //--------//
-using Byte = std::uint8_t;
-using ByteArray = std::vector<Byte>;
-using Buffer = ByteArray;
-using Double = double;
-using Int64 = std::int64_t;
-using i = Int64;
-using Index = Int64;
-using Offset = Int64;
-using String = std::string;
+export using Byte = std::uint8_t;
+export using ByteArray = std::vector<Byte>;
+export using Buffer = ByteArray;
+export using Double = double;
+export using Int64 = std::int64_t;
+export using i = Int64;
+export using Index = Int64;
+export using Offset = Int64;
+export using String = std::string;
 
 auto int64ToLittleEndian(Int64 value) -> Int64 {
     if (std::endian::native == std::endian::big) {

@@ -107,7 +107,25 @@ function side(expression, ast) {
         )})`;
     }
 
-    if (type == "call" || type == "method") {
+    if (type == "call") {
+        return `${parent(expression, ast)}${
+            expression["value"]
+        }(${functionArguments(expression, ast)})`;
+    }
+
+    if (type == "method") {
+        if (expression["value"] == "index") {
+            return `static_cast<Byte>(${parent(expression, ast)}${
+                expression["value"]
+            }(${functionArguments(expression, ast)}))`;
+        }
+
+        if (expression["value"] == "at") {
+            return `${parent(expression, ast)}${
+                expression["value"]
+            }(static_cast<size_t>(${functionArguments(expression, ast)}))`;
+        }
+
         return `${parent(expression, ast)}${
             expression["value"]
         }(${functionArguments(expression, ast)})`;

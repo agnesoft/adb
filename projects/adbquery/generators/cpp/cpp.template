@@ -81,32 +81,32 @@ auto int64ToNativeEndian(Int64 value) -> Int64 {
 }
 
 auto doubleToNativeEndian(Double value) -> Double {
-    return doubleToNativeEndian(value);
+    return doubleToLittleEndian(value);
 }
 
 auto deserializeDouble(const Buffer &buffer, Offset &offset) -> Double {
     Double value;
-    std::memcpy(&value, &buffer[offset], sizeof(Double));
+    std::memcpy(&value, &buffer[static_cast<size_t>(offset)], sizeof(Double));
     offset += sizeof(Double);
     return doubleToNativeEndian(value);
 }
 
 auto deserializeInt64(const Buffer &buffer, Offset &offset) -> Int64 {
     Int64 value;
-    std::memcpy(&value, &buffer[offset], sizeof(Int64));
+    std::memcpy(&value, &buffer[static_cast<size_t>(offset)], sizeof(Int64));
     offset += sizeof(Int64);
     return int64ToNativeEndian(value);
 }
 
 auto serializeDouble(Buffer &buffer, Offset &offset, Double value) -> void {
     value = doubleToLittleEndian(value);
-    std::memcpy(&buffer[offset], &value, sizeof(Double));
+    std::memcpy(&buffer[static_cast<size_t>(offset)], &value, sizeof(Double));
     offset += sizeof(Double);
 }
 
 auto serializeInt64(Buffer &buffer, Offset &offset, Int64 value) -> void {
     value = int64ToLittleEndian(value);
-    std::memcpy(&buffer[offset], &value, sizeof(Int64));
+    std::memcpy(&buffer[static_cast<size_t>(offset)], &value, sizeof(Int64));
     offset += sizeof(Int64);
 }
 

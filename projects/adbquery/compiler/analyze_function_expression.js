@@ -130,6 +130,7 @@ function analyzeFunctionCall(expression, context, ast) {
     let func = ast[expression["value"]];
     addCallTypes(expression, func, ast);
     analyzeFunctionArguments(expression, func, context, ast);
+    detectUsedBeforeDefined(expression, context, ast);
 }
 
 function analyzeIf(expression, context, ast) {
@@ -212,6 +213,18 @@ function detectOutArguments(expression, args, context) {
     for (let i = 0; i < args.length; i++) {
         if (args[i]["out"] && isArgument(expression["arguments"][i], context)) {
             context["func"]["arguments"][i]["out"] = true;
+        }
+    }
+}
+
+function detectUsedBeforeDefined(expression, context, ast) {
+    for (const type in ast) {
+        if (context["func"]["name"] == type) {
+            return;
+        }
+
+        if (expression["value"] == type) {
+            context["func"]["usedBeforeDefined"] = true;
         }
     }
 }

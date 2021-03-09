@@ -490,6 +490,27 @@ describe("analyze", () => {
 
                         expect(analyze()).toMatchObject(ast);
                     });
+
+                    test("used before defined", () => {
+                        const data = {
+                            bar: { body: [] },
+                            foo: {
+                                body: ["bar()"],
+                            },
+                        };
+
+                        const ast = {
+                            foo: {
+                                usedBeforeDefined: true,
+                            },
+                        };
+
+                        const analyze = () => {
+                            return analyzer.analyze(parser.parse(data));
+                        };
+
+                        expect(analyze()).toMatchObject(ast);
+                    });
                 });
 
                 describe("invalid", () => {

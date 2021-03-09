@@ -101,7 +101,7 @@ function side(expression, ast) {
             : expression["type"];
 
     if (type == "variant") {
-        return `std::get<${expression["value"]}>(${side(
+        return `std::get<${cpptypes.cppType(expression["value"], ast)}>(${side(
             expression["parent"],
             ast
         )})`;

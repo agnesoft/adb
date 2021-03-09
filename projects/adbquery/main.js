@@ -20,7 +20,7 @@ function main() {
     const data = fs.readFileSync(process.argv[2]);
     const ast = compiler.compile(data);
 
-    cpp.generate(ast, "./adbquery.cpp");
+    cpp.generate(ast, "./adbquery.ixx");
 }
 
 main();

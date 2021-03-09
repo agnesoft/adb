@@ -29,7 +29,7 @@ export module adbquery;
 namespace adb
 {
 //--------//
-//In built//
+//Inbuilt//
 //--------//
 using Byte = std::uint8_t;
 using ByteArray = std::vector<Byte>;

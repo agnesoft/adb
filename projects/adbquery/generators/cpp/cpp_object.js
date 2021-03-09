@@ -16,7 +16,12 @@ import * as cpptypes from "./cpp_types.js";
 import * as cppfunction from "./cpp_function.js";
 
 function constructor(type, ast) {
-    return `    ${explicit(type, ast)}${type}(${cpptypes.functionArguments(
+    if (ast[type]["fields"].length == 0) {
+        return "";
+    }
+
+    return `    ${type}() = default;
+    ${explicit(type, ast)}${type}(${cpptypes.functionArguments(
         ast[type]["fields"],
         ast
     )})${initializers(ast[type]["fields"])}
@@ -74,7 +79,6 @@ export function generate(type, ast) {
     return `\nclass ${type}
 {
 public:
-    ${type}() = default;
 ${constructor(type, ast)}
 ${functions(type, ast)}
 //private:

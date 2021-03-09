@@ -25,11 +25,15 @@ function expressions(body, ast) {
     return exprs.join("\n");
 }
 
-export function generate(func, ast) {
-    return `\nauto ${func["name"]}(${cpptypes.functionArguments(
+export function declaration(func, ast) {
+    return `auto ${func["name"]}(${cpptypes.functionArguments(
         func["arguments"],
         ast
-    )}) -> ${cpptypes.cppType(func["returnValue"], ast)}
+    )}) -> ${cpptypes.cppType(func["returnValue"], ast)}`;
+}
+
+export function generate(func, ast) {
+    return `\n${declaration(func, ast)}
 {
 ${expressions(func["body"], ast)}
 }\n`;

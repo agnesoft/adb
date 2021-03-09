@@ -218,14 +218,13 @@ function detectOutArguments(expression, args, context) {
 }
 
 function detectUsedBeforeDefined(expression, context, ast) {
-    for (const type in ast) {
-        if (context["func"]["name"] == type) {
-            return;
-        }
+    const types = Object.keys(ast);
 
-        if (expression["value"] == type) {
-            context["func"]["usedBeforeDefined"] = true;
-        }
+    if (
+        types.indexOf(context["func"]["name"]) <
+        types.indexOf(expression["value"])
+    ) {
+        ast[expression["value"]]["usedBeforeDefined"] = true;
     }
 }
 

@@ -58,7 +58,14 @@ function forwardDeclarations(ast) {
 
     for (const type in ast) {
         if (ast[type]["usedBeforeDefined"]) {
-            buffer += `class ${type};`;
+            switch (ast[type]["type"]) {
+                case "object":
+                    buffer += `class ${type};\n`;
+                    break;
+                case "function":
+                    buffer += `${cppfunction.declaration(ast[type], ast)};\n`;
+                    break;
+            }
         }
     }
 

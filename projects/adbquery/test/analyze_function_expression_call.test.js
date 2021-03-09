@@ -493,23 +493,24 @@ describe("analyze", () => {
 
                     test("used before defined", () => {
                         const data = {
-                            bar: { body: [] },
                             foo: {
                                 body: ["bar()"],
                             },
+                            bar: { body: [] },
                         };
 
                         const ast = {
-                            foo: {
+                            bar: {
                                 usedBeforeDefined: true,
                             },
                         };
 
-                        const analyze = () => {
-                            return analyzer.analyze(parser.parse(data));
-                        };
+                        const result = analyzer.analyze(parser.parse(data));
 
-                        expect(analyze()).toMatchObject(ast);
+                        expect(result).toMatchObject(ast);
+                        expect(
+                            "usedBeforeDefined" in result["foo"]
+                        ).toBeFalsy();
                     });
                 });
 

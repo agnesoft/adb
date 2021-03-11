@@ -69,6 +69,9 @@ const inBuilt = {
         body: ["return 0"],
         return: "Double",
     },
+};
+
+const inBuiltSerialization = {
     serialize_Byte: {
         arguments: ["Buffer", "Offset", "Byte"],
         body: ["Buffer.at(Offset) = Byte", "Offset += 1"],
@@ -119,8 +122,17 @@ const inBuilt = {
 export function compile(data) {
     const fullData = serializer.addSerialization({
         ...inBuilt,
+        ...inBuiltSerialization,
         ...JSON.parse(data),
     });
+
     let ast = parser.parse(fullData);
+
+    for (const type in ast) {
+        if (type in inBuilt) {
+            ast[type]["inBuilt"] = true;
+        }
+    }
+
     return analyzer.analyze(ast);
 }

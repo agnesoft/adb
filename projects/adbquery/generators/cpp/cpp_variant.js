@@ -25,5 +25,5 @@ function variants(types, ast) {
 }
 
 export function generate(type, ast) {
-    return `export using ${type} = std::variant<${variants(ast[type]["variants"], ast)}>;\n`;
+    return `\nexport using ${type} = std::variant<${variants(ast[type]["variants"], ast)}>;\n`;
 }

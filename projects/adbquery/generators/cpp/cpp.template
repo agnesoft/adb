@@ -1,4 +1,4 @@
-// Copyright //!year Agnesoft
+// Copyright /*!year*/ Agnesoft
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ export using Index = Int64;
 export using Offset = Int64;
 export using String = std::string;
 
-auto int64ToLittleEndian(Int64 value) -> Int64 {
+[[nodiscard]] auto int64ToLittleEndian(Int64 value) noexcept -> Int64 {
     if (std::endian::native == std::endian::big) {
         constexpr std::uint64_t BASE = 0U;
         constexpr std::uint64_t ONE_BYTE = 8U;
@@ -72,26 +72,26 @@ auto int64ToLittleEndian(Int64 value) -> Int64 {
     return value;
 }
 
-auto doubleToLittleEndian(Double value) -> Double {
+[[nodiscard]] auto doubleToLittleEndian(Double value) noexcept -> Double {
     return static_cast<Double>(int64ToLittleEndian(static_cast<Int64>(value)));
 }
 
-auto int64ToNativeEndian(Int64 value) -> Int64 {
+[[nodiscard]] auto int64ToNativeEndian(Int64 value) noexcept -> Int64 {
     return int64ToLittleEndian(value);
 }
 
-auto doubleToNativeEndian(Double value) -> Double {
+[[nodiscard]] auto doubleToNativeEndian(Double value) noexcept -> Double {
     return doubleToLittleEndian(value);
 }
 
-auto deserializeDouble(const Buffer &buffer, Offset &offset) -> Double {
+[[nodiscard]] auto deserializeDouble(const Buffer &buffer, Offset &offset) -> Double {
     Double value;
     std::memcpy(&value, &buffer[static_cast<size_t>(offset)], sizeof(Double));
     offset += sizeof(Double);
     return doubleToNativeEndian(value);
 }
 
-auto deserializeInt64(const Buffer &buffer, Offset &offset) -> Int64 {
+[[nodiscard]] auto deserializeInt64(const Buffer &buffer, Offset &offset) -> Int64 {
     Int64 value;
     std::memcpy(&value, &buffer[static_cast<size_t>(offset)], sizeof(Int64));
     offset += sizeof(Int64);
@@ -110,13 +110,13 @@ auto serializeInt64(Buffer &buffer, Offset &offset, Int64 value) -> void {
     offset += sizeof(Int64);
 }
 
-auto stringFromBuffer(const Buffer &buffer) -> String {
+[[nodiscard]] auto stringFromBuffer(const Buffer &buffer) -> String {
     String str(buffer.size(), 0);
     std::memcpy(str.data(), buffer.data(), buffer.size());
     return str;
 }
 
-auto stringToBuffer(const String &str) -> Buffer {
+[[nodiscard]] auto stringToBuffer(const String &str) -> Buffer {
     Buffer buf(str.size());
     std::memcpy(buf.data(), str.data(), str.size());
     return buf;
@@ -125,5 +125,4 @@ auto stringToBuffer(const String &str) -> Buffer {
 //------------//
 //User Defined//
 //------------//
-//!data
-}
+/*!data*/}

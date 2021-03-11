@@ -49,6 +49,18 @@ describe("serializer", () => {
 
             expect(compile).not.toThrow();
         });
+
+        test("in-built type flag", () => {
+            const data = JSON.stringify({});
+            const ast = compiler.compile(data);
+
+            expect(ast["Offset"]["inBuilt"]).toBeTruthy();
+            expect(ast["Buffer"]["inBuilt"]).toBeTruthy();
+            expect(ast["doubleToNativeEndian"]["inBuilt"]).toBeTruthy();
+
+            expect(ast["serialize_Byte"]["inBuilt"]).toBeFalsy();
+            expect(ast["deserialize_String"]["inBuilt"]).toBeFalsy();
+        });
     });
 
     describe("invalid", () => {

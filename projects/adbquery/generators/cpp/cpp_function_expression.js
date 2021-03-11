@@ -31,7 +31,13 @@ function assignmentExpr(expression, ast) {
 }
 
 function call(expression, ast) {
-    return `${parent(expression, ast)}${expression["value"]}(${functionArguments(expression, ast)})`;
+    if (requiresStrictEvaluationOrder(expression, ast)) {
+        return `[${evaluatedArgumentsDeclarations(expression, ast)}]() mutable {
+            ${strictCallReturn(expression)}${parent(expression, ast)}${expression["value"]}(${evaluatedArguments(expression, ast)});
+        }()`;
+    } else {
+        return `${parent(expression, ast)}${expression["value"]}(${functionArguments(expression, ast)})`;
+    }
 }
 
 function callExpr(expression, ast) {
@@ -39,6 +45,14 @@ function callExpr(expression, ast) {
 }
 
 function constructor(expression, ast) {
+    if (requiresStrictEvaluationOrder(expression, ast)) {
+        return constructorStrict(expression, ast);
+    } else {
+        return constructorRegular(expression, ast);
+    }
+}
+
+function constructorRegular(expression, ast) {
     if (ast[expression["value"]]["usedBeforeDefined"]) {
         return `std::make_unique<${expression["value"]}>(${functionArguments(expression, ast)})`;
     } else {
@@ -46,10 +60,64 @@ function constructor(expression, ast) {
     }
 }
 
+function constructorStrict(expression, ast) {
+    if (ast[expression["value"]]["usedBeforeDefined"]) {
+        return `[${evaluatedArgumentsDeclarations(expression, ast)}]() mutable { 
+            return std::make_unique<${expression["value"]}>(${evaluatedArguments(expression, ast)});
+        }()`;
+    } else {
+        return `[${evaluatedArgumentsDeclarations(expression, ast)}]() mutable {
+            return ${expression["value"]}{${evaluatedArguments(expression, ast)}};
+        }()`;
+    }
+}
+
 function elseExpr(expression, ast) {
     return `    else {
         ${generate(expression["body"][0], ast)}
     }`;
+}
+
+function evaluatedArguments(expression, ast) {
+    let args = [];
+    let counter = 1;
+
+    for (const arg of expression["arguments"]) {
+        if (isCall(arg)) {
+            args.push(`std::move(arg${counter++})`);
+        } else {
+            args.push(side(arg, ast));
+        }
+    }
+
+    return args.join(",");
+}
+
+function evaluatedArgumentsDeclarations(expression, ast) {
+    let declarations = ["&"];
+    let counter = 1;
+
+    for (const arg of expression["arguments"]) {
+        if (isCall(arg)) {
+            declarations.push(`arg${counter++} = ${side(arg, ast)}`);
+        }
+    }
+
+    return declarations.join(", ");
+}
+
+function evaluatedArgumentsList(expression, ast) {
+    let args = [];
+
+    for (const arg of expression["arguments"]) {
+        if (isCall(arg)) {
+            args.push(`std::move(${cpptypes.variableName(ast[arg["value"]]["returnValue"])}_)`);
+        } else {
+            args.push(side(arg, ast));
+        }
+    }
+
+    return args;
 }
 
 function expressionType(expression) {
@@ -84,6 +152,20 @@ function ifExpr(expression, ast, elseif = "") {
     return `    ${elseif}if (${side(expression["condition"]["left"], ast)} ${expression["condition"]["type"]} ${side(expression["condition"]["right"], ast)}) {
     ${generate(expression["body"][0], ast)}
     }`;
+}
+
+function isCall(arg) {
+    return ["call", "method", "constructor"].includes(arg["type"]);
+}
+
+function hasOutArguments(type, ast) {
+    for (const arg of ast[type]["arguments"]) {
+        if (arg["out"]) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 function method(expression, ast) {
@@ -123,6 +205,16 @@ function parentAccessor(expression, ast) {
     }
 }
 
+function requiresStrictEvaluationOrder(expression, ast) {
+    for (const arg of expression["arguments"]) {
+        if (arg["value"] in ast && isCall(arg) && ast[arg["value"]]["arguments"].length > 1 && hasOutArguments(arg["value"], ast)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 function returnExpr(expression, ast) {
     return `    return ${side(expression, ast)};`;
 }
@@ -145,6 +237,14 @@ function side(expression, ast) {
             return field(expression, ast);
         default:
             return cpptypes.variableName(expression["value"]);
+    }
+}
+
+function strictCallReturn(expression) {
+    if (expression["realType"]) {
+        return "return ";
+    } else {
+        return "";
     }
 }
 

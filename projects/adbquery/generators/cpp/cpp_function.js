@@ -25,8 +25,16 @@ function expressions(body, ast) {
     return exprs.join("\n");
 }
 
+function nodiscard(func) {
+    if (func["returnValue"]) {
+        return "[[nodiscard]] ";
+    } else {
+        return "";
+    }
+}
+
 export function declaration(func, ast) {
-    return `export auto ${func["name"]}(${cpptypes.functionArguments(func["arguments"], ast)}) -> ${cpptypes.cppType(func["returnValue"], ast)}`;
+    return `export ${nodiscard(func)}auto ${func["name"]}(${cpptypes.functionArguments(func["arguments"], ast)}) -> ${cpptypes.cppType(func["returnValue"], ast)}`;
 }
 
 export function generate(func, ast) {

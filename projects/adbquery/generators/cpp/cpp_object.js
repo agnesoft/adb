@@ -55,7 +55,7 @@ function functions(type, ast) {
 }
 
 function getter(field, ast) {
-    return `\n    [[nodiscard]] auto ${cpptypes.variableName(field)}() const -> const ${cpptypes.cppType(field, ast)} &
+    return `\n    [[nodiscard]] auto ${cpptypes.variableName(field)}() const noexcept -> const ${cpptypes.cppType(field, ast)} &
     {
         return ${cpptypes.fieldName(field)};
     }`;

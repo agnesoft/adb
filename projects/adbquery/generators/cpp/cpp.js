@@ -20,10 +20,10 @@ import * as cppobject from "./cpp_object.js";
 import * as cppvariant from "./cpp_variant.js";
 
 function data(ast) {
-    let buffer = forwardDeclarations(ast) + "\n\n";
+    let buffer = forwardDeclarations(ast);
 
     for (const type in ast) {
-        if (isUserDefined(type)) {
+        if (!ast[type]["inBuilt"]) {
             buffer += generateType(type, ast);
         }
     }
@@ -33,8 +33,8 @@ function data(ast) {
 
 function generateSource(template, ast) {
     let buffer = template;
-    buffer = buffer.replace("//!year", new Date().getUTCFullYear());
-    buffer = buffer.replace("//!data", data(ast));
+    buffer = buffer.replace("/*!year*/", new Date().getUTCFullYear());
+    buffer = buffer.replace("/*!data*/", data(ast));
     return buffer;
 }
 
@@ -54,7 +54,7 @@ function generateType(type, ast) {
 }
 
 function forwardDeclarations(ast) {
-    let buffer = "";
+    let buffer = `\n//Forward Declarations\n`;
 
     for (const type in ast) {
         if (ast[type]["usedBeforeDefined"]) {
@@ -70,29 +70,6 @@ function forwardDeclarations(ast) {
     }
 
     return buffer;
-}
-
-function isUserDefined(type) {
-    return ![
-        "Byte",
-        "ByteArray",
-        "Buffer",
-        "int64",
-        "i",
-        "index",
-        "Offset",
-        "string",
-        "deserializeDouble",
-        "deserializeInt64",
-        "serializeDouble",
-        "serializeInt64",
-        "stringFromBuffer",
-        "stringToBuffer",
-        "int64ToLittleEndian",
-        "doubleToLittleEndian",
-        "int64ToNativeEndian",
-        "doubleToNativeEndian",
-    ].includes(type);
 }
 
 export function generate(ast, file) {

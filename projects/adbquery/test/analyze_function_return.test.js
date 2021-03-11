@@ -30,9 +30,7 @@ describe("analyze", () => {
                         return analyzer.analyze(parser.parse(data));
                     };
 
-                    expect(analyze).toThrow(
-                        `Analyzer: the return type 'Id' of function 'foo' is not an existing type.`
-                    );
+                    expect(analyze).toThrow(`Analyzer: the return type 'Id' of function 'foo' is not an existing type.`);
                 });
 
                 test("missing return statement", () => {
@@ -47,9 +45,7 @@ describe("analyze", () => {
                         return analyzer.analyze(parser.parse(data));
                     };
 
-                    expect(analyze).toThrow(
-                        "Analyzer: missing return statement in function 'foo' that has a return value."
-                    );
+                    expect(analyze).toThrow("Analyzer: missing return statement in function 'foo' that has a return value.");
                 });
             });
         });

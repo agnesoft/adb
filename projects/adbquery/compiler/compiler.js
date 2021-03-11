@@ -93,25 +93,16 @@ const inBuilt = {
     },
     deserialize_Double: {
         arguments: ["Buffer", "Offset"],
-        body: [
-            "return doubleToNativeEndian(deserializeDouble(Buffer, Offset))",
-        ],
+        body: ["return doubleToNativeEndian(deserializeDouble(Buffer, Offset))"],
         return: "Double",
     },
     serialize_ByteArray: {
         arguments: ["Buffer", "Offset", "ByteArray"],
-        body: [
-            "serialize_Int64(Buffer, Offset, ByteArray.size())",
-            "for (ByteArray.size()) { serialize_Byte(Buffer, Offset, ByteArray.at(i)) }",
-        ],
+        body: ["serialize_Int64(Buffer, Offset, ByteArray.size())", "for (ByteArray.size()) { serialize_Byte(Buffer, Offset, ByteArray.at(i)) }"],
     },
     deserialize_ByteArray: {
         arguments: ["Buffer", "Offset"],
-        body: [
-            "ByteArray = ByteArray",
-            "for (deserialize_Int64(Buffer, Offset)) { ByteArray += deserialize_Byte(Buffer, Offset) }",
-            "return ByteArray",
-        ],
+        body: ["ByteArray = ByteArray", "for (deserialize_Int64(Buffer, Offset)) { ByteArray += deserialize_Byte(Buffer, Offset) }", "return ByteArray"],
         return: "ByteArray",
     },
     serialize_String: {
@@ -120,9 +111,7 @@ const inBuilt = {
     },
     deserialize_String: {
         arguments: ["Buffer", "Offset"],
-        body: [
-            "return stringFromBuffer(deserialize_ByteArray(Buffer, Offset))",
-        ],
+        body: ["return stringFromBuffer(deserialize_ByteArray(Buffer, Offset))"],
         return: "String",
     },
 };

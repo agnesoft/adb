@@ -67,9 +67,7 @@ describe("parse", () => {
                         parser.parse(data);
                     };
 
-                    expect(parse).toThrow(
-                        "Parser: type of 'arguments' of 'foo' invalid ('object', must be 'array')."
-                    );
+                    expect(parse).toThrow("Parser: type of 'arguments' of 'foo' invalid ('object', must be 'array').");
                 });
 
                 test("empty string as argument", () => {
@@ -81,9 +79,7 @@ describe("parse", () => {
                         parser.parse(data);
                     };
 
-                    expect(parse).toThrow(
-                        "Parser: argument in 'arguments' of 'foo' cannot be empty."
-                    );
+                    expect(parse).toThrow("Parser: argument in 'arguments' of 'foo' cannot be empty.");
                 });
 
                 test("object as argument", () => {
@@ -95,9 +91,7 @@ describe("parse", () => {
                         parser.parse(data);
                     };
 
-                    expect(parse).toThrow(
-                        "Parser: argument in 'arguments' of 'foo' invalid ('object', must be 'string')."
-                    );
+                    expect(parse).toThrow("Parser: argument in 'arguments' of 'foo' invalid ('object', must be 'string').");
                 });
             });
         });

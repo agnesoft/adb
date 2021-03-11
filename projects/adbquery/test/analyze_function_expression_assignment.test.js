@@ -151,9 +151,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze).toThrow(
-                            "Analyzer: invalid expression in function 'foo'. Unknown type 'MyArr'."
-                        );
+                        expect(analyze).toThrow("Analyzer: invalid expression in function 'foo'. Unknown type 'MyArr'.");
                     });
 
                     test("type = <incompatible type>", () => {
@@ -170,9 +168,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze).toThrow(
-                            "Analyzer: invalid expression in function 'foo'. Cannot assign 'SomeType' (aka SomeType [object]) to 'Id' (aka Int64 [native])."
-                        );
+                        expect(analyze).toThrow("Analyzer: invalid expression in function 'foo'. Cannot assign 'SomeType' (aka SomeType [object]) to 'Id' (aka Int64 [native]).");
                     });
 
                     test("type = incorrect variant", () => {
@@ -190,9 +186,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze).toThrow(
-                            "Analyzer: invalid expression in function 'foo'. Invalid parent 'Int64' (aka Int64 [native]) of 'String' (aka String [native])."
-                        );
+                        expect(analyze).toThrow("Analyzer: invalid expression in function 'foo'. Invalid parent 'Int64' (aka Int64 [native]) of 'String' (aka String [native]).");
                     });
                 });
             });

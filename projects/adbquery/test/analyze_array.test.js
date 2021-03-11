@@ -152,9 +152,7 @@ describe("analyze", () => {
                     return analyzer.analyze(parser.parse(data));
                 };
 
-                expect(analyze).toThrow(
-                    "Analyzer: unknown type 'SomeType' used as an array type of 'MyArr'."
-                );
+                expect(analyze).toThrow("Analyzer: unknown type 'SomeType' used as an array type of 'MyArr'.");
             });
         });
     });

@@ -244,9 +244,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze).toThrow(
-                            `Analyzer: invalid expression in function 'foo'. Cannot assign '1' (aka Int64 [native]) to 'Obj' (aka Obj [object]).`
-                        );
+                        expect(analyze).toThrow(`Analyzer: invalid expression in function 'foo'. Cannot assign '1' (aka Int64 [native]) to 'Obj' (aka Obj [object]).`);
                     });
                 });
             });

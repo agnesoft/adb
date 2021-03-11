@@ -45,9 +45,7 @@ describe("parse", () => {
                     parser.parse(data);
                 };
 
-                expect(parse).toThrow(
-                    "Parser: type of 'body' of 'foo' invalid ('object', must be 'array')."
-                );
+                expect(parse).toThrow("Parser: type of 'body' of 'foo' invalid ('object', must be 'array').");
             });
         });
     });

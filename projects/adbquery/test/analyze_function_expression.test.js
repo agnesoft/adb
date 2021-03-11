@@ -38,9 +38,7 @@ describe("analyze", () => {
                         return analyzer.analyze(ast);
                     };
 
-                    expect(analyze).toThrow(
-                        "Analyzer: invalid expression in function 'foo'. Unknown expression type 'unknown_type'."
-                    );
+                    expect(analyze).toThrow("Analyzer: invalid expression in function 'foo'. Unknown expression type 'unknown_type'.");
                 });
 
                 test("incorrect expression part", () => {
@@ -57,9 +55,7 @@ describe("analyze", () => {
                         analyzer.analyze(parser.parse(data));
                     };
 
-                    expect(analyze).toThrow(
-                        `Analyzer: invalid expression in function 'foo'. Invalid parent 'MyVar' (aka MyVar [variant]) of 'Id' (aka Int64 [native]).`
-                    );
+                    expect(analyze).toThrow(`Analyzer: invalid expression in function 'foo'. Invalid parent 'MyVar' (aka MyVar [variant]) of 'Id' (aka Int64 [native]).`);
                 });
 
                 test("bad expression in method", () => {
@@ -80,9 +76,7 @@ describe("analyze", () => {
                         analyzer.analyze(parser.parse(data));
                     };
 
-                    expect(analyze).toThrow(
-                        `Analyzer: invalid expression in function 'SomeObj::foo'. Invalid parent 'MyVar' (aka MyVar [variant]) of 'Id' (aka Int64 [native]).`
-                    );
+                    expect(analyze).toThrow(`Analyzer: invalid expression in function 'SomeObj::foo'. Invalid parent 'MyVar' (aka MyVar [variant]) of 'Id' (aka Int64 [native]).`);
                 });
             });
         });

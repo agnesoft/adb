@@ -44,9 +44,7 @@ describe("parse", () => {
                     parser.parse(data);
                 };
 
-                expect(parse).toThrow(
-                    "Parser: type of alias 'Id' cannot be empty."
-                );
+                expect(parse).toThrow("Parser: type of alias 'Id' cannot be empty.");
             });
         });
     });

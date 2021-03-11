@@ -72,28 +72,18 @@ function analyzeCallExpression(expression, context, ast) {
 
 function analyzeCallWithParent(expression, context, ast) {
     if (isParentMethod(expression, ast)) {
-        let func =
-            ast[expression["parent"]["realType"]]["functions"][
-                expression["value"]
-            ];
+        let func = ast[expression["parent"]["realType"]]["functions"][expression["value"]];
         addCallTypes(expression, func, ast);
         analyzeFunctionArguments(expression, func, context, ast);
         expression["type"] = "method";
     } else {
-        throw `Cannot call '${expression["value"]}' on ${expressionAsString(
-            expression["parent"]
-        )}.`;
+        throw `Cannot call '${expression["value"]}' on ${expressionAsString(expression["parent"])}.`;
     }
 }
 
 function analyzeConstructorArguments(expression, context, ast) {
     validateArgumentsLength(expression, ast[expression["realType"]]["fields"]);
-    analyzeArguments(
-        expression,
-        ast[expression["realType"]]["fields"],
-        context,
-        ast
-    );
+    analyzeArguments(expression, ast[expression["realType"]]["fields"], context, ast);
 }
 
 function analyzeConstructorCall(expression, context, ast) {
@@ -117,12 +107,7 @@ function analyzeFor(expression, context, ast) {
 
 function analyzeFunctionArguments(expression, func, context, ast) {
     validateArgumentsLength(expression, func["arguments"]);
-    analyzeArguments(
-        expression,
-        functionArgumentsNames(func["arguments"]),
-        context,
-        ast
-    );
+    analyzeArguments(expression, functionArgumentsNames(func["arguments"]), context, ast);
     detectOutArguments(expression, func["arguments"], context);
 }
 
@@ -137,10 +122,7 @@ function analyzeIf(expression, context, ast) {
     analyzeSide(expression["condition"]["left"], context, ast);
     analyzeSide(expression["condition"]["right"], context, ast);
     analyzeBody(expression, context, ast);
-    validateComparison(
-        expression["condition"]["left"],
-        expression["condition"]["right"]
-    );
+    validateComparison(expression["condition"]["left"], expression["condition"]["right"]);
 }
 
 function analyzeIterations(iterations, context, ast) {
@@ -170,10 +152,7 @@ function analyzeReturn(expression, context, ast) {
         {
             value: context["func"]["returnValue"],
             realType: realType(context["func"]["returnValue"], ast),
-            astType: astType(
-                realType(context["func"]["returnValue"], ast),
-                ast
-            ),
+            astType: astType(realType(context["func"]["returnValue"], ast), ast),
         },
         expression,
         ast
@@ -220,10 +199,7 @@ function detectOutArguments(expression, args, context) {
 function detectUsedBeforeDefined(expression, context, ast) {
     const types = Object.keys(ast);
 
-    if (
-        types.indexOf(context["func"]["name"]) <
-        types.indexOf(expression["value"])
-    ) {
+    if (types.indexOf(context["func"]["name"]) < types.indexOf(expression["value"])) {
         ast[expression["value"]]["usedBeforeDefined"] = true;
     }
 }
@@ -292,31 +268,19 @@ function isArray(type, ast) {
 }
 
 function isArrayType(arrayType, type, ast) {
-    return (
-        isArray(arrayType, ast) &&
-        realType(ast[arrayType]["arrayType"], ast) == type
-    );
+    return isArray(arrayType, ast) && realType(ast[arrayType]["arrayType"], ast) == type;
 }
 
 function isConstructor(expression, ast) {
-    return (
-        expression["value"] in ast &&
-        ast[expression["value"]]["type"] == "object"
-    );
+    return expression["value"] in ast && ast[expression["value"]]["type"] == "object";
 }
 
 function isField(expression, context, ast) {
-    return (
-        context["object"]["fields"].includes(expression["value"]) ||
-        isParentField(expression, ast)
-    );
+    return context["object"]["fields"].includes(expression["value"]) || isParentField(expression, ast);
 }
 
 function isFunction(expression, ast) {
-    return (
-        expression["value"] in ast &&
-        ast[expression["value"]]["type"] == "function"
-    );
+    return expression["value"] in ast && ast[expression["value"]]["type"] == "function";
 }
 
 function isMethod(expression, context) {
@@ -336,13 +300,7 @@ function isParentArray(expression) {
 }
 
 function isParentField(expression, ast) {
-    return (
-        hasParent(expression) &&
-        isParentObject(expression) &&
-        ast[expression["parent"]["realType"]]["fields"].includes(
-            expression["value"]
-        )
-    );
+    return hasParent(expression) && isParentObject(expression) && ast[expression["parent"]["realType"]]["fields"].includes(expression["value"]);
 }
 
 function isParentObject(expression) {
@@ -350,13 +308,7 @@ function isParentObject(expression) {
 }
 
 function isParentMethod(expression, ast) {
-    return (
-        (isParentArray(expression) ||
-            isParentTypeVariant(expression) ||
-            isParentObject(expression)) &&
-        expression["value"] in
-            ast[expression["parent"]["realType"]]["functions"]
-    );
+    return (isParentArray(expression) || isParentTypeVariant(expression) || isParentObject(expression)) && expression["value"] in ast[expression["parent"]["realType"]]["functions"];
 }
 
 function isParentTypeVariant(expression) {
@@ -368,14 +320,7 @@ function isVariant(type, ast) {
 }
 
 function isParentVariant(expression, ast) {
-    return (
-        hasParent(expression) &&
-        isVariantType(
-            expression["parent"]["realType"],
-            expression["value"],
-            ast
-        )
-    );
+    return hasParent(expression) && isVariantType(expression["parent"]["realType"], expression["value"], ast);
 }
 
 function isVariantType(variantType, type, ast) {
@@ -411,11 +356,7 @@ function expressionAsString(expression) {
 }
 
 function isNumericType(type) {
-    return (
-        type["realType"] == "Int64" ||
-        type["realType"] == "Double" ||
-        type["realType"] == "Byte"
-    );
+    return type["realType"] == "Int64" || type["realType"] == "Double" || type["realType"] == "Byte";
 }
 
 function isNumeric(left, right) {
@@ -423,14 +364,8 @@ function isNumeric(left, right) {
 }
 
 function validateAddition(left, right, ast) {
-    if (
-        left["realType"] != right["realType"] &&
-        !isNumeric(left, right) &&
-        !isArrayType(left["realType"], right["realType"], ast)
-    ) {
-        throw `Cannot add ${expressionAsString(right)} to ${expressionAsString(
-            left
-        )}.`;
+    if (left["realType"] != right["realType"] && !isNumeric(left, right) && !isArrayType(left["realType"], right["realType"], ast)) {
+        throw `Cannot add ${expressionAsString(right)} to ${expressionAsString(left)}.`;
     }
 }
 
@@ -441,22 +376,14 @@ function validateArgumentsLength(expression, args) {
 }
 
 function validateAssignment(left, right, ast) {
-    if (
-        left["realType"] != right["realType"] &&
-        !isNumeric(left, right) &&
-        !isVariantCompatible(left["realType"], right["realType"], ast)
-    ) {
-        throw `Cannot assign ${expressionAsString(
-            right
-        )} to ${expressionAsString(left)}.`;
+    if (left["realType"] != right["realType"] && !isNumeric(left, right) && !isVariantCompatible(left["realType"], right["realType"], ast)) {
+        throw `Cannot assign ${expressionAsString(right)} to ${expressionAsString(left)}.`;
     }
 }
 
 function validateComparison(left, right) {
     if (!isNumeric(left, right)) {
-        throw `Cannot compare ${expressionAsString(
-            left
-        )} and ${expressionAsString(right)}.`;
+        throw `Cannot compare ${expressionAsString(left)} and ${expressionAsString(right)}.`;
     }
 }
 

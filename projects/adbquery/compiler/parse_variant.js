@@ -21,9 +21,7 @@ function validateVariants(token, variants) {
 
     for (const variant of variants) {
         if (jsType(variant) != "string") {
-            throw `Parser: variant of '${token}' invalid ('${jsType(
-                variant
-            )}', must be 'string').`;
+            throw `Parser: variant of '${token}' invalid ('${jsType(variant)}', must be 'string').`;
         }
 
         if (!variant) {

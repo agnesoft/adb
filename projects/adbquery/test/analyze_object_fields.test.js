@@ -55,9 +55,7 @@ describe("analyze", () => {
                         return analyzer.analyze(parser.parse(data));
                     };
 
-                    expect(analyze).toThrow(
-                        "Analyzer: the field 'Ids' of object 'MyObj' is not an existing type."
-                    );
+                    expect(analyze).toThrow("Analyzer: the field 'Ids' of object 'MyObj' is not an existing type.");
                 });
             });
         });

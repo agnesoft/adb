@@ -15,16 +15,13 @@
 import * as cpptypes from "./cpp_types.js";
 import * as cppfunction from "./cpp_function.js";
 
-function constructor(type, ast) {
+function constructors(type, ast) {
     if (ast[type]["fields"].length == 0) {
         return "";
     }
 
     return `    ${type}() = default;
-    ${explicit(type, ast)}${type}(${cpptypes.functionArguments(
-        ast[type]["fields"],
-        ast
-    )})${initializers(ast[type]["fields"])}
+    ${explicit(type, ast)}${type}(${cpptypes.functionArguments(ast[type]["fields"], ast)})${initializers(ast[type]["fields"])}
     {
     }`;
 }
@@ -57,6 +54,23 @@ function functions(type, ast) {
     return buffer;
 }
 
+function getter(field, ast) {
+    return `\n    [[nodiscard]] auto ${cpptypes.variableName(field)}() const -> const ${cpptypes.cppType(field, ast)} &
+    {
+        return ${cpptypes.fieldName(field)};
+    }`;
+}
+
+function getters(type, ast) {
+    let buffer = [];
+
+    for (const field of ast[type]["fields"]) {
+        buffer.push(getter(field, ast));
+    }
+
+    return buffer.join("\n");
+}
+
 function initializers(fields) {
     if (fields.length == 0) {
         return "";
@@ -65,11 +79,7 @@ function initializers(fields) {
     let inits = [];
 
     for (const field of fields) {
-        inits.push(
-            `        ${cpptypes.fieldName(
-                field
-            )}{std::move(${cpptypes.variableName(field)})}`
-        );
+        inits.push(`        ${cpptypes.fieldName(field)}{std::move(${cpptypes.variableName(field)})}`);
     }
 
     return ` :\n${inits.join(",\n")}`;
@@ -79,9 +89,10 @@ export function generate(type, ast) {
     return `\nexport class ${type}
 {
 public:
-${constructor(type, ast)}
+${constructors(type, ast)}
+${getters(type, ast)}
 ${functions(type, ast)}
-//private:
+private:
 ${fields(ast[type]["fields"], ast)}
 };\n`;
 }

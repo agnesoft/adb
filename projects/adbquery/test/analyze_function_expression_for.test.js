@@ -150,9 +150,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze).toThrow(
-                            `Analyzer: invalid expression in function 'foo'. The 'for' iterations' type must be a numeric type, got 'Obj'.`
-                        );
+                        expect(analyze).toThrow(`Analyzer: invalid expression in function 'foo'. The 'for' iterations' type must be a numeric type, got 'Obj'.`);
                     });
                 });
             });

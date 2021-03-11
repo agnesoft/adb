@@ -12,6 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+function functionArgument(type, ast) {
+    if (typeof type == "object") {
+        return `${outArgument(type)}${cppType(type["value"], ast)} &${variableName(type["value"])}`;
+    } else {
+        return `${cppType(type, ast)} ${variableName(type)}`;
+    }
+}
+
 function outArgument(type) {
     if (type["out"]) {
         return "";
@@ -44,16 +52,7 @@ export function functionArguments(types, ast) {
     let vars = [];
 
     for (const type of types) {
-        if (typeof type == "object") {
-            vars.push(
-                `${outArgument(type)}${cppType(
-                    type["value"],
-                    ast
-                )} &${variableName(type["value"])}`
-            );
-        } else {
-            vars.push(`${cppType(type, ast)} ${variableName(type)}`);
-        }
+        vars.push(functionArgument(type, ast));
     }
 
     return vars.join(", ");

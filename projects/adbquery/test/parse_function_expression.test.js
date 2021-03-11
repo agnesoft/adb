@@ -21,10 +21,7 @@ describe("parse", () => {
                 test("multiple", () => {
                     const data = {
                         foo: {
-                            body: [
-                                "Obj.Id = MyArr.Int64",
-                                "MyVar.Obj.Field1 += 1",
-                            ],
+                            body: ["Obj.Id = MyArr.Int64", "MyVar.Obj.Field1 += 1"],
                         },
                     };
 
@@ -87,9 +84,7 @@ describe("parse", () => {
                         parser.parse(data);
                     };
 
-                    expect(parse).toThrow(
-                        "Parser: expression in 'body' of 'foo' cannot be empty."
-                    );
+                    expect(parse).toThrow("Parser: expression in 'body' of 'foo' cannot be empty.");
                 });
 
                 test("object as expression", () => {
@@ -101,9 +96,7 @@ describe("parse", () => {
                         parser.parse(data);
                     };
 
-                    expect(parse).toThrow(
-                        "Parser: expression in 'body' of 'foo' invalid ('object', must be 'string')."
-                    );
+                    expect(parse).toThrow("Parser: expression in 'body' of 'foo' invalid ('object', must be 'string').");
                 });
 
                 test("unknown expression", () => {
@@ -115,9 +108,7 @@ describe("parse", () => {
                         parser.parse(data);
                     };
 
-                    expect(parse).toThrow(
-                        "Tokenizer: Cannot handle character '*'."
-                    );
+                    expect(parse).toThrow("Tokenizer: Cannot handle character '*'.");
                 });
 
                 test("unexpected token", () => {
@@ -129,9 +120,7 @@ describe("parse", () => {
                         parser.parse(data);
                     };
 
-                    expect(parse).toThrow(
-                        "Parser: expected '(' or '.', got '{' in function 'foo' when parsing expression 'obj{'."
-                    );
+                    expect(parse).toThrow("Parser: expected '(' or '.', got '{' in function 'foo' when parsing expression 'obj{'.");
                 });
 
                 test("unknown keyword", () => {
@@ -143,9 +132,7 @@ describe("parse", () => {
                         parser.parse(data);
                     };
 
-                    expect(parse).toThrow(
-                        "Parser: unknown keyword 'true' in function 'foo' when parsing expression 'true'."
-                    );
+                    expect(parse).toThrow("Parser: unknown keyword 'true' in function 'foo' when parsing expression 'true'.");
                 });
             });
         });

@@ -204,9 +204,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(addContext).toThrow(
-                            "Analyzer: invalid expression in function 'foo'. Unknown type 'Id'."
-                        );
+                        expect(addContext).toThrow("Analyzer: invalid expression in function 'foo'. Unknown type 'Id'.");
                     });
 
                     test("array += <incompatible type>", () => {
@@ -223,9 +221,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze).toThrow(
-                            "Analyzer: invalid expression in function 'foo'. Cannot add 'SomeType' (aka SomeType [object]) to 'MyArr' (aka MyArr [array])."
-                        );
+                        expect(analyze).toThrow("Analyzer: invalid expression in function 'foo'. Cannot add 'SomeType' (aka SomeType [object]) to 'MyArr' (aka MyArr [array]).");
                     });
 
                     test("<non number> += number", () => {
@@ -243,9 +239,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze).toThrow(
-                            "Analyzer: invalid expression in function 'foo'. Cannot add '1' (aka Int64 [native]) to 'SomeType' (aka SomeType [object])."
-                        );
+                        expect(analyze).toThrow("Analyzer: invalid expression in function 'foo'. Cannot add '1' (aka Int64 [native]) to 'SomeType' (aka SomeType [object]).");
                     });
                 });
             });

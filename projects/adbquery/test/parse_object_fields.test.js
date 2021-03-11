@@ -63,9 +63,7 @@ describe("parse", () => {
                         parser.parse(data);
                     };
 
-                    expect(parse).toThrow(
-                        "Parser: type of 'fields' of 'MyObj' invalid ('object', must be 'array')."
-                    );
+                    expect(parse).toThrow("Parser: type of 'fields' of 'MyObj' invalid ('object', must be 'array').");
                 });
 
                 test("empty string as field", () => {
@@ -79,9 +77,7 @@ describe("parse", () => {
                         parser.parse(data);
                     };
 
-                    expect(parse).toThrow(
-                        "Parser: field in 'fields' of 'MyObj' cannot be empty."
-                    );
+                    expect(parse).toThrow("Parser: field in 'fields' of 'MyObj' cannot be empty.");
                 });
 
                 test("object as field", () => {
@@ -95,9 +91,7 @@ describe("parse", () => {
                         parser.parse(data);
                     };
 
-                    expect(parse).toThrow(
-                        "Parser: field of 'MyObj' invalid ('object', must be 'string')."
-                    );
+                    expect(parse).toThrow("Parser: field of 'MyObj' invalid ('object', must be 'string').");
                 });
             });
         });

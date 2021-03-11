@@ -90,9 +90,7 @@ describe("analyze", () => {
                     return analyzer.analyze(parser.parse(data));
                 };
 
-                expect(analyze).toThrow(
-                    "Analyzer: unknown type 'SomeType' used as a variant of 'MyVariant'."
-                );
+                expect(analyze).toThrow("Analyzer: unknown type 'SomeType' used as a variant of 'MyVariant'.");
             });
         });
     });

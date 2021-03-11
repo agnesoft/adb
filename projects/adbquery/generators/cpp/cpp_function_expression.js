@@ -16,15 +16,9 @@ import * as cpptypes from "./cpp_types.js";
 
 function additionExpr(expression, ast) {
     if (expression["left"]["astType"] == "array") {
-        return `    ${side(expression["left"], ast)}.push_back(${side(
-            expression["right"],
-            ast
-        )});`;
+        return `    ${side(expression["left"], ast)}.push_back(${side(expression["right"], ast)});`;
     } else {
-        return `    ${side(expression["left"], ast)} += ${side(
-            expression["right"],
-            ast
-        )};`;
+        return `    ${side(expression["left"], ast)} += ${side(expression["right"], ast)};`;
     }
 }
 
@@ -33,10 +27,7 @@ function assignmentExpr(expression, ast) {
         return `    ${side(expression["left"], ast)};`;
     }
 
-    return `    ${side(expression["left"], ast)} = ${side(
-        expression["right"],
-        ast
-    )};`;
+    return `    ${side(expression["left"], ast)} = ${side(expression["right"], ast)};`;
 }
 
 function callExpr(expression, ast) {
@@ -50,10 +41,7 @@ function elseExpr(expression, ast) {
 }
 
 function forExpr(expression, ast) {
-    return `    for (Int64 i_ = 0; i_ < ${side(
-        expression["iterations"],
-        ast
-    )}; i_++) {
+    return `    for (Int64 i_ = 0; i_ < ${side(expression["iterations"], ast)}; i_++) {
     ${generate(expression["body"][0], ast)}
     }`;
 }
@@ -69,9 +57,7 @@ function functionArguments(expression, ast) {
 }
 
 function ifExpr(expression, ast, elseif = "") {
-    return `    ${elseif}if (${side(expression["condition"]["left"], ast)} ${
-        expression["condition"]["type"]
-    } ${side(expression["condition"]["right"], ast)}) {
+    return `    ${elseif}if (${side(expression["condition"]["left"], ast)} ${expression["condition"]["type"]} ${side(expression["condition"]["right"], ast)}) {
     ${generate(expression["body"][0], ast)}
     }`;
 }
@@ -95,52 +81,33 @@ function returnExpr(expression, ast) {
 }
 
 function side(expression, ast) {
-    const type =
-        "returnType" in expression
-            ? expression["returnType"]
-            : expression["type"];
+    const type = "returnType" in expression ? expression["returnType"] : expression["type"];
 
     if (type == "variant") {
-        return `std::get<${cpptypes.cppType(expression["value"], ast)}>(${side(
-            expression["parent"],
-            ast
-        )})`;
+        return `std::get<${cpptypes.cppType(expression["value"], ast)}>(${side(expression["parent"], ast)})`;
     }
 
     if (type == "call") {
-        return `${parent(expression, ast)}${
-            expression["value"]
-        }(${functionArguments(expression, ast)})`;
+        return `${parent(expression, ast)}${expression["value"]}(${functionArguments(expression, ast)})`;
     }
 
     if (type == "method") {
         if (expression["value"] == "index") {
-            return `static_cast<Byte>(${parent(expression, ast)}${
-                expression["value"]
-            }(${functionArguments(expression, ast)}))`;
+            return `static_cast<Byte>(${parent(expression, ast)}${expression["value"]}(${functionArguments(expression, ast)}))`;
         }
 
         if (expression["value"] == "at") {
-            return `${parent(expression, ast)}${
-                expression["value"]
-            }(static_cast<size_t>(${functionArguments(expression, ast)}))`;
+            return `${parent(expression, ast)}${expression["value"]}(static_cast<size_t>(${functionArguments(expression, ast)}))`;
         }
 
-        return `${parent(expression, ast)}${
-            expression["value"]
-        }(${functionArguments(expression, ast)})`;
+        return `${parent(expression, ast)}${expression["value"]}(${functionArguments(expression, ast)})`;
     }
 
     if (type == "constructor") {
         if (ast[expression["value"]]["usedBeforeDefined"]) {
-            return `std::make_unique<${
-                expression["value"]
-            }>(${functionArguments(expression, ast)})`;
+            return `std::make_unique<${expression["value"]}>(${functionArguments(expression, ast)})`;
         } else {
-            return `${expression["value"]}(${functionArguments(
-                expression,
-                ast
-            )})`;
+            return `${expression["value"]}{${functionArguments(expression, ast)}}`;
         }
     }
 
@@ -153,9 +120,7 @@ function side(expression, ast) {
             return `${cpptypes.variableDeclaration(expression["value"], ast)}`;
         }
     } else if (type == "field") {
-        return `${parent(expression, ast)}${cpptypes.fieldName(
-            expression["value"]
-        )}`;
+        return `${parent(expression, ast)}${cpptypes.variableName(expression["value"])}()`;
     } else {
         return cpptypes.variableName(expression["value"]);
     }

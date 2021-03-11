@@ -175,9 +175,7 @@ describe("analyze", () => {
                         return analyzer.analyze(parser.parse(data));
                     };
 
-                    expect(analyze).toThrow(
-                        `Analyzer: the argument 'From' in function 'foo' is not an existing type.`
-                    );
+                    expect(analyze).toThrow(`Analyzer: the argument 'From' in function 'foo' is not an existing type.`);
                 });
             });
         });

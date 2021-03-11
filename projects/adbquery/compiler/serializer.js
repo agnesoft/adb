@@ -27,11 +27,7 @@ function isArray(type, data) {
 }
 
 function isObject(type, data) {
-    return (
-        !isArray(type, data) &&
-        typeof data[type] == "object" &&
-        ("fields" in data[type] || !("body" in data[type]))
-    );
+    return !isArray(type, data) && typeof data[type] == "object" && ("fields" in data[type] || !("body" in data[type]));
 }
 
 function isVariant(type, data) {
@@ -45,24 +41,11 @@ function addArraySerialization(array, arrayType, data, serialization) {
 
     serialization[`serialize_${array}`] = {
         arguments: ["Buffer", "Offset", array],
-        body: [
-            `serialize_Int64(Buffer, Offset, ${array}.size())`,
-            `for (${array}.size()) { serialize_${realType(
-                arrayType,
-                data
-            )}(Buffer, Offset, ${array}.at(i)) }`,
-        ],
+        body: [`serialize_Int64(Buffer, Offset, ${array}.size())`, `for (${array}.size()) { serialize_${realType(arrayType, data)}(Buffer, Offset, ${array}.at(i)) }`],
     };
     serialization[`deserialize_${array}`] = {
         arguments: ["Buffer", "Offset"],
-        body: [
-            `${array} = ${array}`,
-            `for (deserialize_Int64(Buffer, Offset)) { ${array} += deserialize_${realType(
-                arrayType,
-                data
-            )}(Buffer, Offset) }`,
-            `return ${array}`,
-        ],
+        body: [`${array} = ${array}`, `for (deserialize_Int64(Buffer, Offset)) { ${array} += deserialize_${realType(arrayType, data)}(Buffer, Offset) }`, `return ${array}`],
         return: array,
     };
 }
@@ -72,12 +55,7 @@ function fieldsSerializationExpressions(object, fields, data) {
 
     if (fields) {
         for (const field of fields) {
-            expressions.push(
-                `serialize_${realType(
-                    field,
-                    data
-                )}(Buffer, Offset, ${object}.${field})`
-            );
+            expressions.push(`serialize_${realType(field, data)}(Buffer, Offset, ${object}.${field})`);
         }
     }
 
@@ -89,9 +67,7 @@ function fieldsDeserializationExpression(fields, data) {
 
     if (fields) {
         for (const field of fields) {
-            expressions.push(
-                `deserialize_${realType(field, data)}(Buffer, Offset)`
-            );
+            expressions.push(`deserialize_${realType(field, data)}(Buffer, Offset)`);
         }
     }
 
@@ -101,50 +77,32 @@ function fieldsDeserializationExpression(fields, data) {
 function addObjectSerialization(object, definition, data, serialization) {
     serialization[`serialize_${object}`] = {
         arguments: ["Buffer", "Offset", object],
-        body: fieldsSerializationExpressions(
-            object,
-            definition["fields"],
-            data
-        ),
+        body: fieldsSerializationExpressions(object, definition["fields"], data),
     };
     serialization[`deserialize_${object}`] = {
         arguments: ["Buffer", "Offset"],
-        body: [
-            `return ${object}(${fieldsDeserializationExpression(
-                definition["fields"],
-                data
-            )})`,
-        ],
+        body: [`return ${object}(${fieldsDeserializationExpression(definition["fields"], data)})`],
         return: object,
     };
 }
 
 function variantsSerializationExpressions(variant, variants, data) {
-    let expressions = [
-        `Byte = ${variant}.index()`,
-        `serialize_Byte(Buffer, Offset, Byte)`,
-    ];
+    let expressions = [`Byte = ${variant}.index()`, `serialize_Byte(Buffer, Offset, Byte)`];
+
     for (let i = 0; i < variants.length; i++) {
-        expressions.push(
-            `${i != 0 ? "else " : ""}if (Byte == ${i}) { serialize_${realType(
-                variants[i],
-                data
-            )}(Buffer, Offset, ${variant}.${variants[i]}) }`
-        );
+        expressions.push(`${i != 0 ? "else " : ""}if (Byte == ${i}) { serialize_${realType(variants[i], data)}(Buffer, Offset, ${variant}.${variants[i]}) }`);
     }
+
     return expressions;
 }
 
 function variantsDeserializationExpressions(variant, variants, data) {
     let expressions = [`Byte = deserialize_Byte(Buffer, Offset)`];
+
     for (let i = 0; i < variants.length; i++) {
-        expressions.push(
-            `if (Byte == ${i}) { return deserialize_${realType(
-                variants[i],
-                data
-            )}(Buffer, Offset) }`
-        );
+        expressions.push(`if (Byte == ${i}) { return deserialize_${realType(variants[i], data)}(Buffer, Offset) }`);
     }
+
     expressions.push(`return ${variant}`);
     return expressions;
 }

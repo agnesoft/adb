@@ -508,9 +508,7 @@ describe("analyze", () => {
                         const result = analyzer.analyze(parser.parse(data));
 
                         expect(result).toMatchObject(ast);
-                        expect(
-                            "usedBeforeDefined" in result["foo"]
-                        ).toBeFalsy();
+                        expect("usedBeforeDefined" in result["foo"]).toBeFalsy();
                     });
                 });
 
@@ -532,9 +530,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze).toThrow(
-                            "Analyzer: invalid expression in function 'bar'. Cannot assign 'Id' (aka Int64 [native]) to 'Obj' (aka Obj [object])."
-                        );
+                        expect(analyze).toThrow("Analyzer: invalid expression in function 'bar'. Cannot assign 'Id' (aka Int64 [native]) to 'Obj' (aka Obj [object]).");
                     });
 
                     test("non-function type", () => {
@@ -549,9 +545,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze).toThrow(
-                            "Analyzer: invalid expression in function 'foo'. Cannot call 'Arr' (not a function)."
-                        );
+                        expect(analyze).toThrow("Analyzer: invalid expression in function 'foo'. Cannot call 'Arr' (not a function).");
                     });
 
                     test("non-existent method", () => {
@@ -567,9 +561,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze).toThrow(
-                            "Analyzer: invalid expression in function 'foo'. Cannot call 'bar' on 'SomeObj' (aka SomeObj [object])."
-                        );
+                        expect(analyze).toThrow("Analyzer: invalid expression in function 'foo'. Cannot call 'bar' on 'SomeObj' (aka SomeObj [object]).");
                     });
 
                     test("too few arguments", () => {
@@ -588,9 +580,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze).toThrow(
-                            "Analyzer: invalid expression in function 'bar'. Incorrect number of arguments in call to 'foo' (expected 2, got 1)."
-                        );
+                        expect(analyze).toThrow("Analyzer: invalid expression in function 'bar'. Incorrect number of arguments in call to 'foo' (expected 2, got 1).");
                     });
 
                     test("too many arguments", () => {
@@ -608,9 +598,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze).toThrow(
-                            "Analyzer: invalid expression in function 'bar'. Incorrect number of arguments in call to 'foo' (expected 1, got 2)."
-                        );
+                        expect(analyze).toThrow("Analyzer: invalid expression in function 'bar'. Incorrect number of arguments in call to 'foo' (expected 1, got 2).");
                     });
                 });
             });

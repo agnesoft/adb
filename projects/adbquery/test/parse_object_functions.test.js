@@ -109,9 +109,7 @@ describe("parse", () => {
                         parser.parse(data);
                     };
 
-                    expect(parse).toThrow(
-                        "Parser: type of 'functions' of 'MyObj' invalid ('array', must be 'object')."
-                    );
+                    expect(parse).toThrow("Parser: type of 'functions' of 'MyObj' invalid ('array', must be 'object').");
                 });
 
                 test("string as function's type", () => {
@@ -123,9 +121,7 @@ describe("parse", () => {
                         parser.parse(data);
                     };
 
-                    expect(parse).toThrow(
-                        "Parser: type of function 'MyObj::foo' invalid ('string', must be 'object')."
-                    );
+                    expect(parse).toThrow("Parser: type of function 'MyObj::foo' invalid ('string', must be 'object').");
                 });
             });
         });

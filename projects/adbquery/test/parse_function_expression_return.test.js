@@ -101,9 +101,7 @@ describe("parse", () => {
                             parser.parse(data);
                         };
 
-                        expect(parse).toThrow(
-                            "Parser: expected an identifier, got nothing in function 'foo' when parsing expression 'return'."
-                        );
+                        expect(parse).toThrow("Parser: expected an identifier, got nothing in function 'foo' when parsing expression 'return'.");
                     });
                 });
             });

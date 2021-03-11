@@ -136,9 +136,7 @@ describe("analyze", () => {
                     return analyzer.analyze(parser.parse(data));
                 };
 
-                expect(analyze).toThrow(
-                    "Analyzer: unknown type 'SomeType' aliased as 'Id'."
-                );
+                expect(analyze).toThrow("Analyzer: unknown type 'SomeType' aliased as 'Id'.");
             });
         });
     });

@@ -62,9 +62,7 @@ describe("serializer", () => {
                 foo: { body: [] },
             };
 
-            expect(
-                "serialize_foo" in serializer.addSerialization(data)
-            ).toBeFalsy();
+            expect("serialize_foo" in serializer.addSerialization(data)).toBeFalsy();
         });
 
         test("alias", () => {
@@ -73,9 +71,7 @@ describe("serializer", () => {
                 objalias: "obj",
             };
 
-            expect(
-                "serialize_objalias" in serializer.addSerialization(data)
-            ).toBeFalsy();
+            expect("serialize_objalias" in serializer.addSerialization(data)).toBeFalsy();
         });
     });
 });

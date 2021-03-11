@@ -30,14 +30,38 @@ function assignmentExpr(expression, ast) {
     return `    ${side(expression["left"], ast)} = ${side(expression["right"], ast)};`;
 }
 
+function call(expression, ast) {
+    return `${parent(expression, ast)}${expression["value"]}(${functionArguments(expression, ast)})`;
+}
+
 function callExpr(expression, ast) {
     return `    ${side(expression, ast)};`;
+}
+
+function constructor(expression, ast) {
+    if (ast[expression["value"]]["usedBeforeDefined"]) {
+        return `std::make_unique<${expression["value"]}>(${functionArguments(expression, ast)})`;
+    } else {
+        return `${expression["value"]}{${functionArguments(expression, ast)}}`;
+    }
 }
 
 function elseExpr(expression, ast) {
     return `    else {
         ${generate(expression["body"][0], ast)}
     }`;
+}
+
+function expressionType(expression) {
+    if ("returnType" in expression) {
+        return expression["returnType"];
+    } else {
+        return expression["type"];
+    }
+}
+
+function field(expression, ast) {
+    return `${parent(expression, ast)}${cpptypes.variableName(expression["value"])}()`;
 }
 
 function forExpr(expression, ast) {
@@ -62,17 +86,40 @@ function ifExpr(expression, ast, elseif = "") {
     }`;
 }
 
+function method(expression, ast) {
+    switch (expression["value"]) {
+        case "index":
+            return `static_cast<Byte>(${parent(expression, ast)}${expression["value"]}(${functionArguments(expression, ast)}))`;
+        case "at":
+            return `${parent(expression, ast)}${expression["value"]}(static_cast<size_t>(${functionArguments(expression, ast)}))`;
+        default:
+            return call(expression, ast);
+    }
+}
+
+function newVariable(expression, ast) {
+    if ("returnType" in expression) {
+        return `{}`;
+    } else {
+        return `${cpptypes.variableDeclaration(expression["value"], ast)}`;
+    }
+}
+
 function parent(expression, ast) {
-    if (!expression["parent"]) {
+    if (expression["parent"]) {
+        return `${side(expression["parent"], ast)}${parentAccessor(expression, ast)}`;
+    } else {
         return "";
     }
+}
 
+function parentAccessor(expression, ast) {
     const type = expression["parent"]["value"];
 
     if (type in ast && ast[type]["usedBeforeDefined"]) {
-        return `${side(expression["parent"], ast)}->`;
+        return "->";
     } else {
-        return `${side(expression["parent"], ast)}.`;
+        return ".";
     }
 }
 
@@ -81,49 +128,28 @@ function returnExpr(expression, ast) {
 }
 
 function side(expression, ast) {
-    const type = "returnType" in expression ? expression["returnType"] : expression["type"];
-
-    if (type == "variant") {
-        return `std::get<${cpptypes.cppType(expression["value"], ast)}>(${side(expression["parent"], ast)})`;
+    switch (expressionType(expression)) {
+        case "variant":
+            return variant(expression, ast);
+        case "call":
+            return call(expression, ast);
+        case "method":
+            return method(expression, ast);
+        case "constructor":
+            return constructor(expression, ast);
+        case "number":
+            return expression["value"];
+        case "new":
+            return newVariable(expression, ast);
+        case "field":
+            return field(expression, ast);
+        default:
+            return cpptypes.variableName(expression["value"]);
     }
+}
 
-    if (type == "call") {
-        return `${parent(expression, ast)}${expression["value"]}(${functionArguments(expression, ast)})`;
-    }
-
-    if (type == "method") {
-        if (expression["value"] == "index") {
-            return `static_cast<Byte>(${parent(expression, ast)}${expression["value"]}(${functionArguments(expression, ast)}))`;
-        }
-
-        if (expression["value"] == "at") {
-            return `${parent(expression, ast)}${expression["value"]}(static_cast<size_t>(${functionArguments(expression, ast)}))`;
-        }
-
-        return `${parent(expression, ast)}${expression["value"]}(${functionArguments(expression, ast)})`;
-    }
-
-    if (type == "constructor") {
-        if (ast[expression["value"]]["usedBeforeDefined"]) {
-            return `std::make_unique<${expression["value"]}>(${functionArguments(expression, ast)})`;
-        } else {
-            return `${expression["value"]}{${functionArguments(expression, ast)}}`;
-        }
-    }
-
-    if (type == "number") {
-        return expression["value"];
-    } else if (type == "new") {
-        if ("returnType" in expression) {
-            return `{}`;
-        } else {
-            return `${cpptypes.variableDeclaration(expression["value"], ast)}`;
-        }
-    } else if (type == "field") {
-        return `${parent(expression, ast)}${cpptypes.variableName(expression["value"])}()`;
-    } else {
-        return cpptypes.variableName(expression["value"]);
-    }
+function variant(expression, ast) {
+    return `std::get<${cpptypes.cppType(expression["value"], ast)}>(${side(expression["parent"], ast)})`;
 }
 
 export function generate(expression, ast) {

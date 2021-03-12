@@ -20,9 +20,7 @@ function get() {
 }
 
 function identifierType(value) {
-    return ["if", "else", "for", "return", "true", "false"].includes(value)
-        ? "keyword"
-        : "identifier";
+    return ["if", "else", "for", "return", "true", "false"].includes(value) ? "keyword" : "identifier";
 }
 
 function isAlphaNumeric(c) {

@@ -110,9 +110,7 @@ describe("parse", () => {
                             parser.parse(data);
                         };
 
-                        expect(parse).toThrow(
-                            "Parser: expected '{', got 'bar' [identifier] in function 'foo' when parsing expression 'for(1) bar() }'."
-                        );
+                        expect(parse).toThrow("Parser: expected '{', got 'bar' [identifier] in function 'foo' when parsing expression 'for(1) bar() }'.");
                     });
                 });
             });

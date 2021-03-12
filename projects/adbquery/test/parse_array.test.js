@@ -19,14 +19,14 @@ describe("parse", () => {
         describe("valid", () => {
             test("native type", () => {
                 const data = {
-                    String: ["byte"],
+                    MyString: ["Byte"],
                 };
 
                 const ast = {
-                    String: {
+                    MyString: {
                         type: "array",
-                        name: "String",
-                        arrayType: "byte",
+                        name: "MyString",
+                        arrayType: "Byte",
                     },
                 };
 
@@ -43,9 +43,7 @@ describe("parse", () => {
                     parser.parse(data);
                 };
 
-                expect(parse).toThrow(
-                    "Parser: type of array 'MyArr' cannot be empty."
-                );
+                expect(parse).toThrow("Parser: type of array 'MyArr' cannot be empty.");
             });
 
             test("object as array type", () => {
@@ -57,9 +55,7 @@ describe("parse", () => {
                     parser.parse(data);
                 };
 
-                expect(parse).toThrow(
-                    "Parser: type of array 'MyArr' invalid ('object', must be 'string')."
-                );
+                expect(parse).toThrow("Parser: type of array 'MyArr' invalid ('object', must be 'string').");
             });
         });
     });

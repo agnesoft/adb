@@ -11,7 +11,7 @@ Code generated interface to the Agnesoft Database. It consists of the Interface 
         -   [alias](#alias-1) | [array](#array-1) | [function](#function--expressions) | [object](#object-1) | [variant](#variant-1) | [Parser](#parser)
     -   [Analyzer](#analyzer)
     -   [Serializer](#serializer)
-        -   [byte](#byte) | [integers](#integers-int64-double) | [array](#array) | [object](#object) | [variant](#variant)
+        -   [byte](#byte) | [integers](#integers-Int64-Double) | [array](#array) | [object](#object) | [variant](#variant)
     -   [Code Generators](#code-generators)
         -   [C++](#c)
 
@@ -25,10 +25,10 @@ There are native types that are built-in and needs to be provided by the support
 
 These types must be available and provided by every supported language:
 
--   `byte` (8-bit value)
--   `int64` (64-bit signed two's complement integer)
--   `double` (64-bit floating point integer)
--   `string` (implementation defined string representation)
+-   `Byte` (8-bit value)
+-   `Int64` (64-bit signed two's complement integer)
+-   `Double` (64-bit floating point integer)
+-   `String` (implementation defined string representation)
 
 ### Custom Types
 
@@ -49,18 +49,19 @@ Represents an alias of a different type. Its value must be a defined type. It ca
 Syntax:
 
 ```
-"Id": "int64"
+"Id": "Int64"
 ```
 
 Implicit aliases:
 
--   `"byte": <implementation defined>`
--   `"int64": <implementation defined>`
--   `"double": <implementation defined>`
--   `"string": <implementation defined>`
--   `"i": "int64"`
--   `"offset": "int64"`
--   `"index": "int64"`
+-   `"Byte": <implementation defined>`
+-   `"Int64": <implementation defined>`
+-   `"Double": <implementation defined>`
+-   `"String": <implementation defined>`
+-   `"i": "Int64"`
+-   `"Offset": "Int64"`
+-   `"Index": "Int64"`
+-   `"Buffer": "ByteArray"`
 
 #### array
 
@@ -69,17 +70,17 @@ Represents a dynamic array of another defined type (native or custom). There can
 Syntax:
 
 ```
-"Ids": ["int64"]
+"Ids": ["Int64"]
 ```
 
 Array functions:
 
--   `"size": { "arguments": [], "body": <implementation defined>, "return": "int64" }"` (a function that returns number of values in the array as `int64`)
--   `"at": { "arguments": ["int64"], "body": <implementation defined>, "return": <arrayType> }` (a function that takes index as `int64` argument and returns mutable value at that position in the array)
+-   `"size": { "arguments": [], "body": <implementation defined>, "return": "Int64" }"` (a function that returns number of values in the array as `Int64`)
+-   `"at": { "arguments": ["Int64"], "body": <implementation defined>, "return": <arrayType> }` (a function that takes index as `Int64` argument and returns mutable value at that position in the array)
 
 Implicit arrays:
 
--   `"ByteArray": ["byte"]`
+-   `"ByteArray": ["Byte"]`
 
 #### function
 
@@ -103,16 +104,16 @@ Syntax:
 
 Implicit function declarations:
 
--   `"deserializeDouble": { "arguments": ["ByteArray", "offset"], "body": <implementation defined>, "return": "double" }"` (a function that takes a `ByteArray` buffer and returns the `double` value at the `offset` from the buffer as-is and increments `offset` by the count of read bytes)
--   `"deserializeInt64": { "arguments": ["ByteArray", "offset"], "body": <implementation defined>, "return": "int64" }"` (a function that takes a `ByteArray` buffer and returns the `int64` value at the `offset` from the buffer as-is and increments `offset` by the count of read bytes)
--   `"serializeDouble": { "arguments": ["ByteArray", "offset", "double"], "body": <implementation defined> }"` (a function that takes a `ByteArray` buffer and serializes the `double` value as-is at the `offset` and increments `offset` by the count of written bytes)
--   `"serializeInt64": { "arguments": ["ByteArray", "offset", "int64"], "body": <implementation defined> }"` (a function that takes a `ByteArray` buffer and serializes the `int64` value as-is at the `offset` and increments `offset` by the count of written bytes)
--   `"stringFromByteArray": { "arguments": ["ByteArray"], "body": <implementation defined>, "return": "string" }"` (a function that takes a `ByteArray` and converts it to a native `string`)
--   `"stringToByteArray": { "arguments": ["string"], "body": <implementation defined>, "return": "ByteArray" }"` (a function that takes a native `string` and converts it to `ByteArray`)
--   `"int64ToLittleEndian": { "arguments": ["int64"], "body": <implementation defined>, "return": "int64" }` (a function that takes an `int64` value in native endianness and returns it in the little endian byte order)
--   `"doubleToLittleEndian": { "arguments": ["double"], "body": <implementation defined>, "return": "double" }` (a function that takes a `double` value in native endianness and returns it in the little endian byte order)
--   `"int64ToNativeEndian": { "arguments": ["int64"], "body": <implementation defined>, "return": "int64" }` (a function that takes a little endian `int64` value and returns it in native byte order)
--   `"doubleToNativeEndian": { "arguments": ["double"], "body": <implementation defined>, "return": "double" }` (a function that takes a little endian `double` value and returns it in native byte order)
+-   `"deserializeDouble": { "arguments": ["Buffer", "Offset"], "body": <implementation defined>, "return": "Double" }"` (a function that takes a `Buffer` buffer and returns the `Double` value at the `Offset` from the buffer as-is and increments `Offset` by the count of read bytes)
+-   `"deserializeInt64": { "arguments": ["Buffer", "Offset"], "body": <implementation defined>, "return": "Int64" }"` (a function that takes a `Buffer` buffer and returns the `Int64` value at the `Offset` from the buffer as-is and increments `Offset` by the count of read bytes)
+-   `"serializeDouble": { "arguments": ["Buffer", "Offset", "Double"], "body": <implementation defined> }"` (a function that takes a `Buffer` buffer and serializes the `Double` value as-is at the `Offset` and increments `Offset` by the count of written bytes)
+-   `"serializeInt64": { "arguments": ["Buffer", "Offset", "Int64"], "body": <implementation defined> }"` (a function that takes a `Buffer` buffer and serializes the `Int64` value as-is at the `Offset` and increments `Offset` by the count of written bytes)
+-   `"stringFromBuffer": { "arguments": ["Buffer"], "body": <implementation defined>, "return": "String" }"` (a function that takes a `Buffer` and converts it to a native `string`)
+-   `"stringToBuffer": { "arguments": ["String"], "body": <implementation defined>, "return": "Buffer" }"` (a function that takes a native `string` and converts it to `Buffer`)
+-   `"Int64ToLittleEndian": { "arguments": ["Int64"], "body": <implementation defined>, "return": "Int64" }` (a function that takes an `Int64` value in native endianness and returns it in the little endian byte order)
+-   `"DoubleToLittleEndian": { "arguments": ["Double"], "body": <implementation defined>, "return": "Double" }` (a function that takes a `Double` value in native endianness and returns it in the little endian byte order)
+-   `"Int64ToNativeEndian": { "arguments": ["Int64"], "body": <implementation defined>, "return": "Int64" }` (a function that takes a little endian `Int64` value and returns it in native byte order)
+-   `"DoubleToNativeEndian": { "arguments": ["Double"], "body": <implementation defined>, "return": "Double" }` (a function that takes a little endian `Double` value and returns it in native byte order)
 
 #### Function Expressions
 
@@ -127,7 +128,7 @@ There are following types of expressions:
 
 Each expression is composed of types. Object fields, array types, variant types etc. are referenced using a dot syntax. Only valid combinations of known types (native or custom) or integer literals are allowed and only "compatible" types are allowed in an expression. If the given type is not accessible in the function context (is not an argument or an object field) it will be declared as a local variable and can be referenced by its type name for example in the return statement.
 
-The referenced type's names serve also as the name of the instances. This simplifies the syntax and the identification of the instance that is inferred from the context. But it also has limitations in that it is not possible to have two variables of the same type used in the same context. Use an `alias` to create a new type for a different purpose (e.g. `Id`, `Count` or `Distance` all being aliases of `int64`). The local variable, field or argument names need to be invented by the code generator.
+The referenced type's names serve also as the name of the instances. This simplifies the syntax and the identification of the instance that is inferred from the context. But it also has limitations in that it is not possible to have two variables of the same type used in the same context. Use an `alias` to create a new type for a different purpose (e.g. `Id`, `Count` or `Distance` all being aliases of `Int64`). The local variable, field or argument names need to be invented by the code generator.
 
 There are also two special kinds of expressions - `if` and `for`. The former allows conditional execution. The latter allows iteration and implicitly declares a local variable `i` that represents the current iteration's value.
 
@@ -199,7 +200,7 @@ Syntax
 
 Variant functions:
 
--   `"index": { "arguments": [], "body": <implementation defined>, "return": "byte" }` (returns `byte` index of the currently active value in the variant)
+-   `"Index": { "arguments": [], "body": <implementation defined>, "return": "Byte" }` (returns `Byte` index of the currently active value in the variant)
 
 There are no implicit variants.
 
@@ -237,19 +238,19 @@ MyArr: {
 foo: {
     type: "function",
     name: "foo",
-    arguments: ["ArgType1],
+    arguments: [ { name: "ArgType1", out: true }],
     body: [
         {
             type: "=", //=, +=
             left: {
                 type: "new", //local, argument, field, number, new
-                realType: "int64,
+                realType: "Int64,
                 astType: "native",
-                value: "int64"
+                value: "Int64"
             },
             right: {
                 type: "number", //local, argument, field, number, new
-                realType: "int64",
+                realType: "Int64",
                 astType: "native",
                 value: 1
             }
@@ -286,7 +287,7 @@ foo: {
         {
             type: "return",
             value: "ArgType1",
-            realType: "int64",
+            realType: "Int64",
             astType: "native",
             returnType: "argument" //local, argument, field, number, new, undefined
         },
@@ -296,14 +297,14 @@ foo: {
                 left: {
                     type: "argument", //local, argument, field, number, new
                     value: "arg1"
-                    realType: "int64",
+                    realType: "Int64",
                     astType: "native"
                 },
                 type: "==",
                 right: {
                     type: "argument", //local, argument, field, number, new
                     value: "arg2"
-                    realType: "int64,
+                    realType: "Int64,
                     astType: "native"
                 },
             },
@@ -314,7 +315,7 @@ foo: {
             iterations: {
                 type: "number",
                 value: 5,
-                realType: "int64",
+                realType: "Int64",
                 astType: "native"
             },
             body: []
@@ -339,7 +340,8 @@ Obj: {
             body: []
             returnValue: undefined
         }
-    }
+    },
+    usedBeforeDefined: true
 }
 ```
 
@@ -369,13 +371,13 @@ The AST is then passed over to the Serializer that adds (de)serialization functi
 
 As is.
 
-#### integers (int64, double)
+#### integers (Int64, Double)
 
-The `int64` and `double` are always serialized in the little endian byte order regardless of the platform (on big endian platforms the value is converted to little endian first). The value is deserialized as little endian and in case of big endian platform converted to that byte order.
+The `Int64` and `Double` are always serialized in the little endian byte order regardless of the platform (on big endian platforms the value is converted to little endian first). The value is deserialized as little endian and in case of big endian platform converted to that byte order.
 
 #### array
 
-Size of the array in bytes as `int64` followed by the serialized values.
+Size of the array in bytes as `Int64` followed by the serialized values.
 
 #### object
 
@@ -383,14 +385,14 @@ Individual fields serialized after each other in the order of declaration (no al
 
 #### variant
 
-Index of currently active variant as a single `byte` index (interpreted as an unsigned 8-bit integer value) followed by the serialized active variant.
+Index of currently active variant as a single `Byte` index (interpreted as an unsigned 8-bit integer value) followed by the serialized active variant.
 Currently active variant.
 
 ---
 
 **NOTE ON STRINGS**
 
-The ADb Query assumes the `byte array` (`[byte]`) to represent all data in serialized form. Every programming language uses their own native string representation that does not always adhere to this representation. In some languages strings are UTF-16 (two bytes per character), in others they are UTF-8 (variable number of bytes per character). Some languages offers a choice between the two (e.g. C++ `std::string`, `QString` in Qt etc.). The binary representation differs (e.g. UTF-16 takes twice as many bytes as it has characters). Storing a string in one language and reading it in another without agreeing on the encoding can have surprising results. It is not feasible to enforce an encoding (e.g. UTF-8) due to many variations and because not all data are (human readable/interpretable) strings. It is therefore up to the user to make sure the right encoding is used when using the `string` type for values.
+The ADb Query assumes the `byte array` (`[Byte]`) to represent all data in serialized form. Every programming language uses their own native string representation that does not always adhere to this representation. In some languages strings are UTF-16 (two bytes per character), in others they are UTF-8 (variable number of bytes per character). Some languages offers a choice between the two (e.g. C++ `std::string`, `QString` in Qt etc.). The binary representation differs (e.g. UTF-16 takes twice as many bytes as it has characters). Storing a string in one language and reading it in another without agreeing on the encoding can have surprising results. It is not feasible to enforce an encoding (e.g. UTF-8) due to many variations and because not all data are (human readable/interpretable) strings. It is therefore up to the user to make sure the right encoding is used when using the `String` type for values.
 
 ---
 

@@ -280,10 +280,7 @@ describe("parse", () => {
                     test("else", () => {
                         const data = {
                             foo: {
-                                body: [
-                                    "if (1 == 1) { fizz() }",
-                                    "else { bazz() }",
-                                ],
+                                body: ["if (1 == 1) { fizz() }", "else { bazz() }"],
                             },
                         };
 
@@ -331,10 +328,7 @@ describe("parse", () => {
                     test("else if", () => {
                         const data = {
                             foo: {
-                                body: [
-                                    "if (Arg == 1) { fizz() }",
-                                    "else if (Arg == 2) { bazz() }",
-                                ],
+                                body: ["if (Arg == 1) { fizz() }", "else if (Arg == 2) { bazz() }"],
                             },
                         };
 
@@ -439,9 +433,7 @@ describe("parse", () => {
                             parser.parse(data);
                         };
 
-                        expect(parse).toThrow(
-                            "Parser: expected '(' or '.' or an operator, got 'IS' [identifier] in function 'foo' when parsing expression 'if (1 IS 2) { bar() }'."
-                        );
+                        expect(parse).toThrow("Parser: expected '(' or '.' or an operator, got 'IS' [identifier] in function 'foo' when parsing expression 'if (1 IS 2) { bar() }'.");
                     });
                 });
             });

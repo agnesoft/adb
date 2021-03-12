@@ -1,0 +1,128 @@
+// Copyright /*!year*/ Agnesoft
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// GENERATED FILE. DO NOT MODIFY.
+
+module;
+
+#include <cstdint>
+#include <cstring>
+#include <memory>
+#include <string>
+#include <variant>
+#include <vector>
+#include <bit>
+
+export module adbquery;
+
+namespace adbquery
+{
+//--------//
+//Inbuilt//
+//--------//
+export using Byte = std::uint8_t;
+export using ByteArray = std::vector<Byte>;
+export using Buffer = ByteArray;
+export using Double = double;
+export using Int64 = std::int64_t;
+export using i = Int64;
+export using Index = Int64;
+export using Offset = Int64;
+export using String = std::string;
+
+[[nodiscard]] auto int64ToLittleEndian(Int64 value) noexcept -> Int64 {
+    if (std::endian::native == std::endian::big) {
+        constexpr std::uint64_t BASE = 0U;
+        constexpr std::uint64_t ONE_BYTE = 8U;
+        constexpr std::uint64_t THREE_BYTES = 24U;
+        constexpr std::uint64_t FIVE_BYTES = 40U;
+        constexpr std::uint64_t SEVEN_BYTES = 56U;
+        constexpr std::uint64_t FIRST_BYTE_MASK = 0x00000000000000ffU;
+        constexpr std::uint64_t SECOND_BYTE_MASK = 0x000000000000ff00U;
+        constexpr std::uint64_t THIRD_BYTE_MASK = 0x0000000000ff0000U;
+        constexpr std::uint64_t FOURTH_BYTE_MASK = 0x00000000ff000000U;
+        constexpr std::uint64_t FIFTH_BYTE_MASK = 0x000000ff00000000U;
+        constexpr std::uint64_t SIXTH_BYTE_MASK = 0x0000ff0000000000U;
+        constexpr std::uint64_t SEVENTH_BYTE_MASK = 0x00ff000000000000U;
+        constexpr std::uint64_t EIGHTH_BYTE_MASK = 0xff00000000000000U;
+        auto val = static_cast<std::uint64_t>(value);
+
+        return static_cast<Int64>(std::uint64_t{BASE
+                                | ((value & FIRST_BYTE_MASK) << SEVEN_BYTES)
+                                | ((value & SECOND_BYTE_MASK) << FIVE_BYTES)
+                                | ((value & THIRD_BYTE_MASK) << THREE_BYTES)
+                                | ((value & FOURTH_BYTE_MASK) << ONE_BYTE)
+                                | ((value & FIFTH_BYTE_MASK) >> ONE_BYTE)
+                                | ((value & SIXTH_BYTE_MASK) >> THREE_BYTES)
+                                | ((value & SEVENTH_BYTE_MASK) >> FIVE_BYTES)
+                                | ((value & EIGHTH_BYTE_MASK) >> SEVEN_BYTES)});
+    }
+
+    return value;
+}
+
+[[nodiscard]] auto doubleToLittleEndian(Double value) noexcept -> Double {
+    return static_cast<Double>(int64ToLittleEndian(static_cast<Int64>(value)));
+}
+
+[[nodiscard]] auto int64ToNativeEndian(Int64 value) noexcept -> Int64 {
+    return int64ToLittleEndian(value);
+}
+
+[[nodiscard]] auto doubleToNativeEndian(Double value) noexcept -> Double {
+    return doubleToLittleEndian(value);
+}
+
+[[nodiscard]] auto deserializeDouble(const Buffer &buffer, Offset &offset) -> Double {
+    Double value;
+    std::memcpy(&value, &buffer[static_cast<size_t>(offset)], sizeof(Double));
+    offset += sizeof(Double);
+    return doubleToNativeEndian(value);
+}
+
+[[nodiscard]] auto deserializeInt64(const Buffer &buffer, Offset &offset) -> Int64 {
+    Int64 value;
+    std::memcpy(&value, &buffer[static_cast<size_t>(offset)], sizeof(Int64));
+    offset += sizeof(Int64);
+    return int64ToNativeEndian(value);
+}
+
+auto serializeDouble(Buffer &buffer, Offset &offset, Double value) -> void {
+    value = doubleToLittleEndian(value);
+    std::memcpy(&buffer[static_cast<size_t>(offset)], &value, sizeof(Double));
+    offset += sizeof(Double);
+}
+
+auto serializeInt64(Buffer &buffer, Offset &offset, Int64 value) -> void {
+    value = int64ToLittleEndian(value);
+    std::memcpy(&buffer[static_cast<size_t>(offset)], &value, sizeof(Int64));
+    offset += sizeof(Int64);
+}
+
+[[nodiscard]] auto stringFromBuffer(const Buffer &buffer) -> String {
+    String str(buffer.size(), 0);
+    std::memcpy(str.data(), buffer.data(), buffer.size());
+    return str;
+}
+
+[[nodiscard]] auto stringToBuffer(const String &str) -> Buffer {
+    Buffer buf(str.size());
+    std::memcpy(buf.data(), str.data(), str.size());
+    return buf;
+}
+
+//------------//
+//User Defined//
+//------------//
+/*!data*/}

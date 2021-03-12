@@ -16,27 +16,14 @@ import * as serializer from "../compiler/serializer.js";
 
 describe("serializer", () => {
     describe("valid", () => {
-        test("native", () => {
-            const expected = {
-                serialize_byte: {},
-                deserialize_byte: {},
-                serialize_int64: {},
-                deserialize_int64: {},
-                serialize_double: {},
-                deserialize_double: {},
-                serialize_string: {},
-                deserialize_string: {},
+        test("array", () => {
+            const data = {
+                MyArr: ["Int64"],
             };
 
-            expect(serializer.addSerialization({})).toMatchObject(expected);
-        });
-
-        test("array", () => {
-            const data = { ByteArray: ["byte"] };
-
             const expected = {
-                serialize_ByteArray: {},
-                deserialize_ByteArray: {},
+                serialize_MyArr: {},
+                deserialize_MyArr: {},
             };
 
             expect(serializer.addSerialization(data)).toMatchObject(expected);
@@ -45,7 +32,7 @@ describe("serializer", () => {
         test("object", () => {
             const data = {
                 MyObj: {
-                    fields: ["string", "int64"],
+                    fields: ["String", "Int64"],
                 },
             };
 
@@ -59,7 +46,7 @@ describe("serializer", () => {
 
         test("variant", () => {
             const data = {
-                MyVar: ["int64", "string"],
+                MyVar: ["Int64", "String"],
             };
 
             const expected = {
@@ -75,9 +62,7 @@ describe("serializer", () => {
                 foo: { body: [] },
             };
 
-            expect(
-                "serialize_foo" in serializer.addSerialization(data)
-            ).toBeFalsy();
+            expect("serialize_foo" in serializer.addSerialization(data)).toBeFalsy();
         });
 
         test("alias", () => {
@@ -86,9 +71,7 @@ describe("serializer", () => {
                 objalias: "obj",
             };
 
-            expect(
-                "serialize_objalias" in serializer.addSerialization(data)
-            ).toBeFalsy();
+            expect("serialize_objalias" in serializer.addSerialization(data)).toBeFalsy();
         });
     });
 });

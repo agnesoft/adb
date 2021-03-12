@@ -18,20 +18,20 @@ describe("serializer", () => {
     describe("valid", () => {
         test("sample scheme", () => {
             const data = JSON.stringify({
-                FizzBuzz: "string",
-                Id: "int64",
+                FizzBuzz: "String",
+                Id: "Int64",
                 MyArr: ["Id"],
                 MyVariant: ["Id", "MyArr"],
                 print: {
-                    arguments: ["string"],
+                    arguments: ["String"],
                     body: [],
                 },
                 MyObj: {
                     fields: ["Id"],
                     functions: {
                         doFizzBuzz: {
-                            arguments: ["int64"],
-                            body: ["if (int64 == 15) { print(FizzBuzz) }"],
+                            arguments: ["Int64"],
+                            body: ["if (Int64 == 15) { print(FizzBuzz) }"],
                         },
                         fizzBuzz: {
                             body: ["for(Id) { doFizzBuzz(i) }"],
@@ -48,6 +48,18 @@ describe("serializer", () => {
             };
 
             expect(compile).not.toThrow();
+        });
+
+        test("in-built type flag", () => {
+            const data = JSON.stringify({});
+            const ast = compiler.compile(data);
+
+            expect(ast["Offset"]["inBuilt"]).toBeTruthy();
+            expect(ast["Buffer"]["inBuilt"]).toBeTruthy();
+            expect(ast["doubleToNativeEndian"]["inBuilt"]).toBeTruthy();
+
+            expect(ast["serialize_Byte"]["inBuilt"]).toBeFalsy();
+            expect(ast["deserialize_String"]["inBuilt"]).toBeFalsy();
         });
     });
 

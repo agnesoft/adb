@@ -43,9 +43,7 @@ describe("parse", () => {
                         parser.parse(data);
                     };
 
-                    expect(parse).toThrow(
-                        "Parser: 'return' of 'foo' cannot be empty."
-                    );
+                    expect(parse).toThrow("Parser: 'return' of 'foo' cannot be empty.");
                 });
 
                 test("object as return", () => {
@@ -57,9 +55,7 @@ describe("parse", () => {
                         parser.parse(data);
                     };
 
-                    expect(parse).toThrow(
-                        "Parser: type of 'return' of 'foo' invalid ('object', must be 'string')."
-                    );
+                    expect(parse).toThrow("Parser: type of 'return' of 'foo' invalid ('object', must be 'string').");
                 });
             });
         });

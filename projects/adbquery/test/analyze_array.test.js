@@ -20,28 +20,32 @@ describe("analyze", () => {
         describe("valid", () => {
             test("native type", () => {
                 const data = {
-                    MyArr: ["int64"],
+                    MyArr: ["Int64"],
                 };
 
                 const ast = {
                     MyArr: {
                         type: "array",
                         name: "MyArr",
-                        arrayType: "int64",
+                        arrayType: "Int64",
                         functions: {
                             at: {
                                 type: "function",
                                 name: "at",
-                                arguments: ["int64"],
+                                arguments: [
+                                    {
+                                        value: "Int64",
+                                    },
+                                ],
                                 body: [],
-                                returnValue: "int64",
+                                returnValue: "Int64",
                             },
                             size: {
                                 type: "function",
                                 name: "size",
                                 arguments: [],
                                 body: [],
-                                returnValue: "int64",
+                                returnValue: "Int64",
                             },
                         },
                     },
@@ -69,7 +73,11 @@ describe("analyze", () => {
                             at: {
                                 type: "function",
                                 name: "at",
-                                arguments: ["int64"],
+                                arguments: [
+                                    {
+                                        value: "Int64",
+                                    },
+                                ],
                                 body: [],
                                 returnValue: "SomeObj",
                             },
@@ -78,9 +86,51 @@ describe("analyze", () => {
                                 name: "size",
                                 arguments: [],
                                 body: [],
-                                returnValue: "int64",
+                                returnValue: "Int64",
                             },
                         },
+                    },
+                };
+
+                const analyze = () => {
+                    return analyzer.analyze(parser.parse(data));
+                };
+
+                expect(analyze()).toMatchObject(ast);
+            });
+
+            test("used before defined", () => {
+                const data = {
+                    SomeObj: { fields: ["MyArr"] },
+                    MyArr: ["Int64"],
+                };
+
+                const ast = {
+                    MyArr: {
+                        type: "array",
+                        name: "MyArr",
+                        arrayType: "Int64",
+                        functions: {
+                            at: {
+                                type: "function",
+                                name: "at",
+                                arguments: [
+                                    {
+                                        value: "Int64",
+                                    },
+                                ],
+                                body: [],
+                                returnValue: "Int64",
+                            },
+                            size: {
+                                type: "function",
+                                name: "size",
+                                arguments: [],
+                                body: [],
+                                returnValue: "Int64",
+                            },
+                        },
+                        usedBeforeDefined: true,
                     },
                 };
 
@@ -102,9 +152,7 @@ describe("analyze", () => {
                     return analyzer.analyze(parser.parse(data));
                 };
 
-                expect(analyze).toThrow(
-                    "Analyzer: unknown type 'SomeType' used as an array type of 'MyArr'."
-                );
+                expect(analyze).toThrow("Analyzer: unknown type 'SomeType' used as an array type of 'MyArr'.");
             });
         });
     });

@@ -20,14 +20,14 @@ describe("analyze", () => {
         describe("valid", () => {
             test("native type", () => {
                 const data = {
-                    Id: "int64",
+                    Id: "Int64",
                 };
 
                 const ast = {
                     Id: {
                         type: "alias",
                         name: "Id",
-                        aliasedType: "int64",
+                        aliasedType: "Int64",
                     },
                 };
 
@@ -61,7 +61,7 @@ describe("analyze", () => {
 
             test("alias of alias", () => {
                 const data = {
-                    Id: "int64",
+                    Id: "Int64",
                     From: "Id",
                 };
 
@@ -70,6 +70,51 @@ describe("analyze", () => {
                         type: "alias",
                         name: "From",
                         aliasedType: "Id",
+                    },
+                };
+
+                const analyze = () => {
+                    return analyzer.analyze(parser.parse(data));
+                };
+
+                expect(analyze()).toMatchObject(ast);
+            });
+
+            test("used before defined", () => {
+                const data = {
+                    From: "Id",
+                    Id: "Int64",
+                };
+
+                const ast = {
+                    Id: {
+                        type: "alias",
+                        name: "Id",
+                        aliasedType: "Int64",
+                        usedBeforeDefined: true,
+                    },
+                };
+
+                const analyze = () => {
+                    return analyzer.analyze(parser.parse(data));
+                };
+
+                expect(analyze()).toMatchObject(ast);
+            });
+
+            test("used before defined (transitive)", () => {
+                const data = {
+                    To: "From",
+                    From: "Id",
+                    Id: "Int64",
+                };
+
+                const ast = {
+                    From: {
+                        type: "alias",
+                        name: "From",
+                        aliasedType: "Id",
+                        usedBeforeDefined: true,
                     },
                 };
 
@@ -91,9 +136,7 @@ describe("analyze", () => {
                     return analyzer.analyze(parser.parse(data));
                 };
 
-                expect(analyze).toThrow(
-                    "Analyzer: unknown type 'SomeType' aliased as 'Id'."
-                );
+                expect(analyze).toThrow("Analyzer: unknown type 'SomeType' aliased as 'Id'.");
             });
         });
     });

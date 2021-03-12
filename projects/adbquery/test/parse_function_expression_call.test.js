@@ -262,9 +262,7 @@ describe("parse", () => {
                             parser.parse(data);
                         };
 
-                        expect(parse).toThrow(
-                            "Parser: invalid expression in function 'foo' when parsing expression '(arg2)'."
-                        );
+                        expect(parse).toThrow("Parser: invalid expression in function 'foo' when parsing expression '(arg2)'.");
                     });
 
                     test("missing end bracket", () => {
@@ -276,9 +274,7 @@ describe("parse", () => {
                             parser.parse(data);
                         };
 
-                        expect(parse).toThrow(
-                            "Parser: unexpected end of data, expected an identifier or ')' in function 'foo' when parsing expression 'foo(arg'."
-                        );
+                        expect(parse).toThrow("Parser: unexpected end of data, expected an identifier or ')' in function 'foo' when parsing expression 'foo(arg'.");
                     });
                 });
             });

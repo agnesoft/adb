@@ -21,7 +21,7 @@ describe("analyze", () => {
             describe("valid", () => {
                 test("multiple", () => {
                     const data = {
-                        Id: "int64",
+                        Id: "Int64",
                         From: "Id",
                         foo: {
                             arguments: ["Id", "From"],
@@ -30,7 +30,127 @@ describe("analyze", () => {
 
                     const ast = {
                         foo: {
-                            arguments: ["Id", "From"],
+                            arguments: [
+                                {
+                                    value: "Id",
+                                },
+                                {
+                                    value: "From",
+                                },
+                            ],
+                        },
+                    };
+
+                    const analyze = () => {
+                        return analyzer.analyze(parser.parse(data));
+                    };
+
+                    expect(analyze()).toMatchObject(ast);
+                });
+
+                test("out (addition)", () => {
+                    const data = {
+                        Id: "Int64",
+                        foo: {
+                            arguments: ["Id"],
+                            body: ["Id += 1"],
+                        },
+                    };
+
+                    const ast = {
+                        foo: {
+                            arguments: [
+                                {
+                                    value: "Id",
+                                    out: true,
+                                },
+                            ],
+                        },
+                    };
+
+                    const analyze = () => {
+                        return analyzer.analyze(parser.parse(data));
+                    };
+
+                    expect(analyze()).toMatchObject(ast);
+                });
+
+                test("out (assignment)", () => {
+                    const data = {
+                        Id: "Int64",
+                        foo: {
+                            arguments: ["Id"],
+                            body: ["Id = 1"],
+                        },
+                    };
+
+                    const ast = {
+                        foo: {
+                            arguments: [
+                                {
+                                    value: "Id",
+                                    out: true,
+                                },
+                            ],
+                        },
+                    };
+
+                    const analyze = () => {
+                        return analyzer.analyze(parser.parse(data));
+                    };
+
+                    expect(analyze()).toMatchObject(ast);
+                });
+
+                test("out (transitive)", () => {
+                    const data = {
+                        Id: "Int64",
+                        foo: {
+                            arguments: ["Id"],
+                            body: ["Id = 1"],
+                        },
+                        bar: {
+                            arguments: ["Id"],
+                            body: ["foo(Id)"],
+                        },
+                    };
+
+                    const ast = {
+                        bar: {
+                            arguments: [
+                                {
+                                    value: "Id",
+                                    out: true,
+                                },
+                            ],
+                        },
+                    };
+
+                    const analyze = () => {
+                        return analyzer.analyze(parser.parse(data));
+                    };
+
+                    expect(analyze()).toMatchObject(ast);
+                });
+
+                test("out (subtype)", () => {
+                    const data = {
+                        Id: "Int64",
+                        MyObj: { fields: ["Id"] },
+                        foo: {
+                            arguments: ["MyObj"],
+                            body: ["MyObj.Id = 1"],
+                        },
+                    };
+
+                    const ast = {
+                        foo: {
+                            arguments: [
+                                {
+                                    value: "MyObj",
+                                    out: true,
+                                },
+                            ],
                         },
                     };
 
@@ -45,7 +165,7 @@ describe("analyze", () => {
             describe("invalid", () => {
                 test("unknown argument type", () => {
                     const data = {
-                        Id: "int64",
+                        Id: "Int64",
                         foo: {
                             arguments: ["Id", "From"],
                         },
@@ -55,9 +175,7 @@ describe("analyze", () => {
                         return analyzer.analyze(parser.parse(data));
                     };
 
-                    expect(analyze).toThrow(
-                        `Analyzer: the argument 'From' in function 'foo' is not an existing type.`
-                    );
+                    expect(analyze).toThrow(`Analyzer: the argument 'From' in function 'foo' is not an existing type.`);
                 });
             });
         });

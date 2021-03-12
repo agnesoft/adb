@@ -1,4 +1,4 @@
-// Copyright 2020 Agnesoft
+// Copyright 2021 Agnesoft
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,24 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { typeExists } from "./analyzer_common.js";
+import * as cpptypes from "./cpp_types.js";
 
-export function analyzeVariant(node, ast) {
-    for (const variant of node["variants"]) {
-        if (!typeExists(variant, ast)) {
-            throw `Analyzer: unknown type '${variant}' used as a variant of '${node["name"]}'.`;
-        }
-    }
-
-    node["functions"] = {
-        index: {
-            type: "function",
-            name: "Index",
-            arguments: [],
-            body: [],
-            returnValue: "Byte",
-        },
-    };
-
-    return node;
+export function generate(type, ast) {
+    return `\nexport using ${type} = std::vector<${cpptypes.cppType(ast[type]["arrayType"], ast)}>;\n`;
 }

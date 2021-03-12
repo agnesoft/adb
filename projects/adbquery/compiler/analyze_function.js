@@ -22,10 +22,7 @@ function analyzeExpressions(node, object, ast) {
         try {
             analyzeExpression(expression, context, ast);
         } catch (e) {
-            throw `Analyzer: invalid expression in function '${functionName(
-                node,
-                object
-            )}'. ${e}`;
+            throw `Analyzer: invalid expression in function '${functionName(node, object)}'. ${e}`;
         }
     }
 }
@@ -47,29 +44,20 @@ function functionName(node, object) {
 }
 
 function hasReturnStatement(node) {
-    return (
-        node["body"].length > 0 &&
-        node["body"][node["body"].length - 1]["type"] == "return"
-    );
+    return node["body"].length > 0 && node["body"][node["body"].length - 1]["type"] == "return";
 }
 
 function validateArguments(node, object, ast) {
     for (const arg of node["arguments"]) {
-        if (!typeExists(arg, ast)) {
-            throw `Analyzer: the argument '${arg}' in function '${functionName(
-                node,
-                object
-            )}' is not an existing type.`;
+        if (!typeExists(arg["value"], ast)) {
+            throw `Analyzer: the argument '${arg["value"]}' in function '${functionName(node, object)}' is not an existing type.`;
         }
     }
 }
 
 function validateElseIf(expr, hasIf, node, object) {
     if (!hasIf && (expr["type"] == "elseif" || expr["type"] == "else")) {
-        throw `Analyzer: invalid expression in function '${functionName(
-            node,
-            object
-        )}'. The 'else/if' must follow 'if' or 'else if'.`;
+        throw `Analyzer: invalid expression in function '${functionName(node, object)}'. The 'else/if' must follow 'if' or 'else if'.`;
     }
 
     return ["if", "elseif"].includes(expr["type"]);
@@ -86,19 +74,11 @@ function validateIf(node, object) {
 function validateReturn(node, object, ast) {
     if (node["returnValue"]) {
         if (!typeExists(node["returnValue"], ast)) {
-            throw `Analyzer: the return type '${
-                node["returnValue"]
-            }' of function '${functionName(
-                node,
-                object
-            )}' is not an existing type.`;
+            throw `Analyzer: the return type '${node["returnValue"]}' of function '${functionName(node, object)}' is not an existing type.`;
         }
 
         if (!hasReturnStatement(node)) {
-            throw `Analyzer: missing return statement in function '${functionName(
-                node,
-                object
-            )}' that has a return value.`;
+            throw `Analyzer: missing return statement in function '${functionName(node, object)}' that has a return value.`;
         }
     }
 }

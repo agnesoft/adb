@@ -40,10 +40,54 @@ function analyzeType(node, ast) {
     }
 }
 
+function analyzeWholeAST(ast) {
+    for (const type in ast) {
+        detectUseBeforeDefined(ast[type], ast);
+    }
+}
+
+function detectUseBeforeDefined(node, ast) {
+    for (const type in ast) {
+        if (type == node["name"]) {
+            return;
+        }
+
+        if (isUsedBeforeDefined(node["name"], type, ast)) {
+            node["usedBeforeDefined"] = true;
+            return;
+        }
+    }
+}
+
+function isUsedBeforeDefined(type, other, ast) {
+    switch (ast[other]["type"]) {
+        case "alias":
+            return ast[other]["aliasedType"] == type;
+        case "array":
+            return ast[other]["arrayType"] == type;
+        case "variant":
+            return isUsedBeforeDefinedMulti(ast[other]["variants"], type);
+        case "object":
+            return isUsedBeforeDefinedMulti(ast[other]["fields"], type);
+    }
+}
+
+function isUsedBeforeDefinedMulti(types, type) {
+    for (const other of types) {
+        if (other == type) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 export function analyze(ast) {
     for (const type in ast) {
         analyzeType(ast[type], ast);
     }
+
+    analyzeWholeAST(ast);
 
     return ast;
 }

@@ -23,7 +23,11 @@ export function analyzeArray(node, ast) {
         at: {
             type: "function",
             name: "at",
-            arguments: ["int64"],
+            arguments: [
+                {
+                    value: "Int64",
+                },
+            ],
             body: [],
             returnValue: node["arrayType"],
         },
@@ -32,7 +36,7 @@ export function analyzeArray(node, ast) {
             name: "size",
             arguments: [],
             body: [],
-            returnValue: "int64",
+            returnValue: "Int64",
         },
     };
 

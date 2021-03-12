@@ -31,12 +31,7 @@ function isEndBracket(token) {
 }
 
 function isExpressionEnd(token) {
-    return (
-        !token ||
-        token["value"] == ")" ||
-        token["value"] == "}" ||
-        isComma(token)
-    );
+    return !token || token["value"] == ")" || token["value"] == "}" || isComma(token);
 }
 
 function isOperator(token) {
@@ -149,9 +144,7 @@ function parseNextToken(ast) {
     } else if (isOperator(token)) {
         return parseOperator(token, ast);
     } else {
-        error(
-            `expected '(' or '.' or an operator, got '${token["value"]}' [${token["type"]}]`
-        );
+        error(`expected '(' or '.' or an operator, got '${token["value"]}' [${token["type"]}]`);
     }
 }
 
@@ -204,9 +197,7 @@ function skipPunctuation(value) {
     const token = tokenizer.next();
 
     if (!(token["type"] == "punctuation" && token["value"] == value)) {
-        error(
-            `expected '${value}', got '${token["value"]}' [${token["type"]}]`
-        );
+        error(`expected '${value}', got '${token["value"]}' [${token["type"]}]`);
     }
 }
 
@@ -216,9 +207,7 @@ function validateIdentifier(token) {
     }
 
     if (!["number", "identifier"].includes(token["type"])) {
-        error(
-            `expected an identifier, got '${token["value"]}' [${token["type"]}]`
-        );
+        error(`expected an identifier, got '${token["value"]}' [${token["type"]}]`);
     }
 }
 

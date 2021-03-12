@@ -60,9 +60,7 @@ describe("parse", () => {
                     parser.parse(data);
                 };
 
-                expect(parse).toThrow(
-                    "Parser: list of variants of 'MyVar' cannot be empty."
-                );
+                expect(parse).toThrow("Parser: list of variants of 'MyVar' cannot be empty.");
             });
 
             test("empty string as variant", () => {
@@ -74,9 +72,7 @@ describe("parse", () => {
                     parser.parse(data);
                 };
 
-                expect(parse).toThrow(
-                    "Parser: variant of 'MyVar' cannot be empty."
-                );
+                expect(parse).toThrow("Parser: variant of 'MyVar' cannot be empty.");
             });
 
             test("object as variant", () => {
@@ -88,9 +84,7 @@ describe("parse", () => {
                     parser.parse(data);
                 };
 
-                expect(parse).toThrow(
-                    "Parser: variant of 'MyVar' invalid ('object', must be 'string')."
-                );
+                expect(parse).toThrow("Parser: variant of 'MyVar' invalid ('object', must be 'string').");
             });
         });
     });

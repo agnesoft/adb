@@ -19,9 +19,7 @@ let FUNCTION_NAME = "";
 
 function validateArgument(arg) {
     if (jsType(arg) != "string") {
-        throw `Parser: argument in 'arguments' of '${FUNCTION_NAME}' invalid ('${jsType(
-            arg
-        )}', must be 'string').`;
+        throw `Parser: argument in 'arguments' of '${FUNCTION_NAME}' invalid ('${jsType(arg)}', must be 'string').`;
     }
 
     if (!arg) {
@@ -31,9 +29,7 @@ function validateArgument(arg) {
 
 function validateArguments(args) {
     if (jsType(args) != "array") {
-        throw `Parser: type of 'arguments' of '${FUNCTION_NAME}' invalid ('${jsType(
-            args
-        )}', must be 'array').`;
+        throw `Parser: type of 'arguments' of '${FUNCTION_NAME}' invalid ('${jsType(args)}', must be 'array').`;
     }
 
     for (const argument of args) {
@@ -44,7 +40,14 @@ function validateArguments(args) {
 function functionArguments(func) {
     if ("arguments" in func) {
         validateArguments(func["arguments"]);
-        return func["arguments"];
+
+        let args = [];
+
+        for (const arg of func["arguments"]) {
+            args.push({ value: arg });
+        }
+
+        return args;
     }
 
     return [];
@@ -52,9 +55,7 @@ function functionArguments(func) {
 
 function validateExpression(expression) {
     if (jsType(expression) != "string") {
-        throw `Parser: expression in 'body' of '${FUNCTION_NAME}' invalid ('${jsType(
-            expression
-        )}', must be 'string').`;
+        throw `Parser: expression in 'body' of '${FUNCTION_NAME}' invalid ('${jsType(expression)}', must be 'string').`;
     }
 
     if (!expression) {
@@ -64,9 +65,7 @@ function validateExpression(expression) {
 
 function validateBody(body) {
     if (jsType(body) != "array") {
-        throw `Parser: type of 'body' of '${FUNCTION_NAME}' invalid ('${jsType(
-            body
-        )}', must be 'array').`;
+        throw `Parser: type of 'body' of '${FUNCTION_NAME}' invalid ('${jsType(body)}', must be 'array').`;
     }
 }
 
@@ -87,9 +86,7 @@ function functionBody(func) {
 
 function validateReturn(returnValue) {
     if (jsType(returnValue) != "string") {
-        throw `Parser: type of 'return' of '${FUNCTION_NAME}' invalid ('${jsType(
-            returnValue
-        )}', must be 'string').`;
+        throw `Parser: type of 'return' of '${FUNCTION_NAME}' invalid ('${jsType(returnValue)}', must be 'string').`;
     }
 
     if (!returnValue) {
@@ -108,9 +105,7 @@ function functionReturn(func) {
 
 export function isFunction(token, schema) {
     const keys = Object.keys(schema[token]);
-    return ["arguments", "body", "return"].some((element) =>
-        keys.includes(element)
-    );
+    return ["arguments", "body", "return"].some((element) => keys.includes(element));
 }
 
 export function functionAST(name, func, objectName = undefined) {

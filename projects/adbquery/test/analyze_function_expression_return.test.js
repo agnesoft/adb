@@ -22,7 +22,7 @@ describe("analyze", () => {
                 describe("valid", () => {
                     test("new native", () => {
                         const data = {
-                            Id: "int64",
+                            Id: "Int64",
                             foo: {
                                 body: ["return 1"],
                                 return: "Id",
@@ -36,7 +36,7 @@ describe("analyze", () => {
                                         type: "return",
                                         value: 1,
                                         astType: "native",
-                                        realType: "int64",
+                                        realType: "Int64",
                                         returnType: "number",
                                     },
                                 ],
@@ -53,7 +53,7 @@ describe("analyze", () => {
 
                     test("new custom", () => {
                         const data = {
-                            Id: "int64",
+                            Id: "Int64",
                             Obj: { fields: ["Id"] },
                             foo: {
                                 arguments: ["Id"],
@@ -71,7 +71,7 @@ describe("analyze", () => {
                                             {
                                                 type: "argument",
                                                 astType: "native",
-                                                realType: "int64",
+                                                realType: "Int64",
                                                 value: "Id",
                                             },
                                         ],
@@ -94,7 +94,7 @@ describe("analyze", () => {
 
                     test("field", () => {
                         const data = {
-                            Id: "int64",
+                            Id: "Int64",
                             MyObj: {
                                 fields: ["Id"],
                                 functions: {
@@ -114,7 +114,7 @@ describe("analyze", () => {
                                             {
                                                 type: "return",
                                                 value: "Id",
-                                                realType: "int64",
+                                                realType: "Int64",
                                                 astType: "native",
                                                 returnType: "field",
                                             },
@@ -134,7 +134,7 @@ describe("analyze", () => {
 
                     test("field of field", () => {
                         const data = {
-                            Id: "int64",
+                            Id: "Int64",
                             SubObj: {
                                 fields: ["Id"],
                             },
@@ -157,7 +157,7 @@ describe("analyze", () => {
                                             {
                                                 type: "return",
                                                 value: "Id",
-                                                realType: "int64",
+                                                realType: "Int64",
                                                 astType: "native",
                                                 returnType: "field",
                                                 parent: {
@@ -183,7 +183,7 @@ describe("analyze", () => {
 
                     test("variant of field", () => {
                         const data = {
-                            Id: "int64",
+                            Id: "Int64",
                             MyArr: ["Id"],
                             MyVar: ["Id", "MyArr"],
                             MyObj: {
@@ -244,9 +244,7 @@ describe("analyze", () => {
                             return analyzer.analyze(parser.parse(data));
                         };
 
-                        expect(analyze).toThrow(
-                            `Analyzer: invalid expression in function 'foo'. Cannot assign '1' (aka int64 [native]) to 'Obj' (aka Obj [object]).`
-                        );
+                        expect(analyze).toThrow(`Analyzer: invalid expression in function 'foo'. Cannot assign '1' (aka Int64 [native]) to 'Obj' (aka Obj [object]).`);
                     });
                 });
             });

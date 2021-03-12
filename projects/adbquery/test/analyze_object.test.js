@@ -38,6 +38,99 @@ describe("analyze", () => {
 
                 expect(analyze()).toEqual(ast);
             });
+
+            test("used before definition (array)", () => {
+                const data = {
+                    MyArr: ["MyObj"],
+                    MyObj: {},
+                };
+
+                const ast = {
+                    MyObj: {
+                        type: "object",
+                        name: "MyObj",
+                        functions: {},
+                        fields: [],
+                        usedBeforeDefined: true,
+                    },
+                };
+
+                const analyze = () => {
+                    return analyzer.analyze(parser.parse(data));
+                };
+
+                expect(analyze()).toMatchObject(ast);
+            });
+
+            test("used before definition (variant)", () => {
+                const data = {
+                    MyVariant: ["Int64", "Byte", "MyObj"],
+                    MyObj: {},
+                };
+
+                const ast = {
+                    MyObj: {
+                        type: "object",
+                        name: "MyObj",
+                        functions: {},
+                        fields: [],
+                        usedBeforeDefined: true,
+                    },
+                };
+
+                const analyze = () => {
+                    return analyzer.analyze(parser.parse(data));
+                };
+
+                expect(analyze()).toMatchObject(ast);
+            });
+
+            test("used before definition (object field)", () => {
+                const data = {
+                    OtherObj: { fields: ["MyObj"] },
+                    MyObj: {},
+                };
+
+                const ast = {
+                    MyObj: {
+                        type: "object",
+                        name: "MyObj",
+                        functions: {},
+                        fields: [],
+                        usedBeforeDefined: true,
+                    },
+                };
+
+                const analyze = () => {
+                    return analyzer.analyze(parser.parse(data));
+                };
+
+                expect(analyze()).toMatchObject(ast);
+            });
+
+            test("used before definition (alias)", () => {
+                const data = {
+                    AliasedObj: "MyObj",
+                    MyArr: ["AliasedObj"],
+                    MyObj: {},
+                };
+
+                const ast = {
+                    MyObj: {
+                        type: "object",
+                        name: "MyObj",
+                        functions: {},
+                        fields: [],
+                        usedBeforeDefined: true,
+                    },
+                };
+
+                const analyze = () => {
+                    return analyzer.analyze(parser.parse(data));
+                };
+
+                expect(analyze()).toMatchObject(ast);
+            });
         });
     });
 });

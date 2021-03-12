@@ -184,9 +184,7 @@ describe("serializer", () => {
         test("bad token at the start", () => {
             tokenizer.setData("~");
 
-            expect(tokenizer.next).toThrow(
-                "Tokenizer: Cannot handle character '~'."
-            );
+            expect(tokenizer.next).toThrow("Tokenizer: Cannot handle character '~'.");
         });
 
         test("bad token in the middle", () => {
@@ -203,9 +201,7 @@ describe("serializer", () => {
         test("bad number", () => {
             tokenizer.setData("123a");
 
-            expect(tokenizer.next).toThrow(
-                "Tokenizer: '123a' is not a number."
-            );
+            expect(tokenizer.next).toThrow("Tokenizer: '123a' is not a number.");
         });
     });
 });

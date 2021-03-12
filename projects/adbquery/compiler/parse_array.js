@@ -16,9 +16,7 @@ import { jsType } from "./parser_common.js";
 
 function validateArrayType(token, type) {
     if (jsType(type) != "string") {
-        throw `Parser: type of array '${token}' invalid ('${jsType(
-            type
-        )}', must be 'string').`;
+        throw `Parser: type of array '${token}' invalid ('${jsType(type)}', must be 'string').`;
     }
 
     if (!type) {

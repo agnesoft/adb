@@ -19,14 +19,14 @@ describe("parse", () => {
         describe("valid", () => {
             test("native type", () => {
                 const data = {
-                    Size: "int64",
+                    Size: "Int64",
                 };
 
                 const ast = {
                     Size: {
                         type: "alias",
                         name: "Size",
-                        aliasedType: "int64",
+                        aliasedType: "Int64",
                     },
                 };
 
@@ -44,9 +44,7 @@ describe("parse", () => {
                     parser.parse(data);
                 };
 
-                expect(parse).toThrow(
-                    "Parser: type of alias 'Id' cannot be empty."
-                );
+                expect(parse).toThrow("Parser: type of alias 'Id' cannot be empty.");
             });
         });
     });

@@ -21,23 +21,54 @@ describe("analyze", () => {
             test("two", () => {
                 const data = {
                     SomeType: {},
-                    MyVariant: ["SomeType", "int64"],
+                    MyVariant: ["SomeType", "Int64"],
                 };
 
                 const ast = {
                     MyVariant: {
                         type: "variant",
                         name: "MyVariant",
-                        variants: ["SomeType", "int64"],
+                        variants: ["SomeType", "Int64"],
                         functions: {
                             index: {
                                 type: "function",
-                                name: "index",
+                                name: "Index",
                                 arguments: [],
                                 body: [],
-                                returnValue: "byte",
+                                returnValue: "Byte",
                             },
                         },
+                    },
+                };
+
+                const analyze = () => {
+                    return analyzer.analyze(parser.parse(data));
+                };
+
+                expect(analyze()).toMatchObject(ast);
+            });
+
+            test("used before defined", () => {
+                const data = {
+                    SomeType: { fields: ["MyVariant"] },
+                    MyVariant: ["Byte", "Int64"],
+                };
+
+                const ast = {
+                    MyVariant: {
+                        type: "variant",
+                        name: "MyVariant",
+                        variants: ["Byte", "Int64"],
+                        functions: {
+                            index: {
+                                type: "function",
+                                name: "Index",
+                                arguments: [],
+                                body: [],
+                                returnValue: "Byte",
+                            },
+                        },
+                        usedBeforeDefined: true,
                     },
                 };
 
@@ -52,16 +83,14 @@ describe("analyze", () => {
         describe("invalid", () => {
             test("unknown variant type", () => {
                 const data = {
-                    MyVariant: ["int64", "SomeType"],
+                    MyVariant: ["Int64", "SomeType"],
                 };
 
                 const analyze = () => {
                     return analyzer.analyze(parser.parse(data));
                 };
 
-                expect(analyze).toThrow(
-                    "Analyzer: unknown type 'SomeType' used as a variant of 'MyVariant'."
-                );
+                expect(analyze).toThrow("Analyzer: unknown type 'SomeType' used as a variant of 'MyVariant'.");
             });
         });
     });

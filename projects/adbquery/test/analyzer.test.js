@@ -27,8 +27,6 @@ describe("analyze", () => {
             return analyzer.analyze(ast);
         };
 
-        expect(analyze).toThrow(
-            "Analyzer: unknown type 'NewType' named 'MyType'."
-        );
+        expect(analyze).toThrow("Analyzer: unknown type 'NewType' named 'MyType'.");
     });
 });

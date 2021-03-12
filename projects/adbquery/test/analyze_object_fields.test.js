@@ -21,7 +21,7 @@ describe("analyze", () => {
             describe("valid", () => {
                 test("multiple", () => {
                     const data = {
-                        Id: "int64",
+                        Id: "Int64",
                         Ids: ["Id"],
                         MyObj: {
                             fields: ["Id", "Ids"],
@@ -45,7 +45,7 @@ describe("analyze", () => {
             describe("invalid", () => {
                 test("unknown field type", () => {
                     const data = {
-                        Id: "int64",
+                        Id: "Int64",
                         MyObj: {
                             fields: ["Id", "Ids"],
                         },
@@ -55,9 +55,7 @@ describe("analyze", () => {
                         return analyzer.analyze(parser.parse(data));
                     };
 
-                    expect(analyze).toThrow(
-                        "Analyzer: the field 'Ids' of object 'MyObj' is not an existing type."
-                    );
+                    expect(analyze).toThrow("Analyzer: the field 'Ids' of object 'MyObj' is not an existing type.");
                 });
             });
         });

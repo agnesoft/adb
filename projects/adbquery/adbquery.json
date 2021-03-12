@@ -1,18 +1,18 @@
 {
-    "Count": "int64",
-    "Distance": "int64",
-    "Id": "int64",
+    "Count": "Int64",
+    "Distance": "Int64",
+    "Id": "Int64",
     "Ids": ["Id"],
     "FromId": "Id",
     "FromIds": "Ids",
     "ToId": "Id",
     "ToIds": "Ids",
-    "Value": ["int64", "double", "string"],
+    "Value": ["Int64", "Double", "String"],
     "Key": "Value",
     "Keys": ["Key"],
     "KeyValue": { "fields": ["Key", "Value"] },
     "KeyValues": ["KeyValue"],
-    "Placeholder": "string",
+    "Placeholder": "String",
 
     "IdField": ["Id", "Placeholder", "Query"],
     "IdsField": ["Ids", "Placeholder", "Query"],
@@ -25,6 +25,8 @@
     "CountField": ["Count", "Placeholder", "Query"],
     "ValueField": ["Key", "Placeholder", "Query"],
     "ElementsDataField": ["KeyValues", "Placeholder", "Query"],
+    "Element": { "fields": ["Id", "KeyValues"] },
+    "Elements": ["Element"],
 
     "EqualsCount": { "fields": ["CountField"] },
     "NotEqualsCount": { "fields": ["CountField"] },
@@ -141,7 +143,6 @@
     "SelectPathIdsQuery": {
         "fields": ["FromIdField", "ToIdField", "Conditions"]
     },
-
     "QueryData": [
         "InsertNodesQueryData",
         "InsertEdgesQueryData",
@@ -157,5 +158,8 @@
     ],
     "Query": {
         "fields": ["QueryData"]
+    },
+    "Result": {
+        "fields": ["Count", "Elements"]
     }
 }

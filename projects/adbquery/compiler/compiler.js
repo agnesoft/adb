@@ -17,64 +17,122 @@ import * as analyzer from "./analyzer.js";
 import * as serializer from "./serializer.js";
 
 const inBuilt = {
-    i: "int64",
-    offset: "int64",
-    ByteArray: ["byte"],
+    i: "Int64",
+    Offset: "Int64",
+    ByteArray: ["Byte"],
+    Buffer: "ByteArray",
     deserializeDouble: {
-        arguments: ["ByteArray", "offset"],
-        body: ["return 0"],
-        return: "double",
+        arguments: ["Buffer", "Offset"],
+        body: ["Offset = 1", "return 0"],
+        return: "Double",
     },
     deserializeInt64: {
-        arguments: ["ByteArray", "offset"],
-        body: ["return 0"],
-        return: "int64",
+        arguments: ["Buffer", "Offset"],
+        body: ["Offset = 1", "return 0"],
+        return: "Int64",
     },
     serializeDouble: {
-        arguments: ["ByteArray", "offset", "double"],
-        body: [],
+        arguments: ["Buffer", "Offset", "Double"],
+        body: ["Buffer = Buffer", "Offset = 1"],
     },
     serializeInt64: {
-        arguments: ["ByteArray", "offset", "int64"],
-        body: [],
+        arguments: ["Buffer", "Offset", "Int64"],
+        body: ["Buffer = Buffer", "Offset = 1"],
     },
-    stringFromByteArray: {
-        arguments: ["ByteArray"],
-        body: ["return string"],
-        return: "string",
+    stringFromBuffer: {
+        arguments: ["Buffer"],
+        body: ["return String"],
+        return: "String",
     },
-    stringToByteArray: {
-        arguments: ["string"],
-        body: ["return ByteArray"],
-        return: "ByteArray",
+    stringToBuffer: {
+        arguments: ["String"],
+        body: ["return Buffer"],
+        return: "Buffer",
     },
     int64ToLittleEndian: {
-        arguments: ["int64"],
+        arguments: ["Int64"],
         body: ["return 0"],
-        return: "int64",
+        return: "Int64",
     },
     doubleToLittleEndian: {
-        arguments: ["double"],
+        arguments: ["Double"],
         body: ["return 0"],
-        return: "double",
+        return: "Double",
     },
     int64ToNativeEndian: {
-        arguments: ["int64"],
+        arguments: ["Int64"],
         body: ["return 0"],
-        return: "int64",
+        return: "Int64",
     },
     doubleToNativeEndian: {
-        arguments: ["double"],
+        arguments: ["Double"],
         body: ["return 0"],
-        return: "double",
+        return: "Double",
+    },
+};
+
+const inBuiltSerialization = {
+    serialize_Byte: {
+        arguments: ["Buffer", "Offset", "Byte"],
+        body: ["Buffer.at(Offset) = Byte", "Offset += 1"],
+    },
+    deserialize_Byte: {
+        arguments: ["Buffer", "Offset"],
+        body: ["Byte = Buffer.at(Offset)", "Offset += 1", "return Byte"],
+        return: "Byte",
+    },
+    serialize_Int64: {
+        arguments: ["Buffer", "Offset", "Int64"],
+        body: ["serializeInt64(Buffer, Offset, int64ToLittleEndian(Int64))"],
+    },
+    deserialize_Int64: {
+        arguments: ["Buffer", "Offset"],
+        body: ["return int64ToNativeEndian(deserializeInt64(Buffer, Offset))"],
+        return: "Int64",
+    },
+    serialize_Double: {
+        arguments: ["Buffer", "Offset", "Double"],
+        body: ["serializeDouble(Buffer, Offset, doubleToLittleEndian(Double))"],
+    },
+    deserialize_Double: {
+        arguments: ["Buffer", "Offset"],
+        body: ["return doubleToNativeEndian(deserializeDouble(Buffer, Offset))"],
+        return: "Double",
+    },
+    serialize_ByteArray: {
+        arguments: ["Buffer", "Offset", "ByteArray"],
+        body: ["serialize_Int64(Buffer, Offset, ByteArray.size())", "for (ByteArray.size()) { serialize_Byte(Buffer, Offset, ByteArray.at(i)) }"],
+    },
+    deserialize_ByteArray: {
+        arguments: ["Buffer", "Offset"],
+        body: ["ByteArray = ByteArray", "for (deserialize_Int64(Buffer, Offset)) { ByteArray += deserialize_Byte(Buffer, Offset) }", "return ByteArray"],
+        return: "ByteArray",
+    },
+    serialize_String: {
+        arguments: ["Buffer", "Offset", "String"],
+        body: ["serialize_ByteArray(Buffer, Offset, stringToBuffer(String))"],
+    },
+    deserialize_String: {
+        arguments: ["Buffer", "Offset"],
+        body: ["return stringFromBuffer(deserialize_ByteArray(Buffer, Offset))"],
+        return: "String",
     },
 };
 
 export function compile(data) {
     const fullData = serializer.addSerialization({
         ...inBuilt,
+        ...inBuiltSerialization,
         ...JSON.parse(data),
     });
+
     let ast = parser.parse(fullData);
+
+    for (const type in ast) {
+        if (type in inBuilt) {
+            ast[type]["inBuilt"] = true;
+        }
+    }
+
     return analyzer.analyze(ast);
 }
